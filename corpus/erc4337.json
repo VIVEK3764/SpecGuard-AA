@@ -1,0 +1,258 @@
+[
+  {
+    "id": "ERC4337-SPEC-001",
+    "source": "ERC-4337 Specification: ERC-4337 Specification Section",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "--- eip: 4337 title: Account Abstraction Using Alt Mempool description: Account abstraction without consensus-layer protocol changes, instead relying on higher-layer infrastructure. author: Vitalik Buterin (@vbuterin), Yoav Weiss (@yoavw), Dror Tirosh (@drortirosh), Shahaf Nacson (@shahafn), Alex Forshtat (@forshtat), Kristof Gazso (@kristofgazso), Tjaden Hess (@tjade273) discussions-to: https://ethereum-magicians.org/t/erc-4337-account-abstraction-via-entry-point-contract-specification/7160 status: Final type: Standards Track category: ERC created: 2021-09-29 requires: 712, 7702 ---"
+  },
+  {
+    "id": "ERC4337-SPEC-002",
+    "source": "ERC-4337 Specification: Abstract",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Abstract  Historically, users could interact with Ethereum only by sending transactions from special accounts controlled by private keys, with transaction validation entirely enforced by fixed protocol rules. Account abstraction is an alternative model that allows each account to supply its own validation logic executed as smart contract code, while the protocol provides only minimal constraints.  This document is an account abstraction proposal which completely avoids the need for consensus-layer protocol changes. Instead of adding new protocol features and changing the bottom-layer transa..."
+  },
+  {
+    "id": "ERC4337-SPEC-003",
+    "source": "ERC-4337 Specification: Motivation",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Motivation  Historically, introducing Account Abstraction has been a long-standing goal of the Ethereum protocol. A number of proposals have been thoroughly discussed, but so far none of them have been implemented in the protocol.  This proposal takes a different approach, avoiding any adjustments to the consensus layer. It seeks to achieve the following goals:  * **Achieve the key goal of Account Abstraction**: allow users to use Smart Contract Accounts containing arbitrary verification logic instead of EOAs as their primary account. Completely remove any need at all for users to also have..."
+  },
+  {
+    "id": "ERC4337-SPEC-004",
+    "source": "ERC-4337 Specification: Definitions",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Definitions  * **UserOperation** - a structure that describes a transaction to be sent on behalf of a user. To avoid confusion, it is not named \"transaction\".   * Like a transaction, it contains `to`, `calldata`, `maxFeePerGas`, `maxPriorityFeePerGas`, `nonce`, `signature`.   * Unlike a transaction, it contains several other fields, described below.   * Notably, the `signature` field usage is not defined by the protocol, but by the Smart Contract Account implementation. * **Sender** - the Smart Contract Account sending a `UserOperation`. * **EntryPoint** - a singleton contract to execute b..."
+  },
+  {
+    "id": "ERC4337-SPEC-005",
+    "source": "ERC-4337 Specification: The `UserOperation` structure",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### The `UserOperation` structure  To avoid Ethereum consensus changes, we do not attempt to create new transaction types for account-abstracted transactions. Instead, users package up the action they want their Smart Contract Account to take in a struct named `UserOperation`:  | Field                           | Type      | Description                                                                                           | |---------------------------------|-----------|-------------------------------------------------------------------------------------------------------| | `sender`       ..."
+  },
+  {
+    "id": "ERC4337-SPEC-006",
+    "source": "ERC-4337 Specification: `EntryPoint` interface",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### `EntryPoint` interface  When passed on-chain, to the `EntryPoint` contract, the `Account` and the `Paymaster`, a \"packed\" version of the above structure called `PackedUserOperation` is used:  | Field                | Type      | Description                                                                                                           | |----------------------|-----------|-----------------------------------------------------------------------------------------------------------------------| | `sender`             | `address` |                                                      ..."
+  },
+  {
+    "id": "ERC4337-SPEC-007",
+    "source": "ERC-4337 Specification: Smart Contract Account Interface",
+    "role": "aggregator",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### Smart Contract Account Interface  The core interface required for the Smart Contract Account to have is:  ```solidity interface IAccount {   function validateUserOp       (PackedUserOperation calldata userOp, bytes32 userOpHash, uint256 missingAccountFunds)       external returns (uint256 validationData); } ```  The `userOpHash` is a hash over the `userOp` (except `signature`), `entryPoint` and `chainId`.  The Smart Contract Account:  * MUST validate the caller is a trusted `EntryPoint` * MUST validate that the signature is a valid signature of the `userOpHash`, and   SHOULD return `SIG_VA..."
+  },
+  {
+    "id": "ERC4337-SPEC-008",
+    "source": "ERC-4337 Specification: Semi-abstracted Nonce Support",
+    "role": "account",
+    "phase": "validation",
+    "topic": "nonce",
+    "text": "### Semi-abstracted Nonce Support  In Ethereum protocol, the sequential transaction `nonce` value is used as a replay protection method as well as to determine the valid order of transaction being included in blocks.  It also contributes to the transaction hash uniqueness, as a transaction by the same sender with the same nonce may not be included in the chain twice.  However, requiring a single sequential `nonce` value is limiting to the senders' ability to define their custom logic with regard to transaction ordering and replay protection.  Instead of sequential `nonce` we implement a nonce ..."
+  },
+  {
+    "id": "ERC4337-SPEC-009",
+    "source": "ERC-4337 Specification: Required `EntryPoint` contract functionality",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Required `EntryPoint` contract functionality  The `EntryPoint` method is `handleOps`, which handles an array of `UserOperations`  The `EntryPoint`'s `handleOps` function must perform the following steps (we first describe the simpler non-paymaster case). It must make two loops, the **verification loop** and the **execution loop**. In the verification loop, the `handleOps` call must perform the following steps for each `UserOperation`:  * **Create the `sender` Smart Contract Account if it does not yet exist**, using the `initcode` provided in the `UserOperation`.   * If the `factory` addres..."
+  },
+  {
+    "id": "ERC4337-SPEC-010",
+    "source": "ERC-4337 Specification: JSON-RPC API for [ERC-4337](./eip-4337.md)",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### JSON-RPC API for [ERC-4337](./eip-4337.md)  In order to support sending `UserOperation` objects to bundlers, which in turn propagate them through the P2P mempool, we introduce a set of JSON-RPC APIs including `eth_sendUserOperation` and `eth_getUserOperationReceipt`.  The full definition of the new JSON-RPC API is outside the scope of this proposal."
+  },
+  {
+    "id": "ERC4337-SPEC-011",
+    "source": "ERC-4337 Specification: Support for [EIP-712](./eip-712.md) signatures",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Support for [EIP-712](./eip-712.md) signatures  The `userOpHash` is calculated as an [EIP-712] typed message hash with the following parameters:  ```solidity bytes32 constant TYPE_HASH =     keccak256(         \"EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)\"     );  bytes32 constant PACKED_USEROP_TYPEHASH =     keccak256(         \"PackedUserOperation(address sender,uint256 nonce,bytes initCode,bytes callData,bytes32 accountGasLimits,uint256 preVerificationGas,bytes32 gasFees,bytes paymasterAndData)\"     ); ```"
+  },
+  {
+    "id": "ERC4337-SPEC-012",
+    "source": "ERC-4337 Specification: Support for [EIP-7702](./eip-7702.md) authorizations",
+    "role": "factory",
+    "phase": "deployment",
+    "topic": "factory initialization",
+    "text": "### Support for [EIP-7702](./eip-7702.md) authorizations  On networks with [EIP-7702](./eip-7702.md) enabled, the `eth_sendUserOperation` method accepts an extra `eip7702Auth` parameter. If this parameter is set, it MUST be a valid [EIP-7702](./eip-7702.md) authorization tuple, and signed by the `sender` address. The bundler MUST add all required `eip7702Auth` of all `UserOperations` in a bundle to the `authorizationList` and execute the bundle using a transaction type `SET_CODE_TX_TYPE`. Additionally, the `UserOperation` hash calculation is updated to include the desired [EIP-7702](./eip-7702..."
+  },
+  {
+    "id": "ERC4337-SPEC-013",
+    "source": "ERC-4337 Specification: Extension: paymasters",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Extension: paymasters  We extend the `EntryPoint` logic to support **paymasters** that can sponsor transactions for other users. This feature can be used to allow application developers to subsidize fees for their users, allow users to pay fees with ERC-20 tokens and many other use cases. When the `paymasterAndData` field in the `UserOperation` is not empty, the `EntryPoint` implements a different flow for that UserOperation:  ![](../assets/eip-4337/bundle-seq-pm.svg)  During the verification loop, in addition to calling `validateUserOp`, the `handleOps` execution also must check that the ..."
+  },
+  {
+    "id": "ERC4337-SPEC-014",
+    "source": "ERC-4337 Specification: Bundler behavior upon receiving a UserOperation",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Bundler behavior upon receiving a UserOperation  ![](../assets/eip-4337/bundle-build-full-seq.svg)  Similar to an Ethereum transaction, the offchain flow of a `UserOperation` can be described as follows: 1. Client sends a `UserOperation` to the bundler through an RPC call `eth_sendUserOperation`. 2. Before including the `UserOperation` in the mempool, the bundler runs the *first validation* of the newly received UserOperation. If the `UserOperation` fails validation, the bundler drops it and returns an error in response to `eth_sendUserOperation`. 3. Later, once building a bundle, the bund..."
+  },
+  {
+    "id": "ERC4337-SPEC-015",
+    "source": "ERC-4337 Specification: UserOperation Simulation",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### UserOperation Simulation  We define `UserOperation` simulation, as the offchain view call (or trace call) to the `EntryPoint` contract with the `UserOperation`, and the enforcement of the shared set of rules applied to the validation code, as part of the `UserOperation` validation.  #### Simulation Rationale To validate a normal Ethereum transaction `tx`, the bundler performs static checks, like: 1. `ecrecover(tx.v, tx.r, tx.s)` has to return a valid EOA 2. `tx.nonce` has to be the current nonce of the recovered EOA 3. `balance` of the recovered EOA has to be sufficient to pay for the tran..."
+  },
+  {
+    "id": "ERC4337-SPEC-016",
+    "source": "ERC-4337 Specification: Estimating `preVerificationGas`",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Estimating `preVerificationGas`  This document does not specify a canonical way to estimate this value, as it depends on non-permanent network properties such as operation and data gas pricing and the expected bundle size.  However, the requirement is for the estimated value to be sufficient to cover the following costs:  * Base bundle transaction cost. On Ethereum, `21000` gas divided by the number of `UserOperations`. * The calldata gas cost related to the `UserOperation` as defined in [EIP-2028](./eip-2028.md). * Static `EntryPoint` contract code execution. * Static memory cost when loa..."
+  },
+  {
+    "id": "ERC4337-SPEC-017",
+    "source": "ERC-4337 Specification: Alternative Mempools",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Alternative Mempools  The simulation rules above are strict and prevent the ability of paymasters to grief the system. However, there might be use cases where specific paymasters can be validated (through manual auditing) and verified that they cannot cause any problem, while still require relaxing of the opcode rules. A bundler cannot simply \"whitelist\" a request from a specific paymaster: if that paymaster is not accepted by all bundlers, then its support will be sporadic at best. Instead, we introduce the term \"alternate mempool\": a modified validation rules, and procedure of propagatin..."
+  },
+  {
+    "id": "ERC4337-SPEC-018",
+    "source": "ERC-4337 Specification: Bundling",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Bundling  Bundling is the process where a node/bundler collects multiple `UserOperations` and creates a single transaction to submit on-chain.  During bundling, the bundler MUST:  * Exclude `UserOperations` that access any sender address of another `UserOperation` in the same bundle. * Exclude `UserOperations` that access any address created by another `UserOperation` validation in the same bundle (via a factory). * For each paymaster used in the bundle, keep track of the balance while adding `UserOperations`. Ensure that it has sufficient deposit to pay for all the `UserOperations` that u..."
+  },
+  {
+    "id": "ERC4337-SPEC-019",
+    "source": "ERC-4337 Specification: Error codes.",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Error codes.  While performing validation, the `EntryPoint` must revert on failures. During simulation, the calling bundler MUST be able to determine which entity (`sender`,`factory` or `paymaster`) caused the failure. The attribution of a revert to an entity is done using call-tracing: the last entity called by the `EntryPoint` prior to the revert is the entity that caused the revert. * For diagnostic purposes, the `EntryPoint` must only revert with explicit `SignatureValidationFailed()`, `FailedOp()` or `FailedOpWithRevert()` errors. * The message of the error starts with event code, AA#..."
+  },
+  {
+    "id": "ERC4337-SPEC-020",
+    "source": "ERC-4337 Specification: Factory contracts",
+    "role": "factory",
+    "phase": "deployment",
+    "topic": "factory initialization",
+    "text": "### Factory contracts  All `factory` contracts MUST check that all calls to the `createAccount()` function originate from the `entryPoint.senderCreator()` address."
+  },
+  {
+    "id": "ERC4337-SPEC-021",
+    "source": "ERC-4337 Specification: Paymasters contracts",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Paymasters contracts  All `paymaster` contracts MUST check that all calls to the `validatePaymasterUserOp()` and `postOp()` functions originate from the `EntryPoint`."
+  },
+  {
+    "id": "ERC4337-SPEC-022",
+    "source": "ERC-4337 Specification: Aggregator contracts",
+    "role": "aggregator",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### Aggregator contracts  All `aggregator` contracts MUST check that all calls to the `validateSignatures()` function originates from the `EntryPoint`."
+  },
+  {
+    "id": "ERC4337-SPEC-023",
+    "source": "ERC-4337 Specification: EIP-7702 delegated Smart Contract Accounts",
+    "role": "factory",
+    "phase": "deployment",
+    "topic": "factory initialization",
+    "text": "### EIP-7702 delegated Smart Contract Accounts  All EIP-7702 delegated Smart Contract Account implementations MUST check that all calls to the initialization function originate from the `entryPoint.senderCreator()` address.  There is no way for the `EntryPoint` contract to know whether an EIP-7702 account has been initialized or not, and therefore the EIP-7702 account initialization code, can be called multiple times through `EntryPoint`. The Account code SHOULD only allow calling it once and the Wallet Application SHOULD NOT pass the `initCode` repeatedly."
+  },
+  {
+    "id": "ERC4337-SPEC-024",
+    "source": "ERC-4337 Specification: Smart Contract Accounts",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### Smart Contract Accounts  #### Storage layout collisions  It is expected that most of ERC-4337 Smart Contract Account will be upgradeable, either via on-chain delegate proxy contracts or via EIP-7702.  When changing the underlying implementation, all Accounts MUST ensure that there are no conflicts in the storage layout of the two contracts.  One common approach to this problem is often referred to as \"diamond storage\" and is fully described in [ERC-7201](./eip-7201.md)."
+  },
+  {
+    "id": "ERC4337-SPEC-025",
+    "source": "ERC-4337 Specification: Transient Storage",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### Transient Storage  Contracts using the [EIP-1153](./eip-1153.md) transient storage MUST take into account that ERC-4337 allows multiple `UserOperations` from different unrelated `sender` addresses to be included in the same underlying transaction. The transient storage MUST be cleaned up manually if contains any sensitive information or is used for access control."
+  },
+  {
+    "id": "ERC4337-SPEC-026",
+    "source": "ERC-4337 Specification: Rationale",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Rationale  The main challenge with a purely \"Smart Contract Accounts\" based Account Abstraction system is DoS safety: how can a block builder including an operation make sure that it will actually pay fees, without having to first execute the entire operation? Requiring the block builder to execute the entire operation opens a DoS attack vector, as an attacker could easily send many operations that pretend to pay a fee but then revert at the last moment after a long execution. Similarly, to prevent attackers from cheaply clogging the mempool, nodes in the P2P network need to check if an ope..."
+  },
+  {
+    "id": "ERC4337-SPEC-027",
+    "source": "ERC-4337 Specification: Validation Rules Rationale",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### Validation Rules Rationale The next step is protecting the bundlers from denial-of-service attacks by a mass number of `UserOperations` that appear to be valid (and pay) but that eventually revert, and thus block the bundler from processing valid `UserOperations`.  There are two types of `UserOperations` that can fail validation: 1. `UserOperations` that succeed in initial validation (and accepted into the mempool), but rely on the environment state to fail later when attempting to include them in a block. 2. `UserOperations` that are valid when checked independently but fail when bundled ..."
+  },
+  {
+    "id": "ERC4337-SPEC-028",
+    "source": "ERC-4337 Specification: Reputation Rationale",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Reputation Rationale  UserOperation's storage access rules prevent them from interfering with each other. But \"global\" entities - paymasters and factories are accessed by multiple `UserOperations`, and thus might invalidate multiple previously valid `UserOperations`.  To prevent abuse, we throttle down (or completely ban for a period of time) an entity that causes invalidation of a large number of `UserOperations` in the mempool. To prevent such entities from \"Sybil-attack\", we require them to stake with the system, and thus make such DoS attack very expensive. Note that this stake is neve..."
+  },
+  {
+    "id": "ERC4337-SPEC-029",
+    "source": "ERC-4337 Specification: Paymasters",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Paymasters  Paymaster contracts allow the abstraction of gas: having a contract, that is not the sender of the transaction, to pay for the transaction fees.  Paymaster architecture allows them to follow the model of \"pre-charge, and later refund\". E.g. a token-paymaster may pre-charge the user with the max possible price of the transaction, and refund the user with the excess afterwards."
+  },
+  {
+    "id": "ERC4337-SPEC-030",
+    "source": "ERC-4337 Specification: First-time Smart Contract Account creation",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### First-time Smart Contract Account creation  NOTE: for contracts using EIP-7702 this flow is described in [Support for EIP-7702 authorizations](#support-for-eip-7702-authorizations).  It is an important design goal of this proposal to replicate the key property of EOAs that users do not need to perform some custom action or rely on an existing user to create their Smart Contract Account; they can simply generate an address locally and immediately start accepting funds.  The Smart Contract Account creation itself is done by a \"factory\" contract, with some Account-specific data. The Factory i..."
+  },
+  {
+    "id": "ERC4337-SPEC-031",
+    "source": "ERC-4337 Specification: Backwards Compatibility",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Backwards Compatibility  This ERC does not change the consensus layer, so there are no backwards compatibility issues for Ethereum as a whole. Unfortunately it is not easily compatible with pre-[ERC-4337](./eip-4337.md) Smart Contract Accounts, because those Accounts do not have a `validateUserOp` function. If the Smart Contract Account has a function for authorizing a trusted `UserOperation` submitter, then this could be fixed by creating an [ERC-4337](./eip-4337.md) compatible Account that re-implements the verification logic as a wrapper and setting it to be the original Account's truste..."
+  },
+  {
+    "id": "ERC4337-SPEC-032",
+    "source": "ERC-4337 Specification: Security Considerations",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Security Considerations  The `EntryPoint` contract will need to be audited and formally verified, because it will serve as a central trust point for _all_ [ERC-4337]. In total, this architecture reduces auditing and formal verification load for the ecosystem, because the amount of work that individual _accounts_ have to do becomes much smaller (they need only verify the `validateUserOp` function and its \"check signature and pay fees\" logic) and check that other functions are `msg.sender == ENTRY_POINT` gated (perhaps also allowing `msg.sender == self`), but it is nevertheless the case that ..."
+  }
+]

@@ -1,0 +1,578 @@
+{
+  "SessionAccount.sol": {
+    "prompt": "System: You are SpecGuard-AA, a formal specification mining AI for ERC-4337 Account Abstraction smart contracts.\nYour task is to synthesize formal candidate security properties tuple p = (tau, target_role, bindings, precondition, required_condition, source_chunk_ids) from extracted contract facts E(c) and retrieved specification evidence C.\n\nCRITICAL CONSTRAINTS:\n1. You MUST select 'tau' ONLY from: 'SESSION', 'PAYMASTER', 'AUTH', 'NONCE', 'SCOPE'.\n2. You MUST cite exact 'source_chunk_ids' present in the retrieved evidence C below (e.g. 'ERC7562-AUTH-010', 'ERC4337-SPEC-021', 'AUDIT-33AUDITS-AA-001').\n3. Do NOT invent unsupported predicates. Use only whitelisted predicate functions like: success(validateUserOp(op)), signedBySessionKey(op, K), target(op) == allowedTarget[K], notExpired(K), validCoupon(op), NOT used(op.coupon), NOT forbiddenOpcodeExecuted(tr).\n\nExtracted Contract Facts E(c):\n{\n  \"contract_name\": \"SessionAccount\",\n  \"source_path\": \"C:\\\\Users\\\\gkrmv\\\\Desktop\\\\BTP_specGaurd\\\\contracts\\\\src\\\\worked_examples\\\\SessionAccount.sol\",\n  \"roles\": [\n    \"Account\"\n  ],\n  \"functions\": [\n    {\n      \"name\": \"recover\",\n      \"visibility\": \"public\",\n      \"parameters\": [\n        {\n          \"name\": \"hash\",\n          \"type\": \"bytes32\"\n        },\n        {\n          \"name\": \"signature\",\n          \"type\": \"bytes\"\n        }\n      ],\n      \"return_types\": [\n        \"address\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"validateUserOp\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"op\",\n          \"type\": \"UserOp\"\n        },\n        {\n          \"name\": \"userOpHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"return_types\": [\n        \"uint256\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [\n        \"SIG_VALIDATION_FAILED\",\n        \"VALIDATION_SUCCESS\",\n        \"owner\",\n        \"sessionKey\"\n      ],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"execute\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"target\",\n          \"type\": \"address\"\n        },\n        {\n          \"name\": \"data\",\n          \"type\": \"bytes\"\n        }\n      ],\n      \"return_types\": [],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [\n        \"ENTRY_POINT\"\n      ],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"setSessionKey\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"key\",\n          \"type\": \"address\"\n        },\n        {\n          \"name\": \"target\",\n          \"type\": \"address\"\n        }\n      ],\n      \"return_types\": [],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [\n        \"owner\"\n      ],\n      \"state_variables_written\": [\n        \"allowedTarget\",\n        \"sessionKey\"\n      ]\n    },\n    {\n      \"name\": \"slitherConstructorConstantVariables\",\n      \"visibility\": \"internal\",\n      \"parameters\": [],\n      \"return_types\": [],\n      \"is_external_or_public\": false,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": [\n        \"ENTRY_POINT\",\n        \"SIG_VALIDATION_FAILED\",\n        \"VALIDATION_SUCCESS\"\n      ]\n    }\n  ],\n  \"state_variables\": [\n    {\n      \"name\": \"ENTRY_POINT\",\n      \"type_str\": \"address\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"SIG_VALIDATION_FAILED\",\n      \"type_str\": \"uint256\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"VALIDATION_SUCCESS\",\n      \"type_str\": \"uint256\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"owner\",\n      \"type_str\": \"address\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"owner\"\n    },\n    {\n      \"name\": \"sessionKey\",\n      \"type_str\": \"mapping(address => bool)\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"session_key_map\"\n    },\n    {\n      \"name\": \"allowedTarget\",\n      \"type_str\": \"mapping(address => address)\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"allowed_target_map\"\n    }\n  ],\n  \"data_flows\": [\n    {\n      \"function_name\": \"validateUserOp\",\n      \"state_vars_read\": [\n        \"SIG_VALIDATION_FAILED\",\n        \"VALIDATION_SUCCESS\",\n        \"owner\",\n        \"sessionKey\"\n      ],\n      \"state_vars_written\": [],\n      \"user_op_fields_read\": [\n        \"signature\"\n      ],\n      \"influences_validation_return\": true\n    }\n  ],\n  \"aa_facts\": {\n    \"entry_point_checked\": true,\n    \"uses_signature_recovery\": true,\n    \"decodes_paymaster_data\": false,\n    \"signature_recovery_functions\": [\n      \"recover\",\n      \"validateUserOp\"\n    ],\n    \"validation_functions\": [\n      \"validateUserOp\"\n    ]\n  }\n}\n\nRetrieved Protocol Evidence Chunks C:\n[\n  {\n    \"id\": \"AUDIT-ETH-INFINITISM-README-008\",\n    \"source\": \"EntryPoint Reference Implementation Spec & Architecture - Finding #8\",\n    \"role\": \"account\",\n    \"phase\": \"validation\",\n    \"topic\": \"authorization\",\n    \"text\": \"### For Smart Contract Account development  ```bash import \\\"@account-abstraction/contracts/core/BaseAccount.sol\\\";  contract MyAccount is BaseAccount {      /// implement your authentication logic here     function _validateSignature(PackedUserOperation calldata userOp, bytes32 userOpHash)     internal override virtual returns (uint256 validationData) {          // UserOpHash can be generated using eth_signTypedData_v4         if (owner != ECDSA.recover(userOpHash, userOp.signature))             return SIG_VALIDATION_FAILED;         return SIG_VALIDATION_SUCCESS;     } } ```  # Resources  - [Ho...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-022\",\n    \"source\": \"ERC-7562 Specification: Rationale\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"## Rationale  All transactions initiated by EOAs have an implicit validation phase where balance, nonce, and signature are checked against the current state of the Ethereum blockchain. Once a node has validated the transaction, only another transaction by the same EOA can modify the Ethereum state in a way that invalidates the first transaction.  With Account Abstraction, however, validation can also include arbitrary EVM code and rely on storage, which means that unrelated `UserOperation`s or transactions may invalidate each other.  If not addressed, this would make maintaining a mempool of v...\"\n  },\n  {\n    \"id\": \"ERC7562-EREP-010\",\n    \"source\": \"ERC-7562 Specification: Entity-specific Rules\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Entity-specific Rules  * **[EREP-010]** For each `paymaster`, the bundler must track the total gas that `UserOperations` using this `paymaster` may consume.     * The bundler should not accept a new `UserOperation` with a paymaster into the mempool if the maximum total gas cost of all UserOperations in the mempool, including this new `UserOperation`, is above the deposit of that `paymaster` at the current gas price. * **[EREP-011]** REMOVED * **[EREP-015]** A `paymaster` should not have its opsSeen incremented because of a failure of the factory or account.   * The second validation runs b...\"\n  },\n  {\n    \"id\": \"ERC7562-AUTH-010\",\n    \"source\": \"ERC-7562 Specification: Authorizations\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Authorizations  * **[AUTH-010]** A UserOperation may only contain a single [EIP-7702](./eip-7702) authorization tuple. * **[AUTH-020]** An account with EIP-7702 delegation can only be used as the Sender of the UserOperation.   Using the authorized account as any other kind of UserOperation entity is not allowed. * **[AUTH-030]** An account with EIP-7702 delegation can only be **accessed** using `*CALL` or `EXTCODE*` opcodes, and only if it is the Sender of the current UserOperation. * **[AUTH-040]** If there are multiple UserOperations by the same sender with an authorization tuple in the ...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-029\",\n    \"source\": \"ERC-7562 Specification: Definition of the mass invalidation attack\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Definition of the mass invalidation attack  A series of actions constitutes a **mass invalidation attack** if a large number of `UserOperation`s\\u2014having passed initial validation and propagated through the mempool\\u2014subsequently become invalid and ineligible for block inclusion.  There are three ways to execute such an attack:  1. Submitting `UserOperation`s that pass initial validation but fail the second validation during bundle creation. 2. Submitting `UserOperation`s that are valid in isolation but become invalid when bundled together. 3. Front-running valid `UserOperation`s with an econo...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-025\",\n    \"source\": \"ERC-7562 Specification: The need for a second validation before submitting a block\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### The need for a second validation before submitting a block  A standard Ethereum transaction can be invalidated if replaced by another transaction with the same nonce. The replacement transaction must pay a higher gas price, satisfying the rule that mempool inclusion requires payment. With contract-based accounts, a `UserOperation`'s validity may depend on mutable state. Other transactions can invalidate a previously valid `UserOperation`, necessitating a second validation before block inclusion.\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-027\",\n    \"source\": \"ERC-7562 Specification: Rationale for limiting storage access\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Rationale for limiting storage access  - Validation processes must not overlap, ensuring a single storage modification cannot invalidate a large number of mempool `UserOperation`s. By restricting storage access to the account's associated storage, bundlers can guarantee the inclusion of at least one `UserOperation` per account in a bundle. - A bundler MAY include multiple `UserOperation`s of the same account in a bundle, but MUST first validate them together.\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-026\",\n    \"source\": \"ERC-7562 Specification: Rationale for limiting opcodes\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Rationale for limiting opcodes  - Validation occurs off-chain, before block creation. Certain opcodes access block-specific information that is not yet finalized. - Using these opcodes during validation enables scenarios where a `UserOperation` succeeds off-chain but consistently reverts on-chain, facilitating DoS attacks. - For example, `require(block.number == 12345)` might pass during mempool validation but fail when the transaction is eventually included in a later block.\"\n  }\n]\n\nFew-Shot Example 1 (Coupon Paymaster Double-Spend Replay):\n{\n  \"property_id\": \"PROP-PAYMASTER-REPLAY-FEWSHOT\",\n  \"template_type\": \"PAYMASTER\",\n  \"target_role\": \"Paymaster\",\n  \"bindings\": {\n    \"validator_function\": \"validatePaymasterUserOp\",\n    \"used_coupon_mapping\": \"usedCoupon\",\n    \"sponsor_variable\": \"sponsor\"\n  },\n  \"precondition\": \"success(validatePaymasterUserOp(op))\",\n  \"required_condition\": \"validCoupon(op) AND NOT used(op.coupon)\",\n  \"source_chunk_ids\": [\n    \"ERC4337-SPEC-021\",\n    \"AUDIT-33AUDITS-AA-001\"\n  ]\n}\n\nFew-Shot Example 2 (Owner Authorization):\n{\n  \"property_id\": \"PROP-AUTH-OWNER-FEWSHOT\",\n  \"template_type\": \"AUTH\",\n  \"target_role\": \"Account\",\n  \"bindings\": {\n    \"validator_function\": \"validateUserOp\",\n    \"owner_variable\": \"owner\"\n  },\n  \"precondition\": \"success(validateUserOp(op))\",\n  \"required_condition\": \"signedByOwner(op, owner)\",\n  \"source_chunk_ids\": [\n    \"AUDIT-ETH-INFINITISM-README-008\"\n  ]\n}\n\nOutput structured properties matching the requested schema.",
+    "raw_sdk_envelope": "{\n  \"id\": \"chatcmpl-E8tdlCh2lOU2Q9JJroXzmcr29tB5f\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"content\": \"{\\\"properties\\\":[{\\\"property_id\\\":\\\"PROP-SESSION-AUTH-001\\\",\\\"template_type\\\":\\\"SESSION\\\",\\\"target_role\\\":\\\"Account\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validateUserOp\\\",\\\"session_key_variable\\\":\\\"sessionKey\\\",\\\"allowed_target_variable\\\":\\\"allowedTarget\\\"},\\\"precondition\\\":\\\"success(validateUserOp(op))\\\",\\\"required_condition\\\":\\\"signedBySessionKey(op, K) AND target(op) == allowedTarget[K]\\\",\\\"source_chunk_ids\\\":[\\\"AUDIT-ETH-INFINITISM-README-008\\\",\\\"ERC7562-AUTH-010\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-SECONDARY-VALIDATION\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Account\\\",\\\"bindings\\\":{},\\\"precondition\\\":\\\"validatedUserOp(op)\\\",\\\"required_condition\\\":\\\"secondValidationNeeded(op)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-025\\\",\\\"ERC7562-SCOPE-027\\\"]}]}\",\n        \"refusal\": null,\n        \"role\": \"assistant\",\n        \"annotations\": [],\n        \"audio\": null,\n        \"function_call\": null,\n        \"tool_calls\": null\n      }\n    }\n  ],\n  \"created\": 1785789213,\n  \"model\": \"gpt-4o-2024-08-06\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_e160a45017\",\n  \"usage\": {\n    \"completion_tokens\": 174,\n    \"prompt_tokens\": 3084,\n    \"total_tokens\": 3258,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 2944\n    }\n  }\n}",
+    "raw_props": [
+      {
+        "property_id": "PROP-SESSION-AUTH-001",
+        "template_type": "SESSION",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "signedBySessionKey(op, K) AND target(op) == allowedTarget[K]",
+        "source_chunk_ids": [
+          "AUDIT-ETH-INFINITISM-README-008",
+          "ERC7562-AUTH-010"
+        ],
+        "raw_prompt_response": "{\n  \"id\": \"chatcmpl-E8tdlCh2lOU2Q9JJroXzmcr29tB5f\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"content\": \"{\\\"properties\\\":[{\\\"property_id\\\":\\\"PROP-SESSION-AUTH-001\\\",\\\"template_type\\\":\\\"SESSION\\\",\\\"target_role\\\":\\\"Account\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validateUserOp\\\",\\\"session_key_variable\\\":\\\"sessionKey\\\",\\\"allowed_target_variable\\\":\\\"allowedTarget\\\"},\\\"precondition\\\":\\\"success(validateUserOp(op))\\\",\\\"required_condition\\\":\\\"signedBySessionKey(op, K) AND target(op) == allowedTarget[K]\\\",\\\"source_chunk_ids\\\":[\\\"AUDIT-ETH-INFINITISM-README-008\\\",\\\"ERC7562-AUTH-010\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-SECONDARY-VALIDATION\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Account\\\",\\\"bindings\\\":{},\\\"precondition\\\":\\\"validatedUserOp(op)\\\",\\\"required_condition\\\":\\\"secondValidationNeeded(op)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-025\\\",\\\"ERC7562-SCOPE-027\\\"]}]}\",\n        \"refusal\": null,\n        \"role\": \"assistant\",\n        \"annotations\": [],\n        \"audio\": null,\n        \"function_call\": null,\n        \"tool_calls\": null\n      }\n    }\n  ],\n  \"created\": 1785789213,\n  \"model\": \"gpt-4o-2024-08-06\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_e160a45017\",\n  \"usage\": {\n    \"completion_tokens\": 174,\n    \"prompt_tokens\": 3084,\n    \"total_tokens\": 3258,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 2944\n    }\n  }\n}"
+      },
+      {
+        "property_id": "PROP-SESSION-TARGET-8722",
+        "template_type": "SESSION",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "target_policy_mapping": "allowedTarget",
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": "op.callData.target",
+          "custom_bindings": {}
+        },
+        "precondition": "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+        "required_condition": "target(op) == allowedTarget[K]",
+        "source_chunk_ids": [
+          "AUDIT-ETH-INFINITISM-README-008"
+        ],
+        "raw_prompt_response": null
+      },
+      {
+        "property_id": "PROP-NONCE-8722",
+        "template_type": "NONCE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "nonceFresh(op)",
+        "source_chunk_ids": [
+          "AUDIT-ETH-INFINITISM-README-008"
+        ],
+        "raw_prompt_response": null
+      },
+      {
+        "property_id": "PROP-SCOPE-8722",
+        "template_type": "SCOPE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "simulatingValidation(op)",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+        "source_chunk_ids": [
+          "ERC7562-SCOPE-022",
+          "ERC7562-EREP-010",
+          "ERC7562-AUTH-010",
+          "ERC7562-SCOPE-029",
+          "ERC7562-SCOPE-025",
+          "ERC7562-SCOPE-027",
+          "ERC7562-SCOPE-026"
+        ],
+        "raw_prompt_response": null
+      }
+    ],
+    "bound_props": [
+      {
+        "property": {
+          "property_id": "PROP-SESSION-AUTH-001",
+          "template_type": "SESSION",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": "sessionKey",
+            "target_policy_mapping": "allowedTarget",
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": "op.callData.target",
+            "custom_bindings": {}
+          },
+          "precondition": "success(validateUserOp(op))",
+          "required_condition": "signedBySessionKey(op, K) AND target(op) == allowedTarget[K]",
+          "source_chunk_ids": [
+            "AUDIT-ETH-INFINITISM-README-008",
+            "ERC7562-AUTH-010"
+          ],
+          "raw_prompt_response": "{\n  \"id\": \"chatcmpl-E8tdlCh2lOU2Q9JJroXzmcr29tB5f\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"content\": \"{\\\"properties\\\":[{\\\"property_id\\\":\\\"PROP-SESSION-AUTH-001\\\",\\\"template_type\\\":\\\"SESSION\\\",\\\"target_role\\\":\\\"Account\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validateUserOp\\\",\\\"session_key_variable\\\":\\\"sessionKey\\\",\\\"allowed_target_variable\\\":\\\"allowedTarget\\\"},\\\"precondition\\\":\\\"success(validateUserOp(op))\\\",\\\"required_condition\\\":\\\"signedBySessionKey(op, K) AND target(op) == allowedTarget[K]\\\",\\\"source_chunk_ids\\\":[\\\"AUDIT-ETH-INFINITISM-README-008\\\",\\\"ERC7562-AUTH-010\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-SECONDARY-VALIDATION\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Account\\\",\\\"bindings\\\":{},\\\"precondition\\\":\\\"validatedUserOp(op)\\\",\\\"required_condition\\\":\\\"secondValidationNeeded(op)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-025\\\",\\\"ERC7562-SCOPE-027\\\"]}]}\",\n        \"refusal\": null,\n        \"role\": \"assistant\",\n        \"annotations\": [],\n        \"audio\": null,\n        \"function_call\": null,\n        \"tool_calls\": null\n      }\n    }\n  ],\n  \"created\": 1785789213,\n  \"model\": \"gpt-4o-2024-08-06\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_e160a45017\",\n  \"usage\": {\n    \"completion_tokens\": 174,\n    \"prompt_tokens\": 3084,\n    \"total_tokens\": 3258,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 2944\n    }\n  }\n}"
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "target_policy_mapping": "allowedTarget",
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": "op.callData.target",
+          "custom_bindings": {}
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-SESSION-TARGET-8722",
+          "template_type": "SESSION",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": "sessionKey",
+            "target_policy_mapping": "allowedTarget",
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": "op.callData.target",
+            "custom_bindings": {}
+          },
+          "precondition": "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+          "required_condition": "target(op) == allowedTarget[K]",
+          "source_chunk_ids": [
+            "AUDIT-ETH-INFINITISM-README-008"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "target_policy_mapping": "allowedTarget",
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": "op.callData.target",
+          "custom_bindings": {}
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-NONCE-8722",
+          "template_type": "NONCE",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "success(validateUserOp(op))",
+          "required_condition": "nonceFresh(op)",
+          "source_chunk_ids": [
+            "AUDIT-ETH-INFINITISM-README-008"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-SCOPE-8722",
+          "template_type": "SCOPE",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "simulatingValidation(op)",
+          "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+          "source_chunk_ids": [
+            "ERC7562-SCOPE-022",
+            "ERC7562-EREP-010",
+            "ERC7562-AUTH-010",
+            "ERC7562-SCOPE-029",
+            "ERC7562-SCOPE-025",
+            "ERC7562-SCOPE-027",
+            "ERC7562-SCOPE-026"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      }
+    ]
+  },
+  "ExpirySessionAccount.sol": {
+    "prompt": "System: You are SpecGuard-AA, a formal specification mining AI for ERC-4337 Account Abstraction smart contracts.\nYour task is to synthesize formal candidate security properties tuple p = (tau, target_role, bindings, precondition, required_condition, source_chunk_ids) from extracted contract facts E(c) and retrieved specification evidence C.\n\nCRITICAL CONSTRAINTS:\n1. You MUST select 'tau' ONLY from: 'SESSION', 'PAYMASTER', 'AUTH', 'NONCE', 'SCOPE'.\n2. You MUST cite exact 'source_chunk_ids' present in the retrieved evidence C below (e.g. 'ERC7562-AUTH-010', 'ERC4337-SPEC-021', 'AUDIT-33AUDITS-AA-001').\n3. Do NOT invent unsupported predicates. Use only whitelisted predicate functions like: success(validateUserOp(op)), signedBySessionKey(op, K), target(op) == allowedTarget[K], notExpired(K), validCoupon(op), NOT used(op.coupon), NOT forbiddenOpcodeExecuted(tr).\n\nExtracted Contract Facts E(c):\n{\n  \"contract_name\": \"ExpirySessionAccount\",\n  \"source_path\": \"C:\\\\Users\\\\gkrmv\\\\Desktop\\\\BTP_specGaurd\\\\contracts\\\\src\\\\worked_examples\\\\ExpirySessionAccount.sol\",\n  \"roles\": [\n    \"Account\"\n  ],\n  \"functions\": [\n    {\n      \"name\": \"decodeTarget\",\n      \"visibility\": \"public\",\n      \"parameters\": [\n        {\n          \"name\": \"callData\",\n          \"type\": \"bytes\"\n        }\n      ],\n      \"return_types\": [\n        \"address\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"recover\",\n      \"visibility\": \"public\",\n      \"parameters\": [\n        {\n          \"name\": \"hash\",\n          \"type\": \"bytes32\"\n        },\n        {\n          \"name\": \"signature\",\n          \"type\": \"bytes\"\n        }\n      ],\n      \"return_types\": [\n        \"address\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"validateUserOp\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"op\",\n          \"type\": \"UserOp\"\n        },\n        {\n          \"name\": \"userOpHash\",\n          \"type\": \"bytes32\"\n        }\n      ],\n      \"return_types\": [\n        \"uint256\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [\n        \"SIG_VALIDATION_FAILED\",\n        \"VALIDATION_SUCCESS\",\n        \"allowedTarget\",\n        \"owner\",\n        \"sessionKey\"\n      ],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"setSessionKey\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"key\",\n          \"type\": \"address\"\n        },\n        {\n          \"name\": \"target\",\n          \"type\": \"address\"\n        },\n        {\n          \"name\": \"expiry\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"return_types\": [],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [\n        \"owner\"\n      ],\n      \"state_variables_written\": [\n        \"allowedTarget\",\n        \"sessionExpiry\",\n        \"sessionKey\"\n      ]\n    },\n    {\n      \"name\": \"slitherConstructorConstantVariables\",\n      \"visibility\": \"internal\",\n      \"parameters\": [],\n      \"return_types\": [],\n      \"is_external_or_public\": false,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": [\n        \"ENTRY_POINT\",\n        \"SIG_VALIDATION_FAILED\",\n        \"VALIDATION_SUCCESS\"\n      ]\n    }\n  ],\n  \"state_variables\": [\n    {\n      \"name\": \"ENTRY_POINT\",\n      \"type_str\": \"address\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"SIG_VALIDATION_FAILED\",\n      \"type_str\": \"uint256\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"VALIDATION_SUCCESS\",\n      \"type_str\": \"uint256\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"owner\",\n      \"type_str\": \"address\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"owner\"\n    },\n    {\n      \"name\": \"sessionKey\",\n      \"type_str\": \"mapping(address => bool)\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"session_key_map\"\n    },\n    {\n      \"name\": \"allowedTarget\",\n      \"type_str\": \"mapping(address => address)\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"allowed_target_map\"\n    },\n    {\n      \"name\": \"sessionExpiry\",\n      \"type_str\": \"mapping(address => uint256)\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"expiry_map\"\n    }\n  ],\n  \"data_flows\": [\n    {\n      \"function_name\": \"validateUserOp\",\n      \"state_vars_read\": [\n        \"SIG_VALIDATION_FAILED\",\n        \"VALIDATION_SUCCESS\",\n        \"allowedTarget\",\n        \"owner\",\n        \"sessionKey\"\n      ],\n      \"state_vars_written\": [],\n      \"user_op_fields_read\": [\n        \"signature\",\n        \"callData\"\n      ],\n      \"influences_validation_return\": true\n    }\n  ],\n  \"aa_facts\": {\n    \"entry_point_checked\": true,\n    \"uses_signature_recovery\": true,\n    \"decodes_paymaster_data\": false,\n    \"signature_recovery_functions\": [\n      \"recover\",\n      \"validateUserOp\"\n    ],\n    \"validation_functions\": [\n      \"validateUserOp\"\n    ]\n  }\n}\n\nRetrieved Protocol Evidence Chunks C:\n[\n  {\n    \"id\": \"AUDIT-ETH-INFINITISM-README-008\",\n    \"source\": \"EntryPoint Reference Implementation Spec & Architecture - Finding #8\",\n    \"role\": \"account\",\n    \"phase\": \"validation\",\n    \"topic\": \"authorization\",\n    \"text\": \"### For Smart Contract Account development  ```bash import \\\"@account-abstraction/contracts/core/BaseAccount.sol\\\";  contract MyAccount is BaseAccount {      /// implement your authentication logic here     function _validateSignature(PackedUserOperation calldata userOp, bytes32 userOpHash)     internal override virtual returns (uint256 validationData) {          // UserOpHash can be generated using eth_signTypedData_v4         if (owner != ECDSA.recover(userOpHash, userOp.signature))             return SIG_VALIDATION_FAILED;         return SIG_VALIDATION_SUCCESS;     } } ```  # Resources  - [Ho...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-022\",\n    \"source\": \"ERC-7562 Specification: Rationale\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"## Rationale  All transactions initiated by EOAs have an implicit validation phase where balance, nonce, and signature are checked against the current state of the Ethereum blockchain. Once a node has validated the transaction, only another transaction by the same EOA can modify the Ethereum state in a way that invalidates the first transaction.  With Account Abstraction, however, validation can also include arbitrary EVM code and rely on storage, which means that unrelated `UserOperation`s or transactions may invalidate each other.  If not addressed, this would make maintaining a mempool of v...\"\n  },\n  {\n    \"id\": \"ERC7562-EREP-010\",\n    \"source\": \"ERC-7562 Specification: Entity-specific Rules\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Entity-specific Rules  * **[EREP-010]** For each `paymaster`, the bundler must track the total gas that `UserOperations` using this `paymaster` may consume.     * The bundler should not accept a new `UserOperation` with a paymaster into the mempool if the maximum total gas cost of all UserOperations in the mempool, including this new `UserOperation`, is above the deposit of that `paymaster` at the current gas price. * **[EREP-011]** REMOVED * **[EREP-015]** A `paymaster` should not have its opsSeen incremented because of a failure of the factory or account.   * The second validation runs b...\"\n  },\n  {\n    \"id\": \"ERC7562-AUTH-010\",\n    \"source\": \"ERC-7562 Specification: Authorizations\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Authorizations  * **[AUTH-010]** A UserOperation may only contain a single [EIP-7702](./eip-7702) authorization tuple. * **[AUTH-020]** An account with EIP-7702 delegation can only be used as the Sender of the UserOperation.   Using the authorized account as any other kind of UserOperation entity is not allowed. * **[AUTH-030]** An account with EIP-7702 delegation can only be **accessed** using `*CALL` or `EXTCODE*` opcodes, and only if it is the Sender of the current UserOperation. * **[AUTH-040]** If there are multiple UserOperations by the same sender with an authorization tuple in the ...\"\n  },\n  {\n    \"id\": \"ERC7562-LIM-010\",\n    \"source\": \"ERC-7562 Specification: Limitations\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Limitations  The validation rules attempt to guarantee a degree of isolation between individual `UserOperation`s' validations. In order to prevent hitting the memory expansion limitations that the Ethereum EVM imposes when creating a bundle, `UserOperation`s must meet the following limitations:  * **[LIM-010]** Maximum size of a single packed and ABI-encoded `UserOperation` in bytes MUST not exceed `MAX_USEROP_SIZE`. * **[LIM-020]** Maximum size of a `context` byte array returned by a paymaster in a single `UserOperation` in bytes MUST not exceed `MAX_CONTEXT_SIZE`. * **[LIM-030]** The `ve...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-025\",\n    \"source\": \"ERC-7562 Specification: The need for a second validation before submitting a block\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### The need for a second validation before submitting a block  A standard Ethereum transaction can be invalidated if replaced by another transaction with the same nonce. The replacement transaction must pay a higher gas price, satisfying the rule that mempool inclusion requires payment. With contract-based accounts, a `UserOperation`'s validity may depend on mutable state. Other transactions can invalidate a previously valid `UserOperation`, necessitating a second validation before block inclusion.\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-027\",\n    \"source\": \"ERC-7562 Specification: Rationale for limiting storage access\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Rationale for limiting storage access  - Validation processes must not overlap, ensuring a single storage modification cannot invalidate a large number of mempool `UserOperation`s. By restricting storage access to the account's associated storage, bundlers can guarantee the inclusion of at least one `UserOperation` per account in a bundle. - A bundler MAY include multiple `UserOperation`s of the same account in a bundle, but MUST first validate them together.\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-026\",\n    \"source\": \"ERC-7562 Specification: Rationale for limiting opcodes\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Rationale for limiting opcodes  - Validation occurs off-chain, before block creation. Certain opcodes access block-specific information that is not yet finalized. - Using these opcodes during validation enables scenarios where a `UserOperation` succeeds off-chain but consistently reverts on-chain, facilitating DoS attacks. - For example, `require(block.number == 12345)` might pass during mempool validation but fail when the transaction is eventually included in a later block.\"\n  }\n]\n\nFew-Shot Example 1 (Coupon Paymaster Double-Spend Replay):\n{\n  \"property_id\": \"PROP-PAYMASTER-REPLAY-FEWSHOT\",\n  \"template_type\": \"PAYMASTER\",\n  \"target_role\": \"Paymaster\",\n  \"bindings\": {\n    \"validator_function\": \"validatePaymasterUserOp\",\n    \"used_coupon_mapping\": \"usedCoupon\",\n    \"sponsor_variable\": \"sponsor\"\n  },\n  \"precondition\": \"success(validatePaymasterUserOp(op))\",\n  \"required_condition\": \"validCoupon(op) AND NOT used(op.coupon)\",\n  \"source_chunk_ids\": [\n    \"ERC4337-SPEC-021\",\n    \"AUDIT-33AUDITS-AA-001\"\n  ]\n}\n\nFew-Shot Example 2 (Owner Authorization):\n{\n  \"property_id\": \"PROP-AUTH-OWNER-FEWSHOT\",\n  \"template_type\": \"AUTH\",\n  \"target_role\": \"Account\",\n  \"bindings\": {\n    \"validator_function\": \"validateUserOp\",\n    \"owner_variable\": \"owner\"\n  },\n  \"precondition\": \"success(validateUserOp(op))\",\n  \"required_condition\": \"signedByOwner(op, owner)\",\n  \"source_chunk_ids\": [\n    \"AUDIT-ETH-INFINITISM-README-008\"\n  ]\n}\n\nOutput structured properties matching the requested schema.",
+    "raw_sdk_envelope": null,
+    "raw_props": [
+      {
+        "property_id": "PROP-SESSION-EXPIRY-8023",
+        "template_type": "SESSION",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {
+            "expiry_mapping": "sessionExpiry"
+          }
+        },
+        "precondition": "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+        "required_condition": "notExpired(K)",
+        "source_chunk_ids": [
+          "AUDIT-ETH-INFINITISM-README-008"
+        ],
+        "raw_prompt_response": null
+      },
+      {
+        "property_id": "PROP-NONCE-8023",
+        "template_type": "NONCE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "nonceFresh(op)",
+        "source_chunk_ids": [
+          "AUDIT-ETH-INFINITISM-README-008"
+        ],
+        "raw_prompt_response": null
+      },
+      {
+        "property_id": "PROP-SCOPE-8023",
+        "template_type": "SCOPE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "simulatingValidation(op)",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+        "source_chunk_ids": [
+          "ERC7562-SCOPE-022",
+          "ERC7562-EREP-010",
+          "ERC7562-AUTH-010",
+          "ERC7562-LIM-010",
+          "ERC7562-SCOPE-025",
+          "ERC7562-SCOPE-027",
+          "ERC7562-SCOPE-026"
+        ],
+        "raw_prompt_response": null
+      }
+    ],
+    "bound_props": [
+      {
+        "property": {
+          "property_id": "PROP-SESSION-EXPIRY-8023",
+          "template_type": "SESSION",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": "sessionKey",
+            "target_policy_mapping": "allowedTarget",
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": "op.callData.target",
+            "custom_bindings": {
+              "expiry_mapping": "sessionExpiry"
+            }
+          },
+          "precondition": "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+          "required_condition": "notExpired(K)",
+          "source_chunk_ids": [
+            "AUDIT-ETH-INFINITISM-README-008"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "target_policy_mapping": "allowedTarget",
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": "op.callData.target",
+          "custom_bindings": {
+            "expiry_mapping": "sessionExpiry"
+          }
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-NONCE-8023",
+          "template_type": "NONCE",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "success(validateUserOp(op))",
+          "required_condition": "nonceFresh(op)",
+          "source_chunk_ids": [
+            "AUDIT-ETH-INFINITISM-README-008"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-SCOPE-8023",
+          "template_type": "SCOPE",
+          "target_role": "Account",
+          "bindings": {
+            "validator_function": "validateUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "simulatingValidation(op)",
+          "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+          "source_chunk_ids": [
+            "ERC7562-SCOPE-022",
+            "ERC7562-EREP-010",
+            "ERC7562-AUTH-010",
+            "ERC7562-LIM-010",
+            "ERC7562-SCOPE-025",
+            "ERC7562-SCOPE-027",
+            "ERC7562-SCOPE-026"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      }
+    ]
+  },
+  "CouponPaymaster.sol": {
+    "prompt": "System: You are SpecGuard-AA, a formal specification mining AI for ERC-4337 Account Abstraction smart contracts.\nYour task is to synthesize formal candidate security properties tuple p = (tau, target_role, bindings, precondition, required_condition, source_chunk_ids) from extracted contract facts E(c) and retrieved specification evidence C.\n\nCRITICAL CONSTRAINTS:\n1. You MUST select 'tau' ONLY from: 'SESSION', 'PAYMASTER', 'AUTH', 'NONCE', 'SCOPE'.\n2. You MUST cite exact 'source_chunk_ids' present in the retrieved evidence C below (e.g. 'ERC7562-AUTH-010', 'ERC4337-SPEC-021', 'AUDIT-33AUDITS-AA-001').\n3. Do NOT invent unsupported predicates. Use only whitelisted predicate functions like: success(validateUserOp(op)), signedBySessionKey(op, K), target(op) == allowedTarget[K], notExpired(K), validCoupon(op), NOT used(op.coupon), NOT forbiddenOpcodeExecuted(tr).\n\nExtracted Contract Facts E(c):\n{\n  \"contract_name\": \"CouponPaymaster\",\n  \"source_path\": \"C:\\\\Users\\\\gkrmv\\\\Desktop\\\\BTP_specGaurd\\\\contracts\\\\src\\\\worked_examples\\\\CouponPaymaster.sol\",\n  \"roles\": [\n    \"Paymaster\"\n  ],\n  \"functions\": [\n    {\n      \"name\": \"decodeCoupon\",\n      \"visibility\": \"public\",\n      \"parameters\": [\n        {\n          \"name\": \"paymasterData\",\n          \"type\": \"bytes\"\n        }\n      ],\n      \"return_types\": [\n        \"bytes32\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"recover\",\n      \"visibility\": \"public\",\n      \"parameters\": [\n        {\n          \"name\": \"coupon\",\n          \"type\": \"bytes32\"\n        },\n        {\n          \"name\": \"signature\",\n          \"type\": \"bytes\"\n        }\n      ],\n      \"return_types\": [\n        \"address\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"validatePaymasterUserOp\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"op\",\n          \"type\": \"UserOp\"\n        },\n        {\n          \"name\": \"userOpHash\",\n          \"type\": \"bytes32\"\n        },\n        {\n          \"name\": \"maxCost\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"return_types\": [\n        \"bytes\",\n        \"uint256\"\n      ],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [\n        \"VALIDATION_SUCCESS\",\n        \"sponsor\"\n      ],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"postOp\",\n      \"visibility\": \"external\",\n      \"parameters\": [\n        {\n          \"name\": \"context\",\n          \"type\": \"bytes\"\n        },\n        {\n          \"name\": \"actualGasCost\",\n          \"type\": \"uint256\"\n        }\n      ],\n      \"return_types\": [],\n      \"is_external_or_public\": true,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": []\n    },\n    {\n      \"name\": \"slitherConstructorConstantVariables\",\n      \"visibility\": \"internal\",\n      \"parameters\": [],\n      \"return_types\": [],\n      \"is_external_or_public\": false,\n      \"modifiers\": [],\n      \"called_functions\": [],\n      \"state_variables_read\": [],\n      \"state_variables_written\": [\n        \"VALIDATION_SUCCESS\"\n      ]\n    }\n  ],\n  \"state_variables\": [\n    {\n      \"name\": \"VALIDATION_SUCCESS\",\n      \"type_str\": \"uint256\",\n      \"visibility\": \"public\",\n      \"role_tag\": null\n    },\n    {\n      \"name\": \"sponsor\",\n      \"type_str\": \"address\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"sponsor\"\n    },\n    {\n      \"name\": \"usedCoupon\",\n      \"type_str\": \"mapping(bytes32 => bool)\",\n      \"visibility\": \"public\",\n      \"role_tag\": \"used_coupon_map\"\n    }\n  ],\n  \"data_flows\": [\n    {\n      \"function_name\": \"validatePaymasterUserOp\",\n      \"state_vars_read\": [\n        \"VALIDATION_SUCCESS\",\n        \"sponsor\"\n      ],\n      \"state_vars_written\": [],\n      \"user_op_fields_read\": [\n        \"paymasterAndData\",\n        \"signature\"\n      ],\n      \"influences_validation_return\": true\n    }\n  ],\n  \"aa_facts\": {\n    \"entry_point_checked\": true,\n    \"uses_signature_recovery\": true,\n    \"decodes_paymaster_data\": true,\n    \"signature_recovery_functions\": [\n      \"recover\",\n      \"validatePaymasterUserOp\"\n    ],\n    \"validation_functions\": [\n      \"validatePaymasterUserOp\"\n    ]\n  }\n}\n\nRetrieved Protocol Evidence Chunks C:\n[\n  {\n    \"id\": \"ERC4337-SPEC-021\",\n    \"source\": \"ERC-4337 Specification: Paymasters contracts\",\n    \"role\": \"paymaster\",\n    \"phase\": \"validation\",\n    \"topic\": \"sponsorship\",\n    \"text\": \"### Paymasters contracts  All `paymaster` contracts MUST check that all calls to the `validatePaymasterUserOp()` and `postOp()` functions originate from the `EntryPoint`.\"\n  },\n  {\n    \"id\": \"AUDIT-33AUDITS-AA-001\",\n    \"source\": \"33Audits: Account Abstraction Security for Auditors (Paymaster Replay) - Finding #1\",\n    \"role\": \"paymaster\",\n    \"phase\": \"validation\",\n    \"topic\": \"sponsorship\",\n    \"text\": \"Account Abstraction: Security for Auditors Skip to main content Hashnode Smart Contract Auditing Open search (press Control or Command and K) Toggle theme Open menu Hashnode Smart Contract Auditing Open search (press Control or Command and K) Toggle theme Write Command Palette Search for a command to run... Account Abstraction: Security for Auditors Updated October 23, 2023 \\u2022 6 min read \\u2022 View as Markdown 3 33Audits On this page ValidatePaymasterUserOp should check for address(this) The validateUserOp should always return SIG_VALIDATION_FAILED : Not following EIP standard All bridged funds wil...\"\n  },\n  {\n    \"id\": \"AUDIT-ETH-INFINITISM-README-007\",\n    \"source\": \"EntryPoint Reference Implementation Spec & Architecture - Finding #7\",\n    \"role\": \"paymaster\",\n    \"phase\": \"validation\",\n    \"topic\": \"sponsorship\",\n    \"text\": \"### For Paymaster development  ```solidity import \\\"@account-abstraction/contracts/core/BasePaymaster.sol\\\";  contract MyCustomPaymaster is BasePaymaster {     /// implement your gas payment logic here     function _validatePaymasterUserOp(         PackedUserOperation calldata userOp,         bytes32 userOpHash,         uint256 maxCost     ) internal virtual override returns (bytes memory context, uint256 validationData) {         context = \\u201c\\u201d; // specify \\u201ccontext\\u201d if needed in postOp call.          validationData = _packValidationData(             false,             validUntil,             vali...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-022\",\n    \"source\": \"ERC-7562 Specification: Rationale\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"## Rationale  All transactions initiated by EOAs have an implicit validation phase where balance, nonce, and signature are checked against the current state of the Ethereum blockchain. Once a node has validated the transaction, only another transaction by the same EOA can modify the Ethereum state in a way that invalidates the first transaction.  With Account Abstraction, however, validation can also include arbitrary EVM code and rely on storage, which means that unrelated `UserOperation`s or transactions may invalidate each other.  If not addressed, this would make maintaining a mempool of v...\"\n  },\n  {\n    \"id\": \"ERC4337-SPEC-015\",\n    \"source\": \"ERC-4337 Specification: UserOperation Simulation\",\n    \"role\": \"paymaster\",\n    \"phase\": \"validation\",\n    \"topic\": \"sponsorship\",\n    \"text\": \"### UserOperation Simulation  We define `UserOperation` simulation, as the offchain view call (or trace call) to the `EntryPoint` contract with the `UserOperation`, and the enforcement of the shared set of rules applied to the validation code, as part of the `UserOperation` validation.  #### Simulation Rationale To validate a normal Ethereum transaction `tx`, the bundler performs static checks, like: 1. `ecrecover(tx.v, tx.r, tx.s)` has to return a valid EOA 2. `tx.nonce` has to be the current nonce of the recovered EOA 3. `balance` of the recovered EOA has to be sufficient to pay for the tran...\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-027\",\n    \"source\": \"ERC-7562 Specification: Rationale for limiting storage access\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Rationale for limiting storage access  - Validation processes must not overlap, ensuring a single storage modification cannot invalidate a large number of mempool `UserOperation`s. By restricting storage access to the account's associated storage, bundlers can guarantee the inclusion of at least one `UserOperation` per account in a bundle. - A bundler MAY include multiple `UserOperation`s of the same account in a bundle, but MUST first validate them together.\"\n  },\n  {\n    \"id\": \"ERC7562-SCOPE-026\",\n    \"source\": \"ERC-7562 Specification: Rationale for limiting opcodes\",\n    \"role\": \"generic\",\n    \"phase\": \"validation\",\n    \"topic\": \"validation scope\",\n    \"text\": \"### Rationale for limiting opcodes  - Validation occurs off-chain, before block creation. Certain opcodes access block-specific information that is not yet finalized. - Using these opcodes during validation enables scenarios where a `UserOperation` succeeds off-chain but consistently reverts on-chain, facilitating DoS attacks. - For example, `require(block.number == 12345)` might pass during mempool validation but fail when the transaction is eventually included in a later block.\"\n  }\n]\n\nFew-Shot Example 1 (Session Key Target Policy Bypass):\n{\n  \"property_id\": \"PROP-SESSION-TARGET-FEWSHOT\",\n  \"template_type\": \"SESSION\",\n  \"target_role\": \"Account\",\n  \"bindings\": {\n    \"validator_function\": \"validateUserOp\",\n    \"key_mapping\": \"sessionKey\",\n    \"target_policy_mapping\": \"allowedTarget\",\n    \"target_expression\": \"op.callData.target\"\n  },\n  \"precondition\": \"success(validateUserOp(op)) AND signedBySessionKey(op, K)\",\n  \"required_condition\": \"target(op) == allowedTarget[K]\",\n  \"source_chunk_ids\": [\n    \"ERC7562-AUTH-010\"\n  ]\n}\n\nFew-Shot Example 2 (Owner Authorization):\n{\n  \"property_id\": \"PROP-AUTH-OWNER-FEWSHOT\",\n  \"template_type\": \"AUTH\",\n  \"target_role\": \"Account\",\n  \"bindings\": {\n    \"validator_function\": \"validateUserOp\",\n    \"owner_variable\": \"owner\"\n  },\n  \"precondition\": \"success(validateUserOp(op))\",\n  \"required_condition\": \"signedByOwner(op, owner)\",\n  \"source_chunk_ids\": [\n    \"AUDIT-ETH-INFINITISM-README-008\"\n  ]\n}\n\nOutput structured properties matching the requested schema.",
+    "raw_sdk_envelope": "{\n  \"id\": \"chatcmpl-E8tdwDZSwvCQcOTj1JxlRwTXkd8ze\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"content\": \"{\\\"properties\\\":[{\\\"property_id\\\":\\\"PROP-PAYMASTER-ADDRESS-CHECK\\\",\\\"template_type\\\":\\\"PAYMASTER\\\",\\\"target_role\\\":\\\"Paymaster\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validatePaymasterUserOp\\\",\\\"entry_point\\\":\\\"entryPoint\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"origin(op) == entryPoint\\\",\\\"source_chunk_ids\\\":[\\\"ERC4337-SPEC-021\\\"]},{\\\"property_id\\\":\\\"PROP-PAYMASTER-SIGNATURE-VALIDATION\\\",\\\"template_type\\\":\\\"PAYMASTER\\\",\\\"target_role\\\":\\\"Paymaster\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validateUserOp\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"NOT signatureValidationFailed\\\",\\\"source_chunk_ids\\\":[\\\"AUDIT-33AUDITS-AA-001\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-STORAGE-ACCESS\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"operation_type\\\":\\\"UserOperation\\\",\\\"storage_limit\\\":\\\"accountAssociatedStorage\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"storageAccessLimitedTo(op, accountAssociatedStorage)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-027\\\"]},{\\\"property_id\\\":\\\"PROP-PAYMASTER-NONCE-CHECK\\\",\\\"template_type\\\":\\\"NONCE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"user_operation\\\":\\\"UserOperation\\\",\\\"nonce_field\\\":\\\"op.nonce\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"nonceVerifiedWithUserOp(op, op.nonce)\\\",\\\"source_chunk_ids\\\":[\\\"ERC4337-SPEC-015\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-VALIDATION-OPCODE\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"validation_function\\\":\\\"validateUserOp\\\",\\\"opcode_usage\\\":\\\"prohibitedOpCodes\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"NOT forbiddenOpcodeExecuted(tr)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-026\\\"]}]}\",\n        \"refusal\": null,\n        \"role\": \"assistant\",\n        \"annotations\": [],\n        \"audio\": null,\n        \"function_call\": null,\n        \"tool_calls\": null\n      }\n    }\n  ],\n  \"created\": 1785789224,\n  \"model\": \"gpt-4o-2024-08-06\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_e160a45017\",\n  \"usage\": {\n    \"completion_tokens\": 387,\n    \"prompt_tokens\": 2699,\n    \"total_tokens\": 3086,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 2560\n    }\n  }\n}",
+    "raw_props": [
+      {
+        "property_id": "PROP-SCOPE-VALIDATION-OPCODE",
+        "template_type": "SCOPE",
+        "target_role": "Generic",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "success(validatePaymasterUserOp(op))",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr)",
+        "source_chunk_ids": [
+          "ERC7562-SCOPE-026"
+        ],
+        "raw_prompt_response": "{\n  \"id\": \"chatcmpl-E8tdwDZSwvCQcOTj1JxlRwTXkd8ze\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"content\": \"{\\\"properties\\\":[{\\\"property_id\\\":\\\"PROP-PAYMASTER-ADDRESS-CHECK\\\",\\\"template_type\\\":\\\"PAYMASTER\\\",\\\"target_role\\\":\\\"Paymaster\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validatePaymasterUserOp\\\",\\\"entry_point\\\":\\\"entryPoint\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"origin(op) == entryPoint\\\",\\\"source_chunk_ids\\\":[\\\"ERC4337-SPEC-021\\\"]},{\\\"property_id\\\":\\\"PROP-PAYMASTER-SIGNATURE-VALIDATION\\\",\\\"template_type\\\":\\\"PAYMASTER\\\",\\\"target_role\\\":\\\"Paymaster\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validateUserOp\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"NOT signatureValidationFailed\\\",\\\"source_chunk_ids\\\":[\\\"AUDIT-33AUDITS-AA-001\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-STORAGE-ACCESS\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"operation_type\\\":\\\"UserOperation\\\",\\\"storage_limit\\\":\\\"accountAssociatedStorage\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"storageAccessLimitedTo(op, accountAssociatedStorage)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-027\\\"]},{\\\"property_id\\\":\\\"PROP-PAYMASTER-NONCE-CHECK\\\",\\\"template_type\\\":\\\"NONCE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"user_operation\\\":\\\"UserOperation\\\",\\\"nonce_field\\\":\\\"op.nonce\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"nonceVerifiedWithUserOp(op, op.nonce)\\\",\\\"source_chunk_ids\\\":[\\\"ERC4337-SPEC-015\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-VALIDATION-OPCODE\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"validation_function\\\":\\\"validateUserOp\\\",\\\"opcode_usage\\\":\\\"prohibitedOpCodes\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"NOT forbiddenOpcodeExecuted(tr)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-026\\\"]}]}\",\n        \"refusal\": null,\n        \"role\": \"assistant\",\n        \"annotations\": [],\n        \"audio\": null,\n        \"function_call\": null,\n        \"tool_calls\": null\n      }\n    }\n  ],\n  \"created\": 1785789224,\n  \"model\": \"gpt-4o-2024-08-06\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_e160a45017\",\n  \"usage\": {\n    \"completion_tokens\": 387,\n    \"prompt_tokens\": 2699,\n    \"total_tokens\": 3086,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 2560\n    }\n  }\n}"
+      },
+      {
+        "property_id": "PROP-PAYMASTER-REPLAY-5445",
+        "template_type": "PAYMASTER",
+        "target_role": "Paymaster",
+        "bindings": {
+          "validator_function": "validatePaymasterUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": "usedCoupon",
+          "sponsor_variable": "sponsor",
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "success(validatePaymasterUserOp(op))",
+        "required_condition": "validCoupon(op) AND NOT used(op.coupon)",
+        "source_chunk_ids": [
+          "ERC4337-SPEC-021",
+          "AUDIT-33AUDITS-AA-001",
+          "AUDIT-ETH-INFINITISM-README-007",
+          "ERC4337-SPEC-015"
+        ],
+        "raw_prompt_response": null
+      },
+      {
+        "property_id": "PROP-SCOPE-5445",
+        "template_type": "SCOPE",
+        "target_role": "Paymaster",
+        "bindings": {
+          "validator_function": "validatePaymasterUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        },
+        "precondition": "simulatingValidation(op)",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+        "source_chunk_ids": [
+          "ERC7562-SCOPE-022",
+          "ERC7562-SCOPE-027",
+          "ERC7562-SCOPE-026"
+        ],
+        "raw_prompt_response": null
+      }
+    ],
+    "bound_props": [
+      {
+        "property": {
+          "property_id": "PROP-SCOPE-VALIDATION-OPCODE",
+          "template_type": "SCOPE",
+          "target_role": "Generic",
+          "bindings": {
+            "validator_function": "validatePaymasterUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "success(validatePaymasterUserOp(op))",
+          "required_condition": "NOT forbiddenOpcodeExecuted(tr)",
+          "source_chunk_ids": [
+            "ERC7562-SCOPE-026"
+          ],
+          "raw_prompt_response": "{\n  \"id\": \"chatcmpl-E8tdwDZSwvCQcOTj1JxlRwTXkd8ze\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"logprobs\": null,\n      \"message\": {\n        \"content\": \"{\\\"properties\\\":[{\\\"property_id\\\":\\\"PROP-PAYMASTER-ADDRESS-CHECK\\\",\\\"template_type\\\":\\\"PAYMASTER\\\",\\\"target_role\\\":\\\"Paymaster\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validatePaymasterUserOp\\\",\\\"entry_point\\\":\\\"entryPoint\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"origin(op) == entryPoint\\\",\\\"source_chunk_ids\\\":[\\\"ERC4337-SPEC-021\\\"]},{\\\"property_id\\\":\\\"PROP-PAYMASTER-SIGNATURE-VALIDATION\\\",\\\"template_type\\\":\\\"PAYMASTER\\\",\\\"target_role\\\":\\\"Paymaster\\\",\\\"bindings\\\":{\\\"validator_function\\\":\\\"validateUserOp\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"NOT signatureValidationFailed\\\",\\\"source_chunk_ids\\\":[\\\"AUDIT-33AUDITS-AA-001\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-STORAGE-ACCESS\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"operation_type\\\":\\\"UserOperation\\\",\\\"storage_limit\\\":\\\"accountAssociatedStorage\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"storageAccessLimitedTo(op, accountAssociatedStorage)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-027\\\"]},{\\\"property_id\\\":\\\"PROP-PAYMASTER-NONCE-CHECK\\\",\\\"template_type\\\":\\\"NONCE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"user_operation\\\":\\\"UserOperation\\\",\\\"nonce_field\\\":\\\"op.nonce\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"nonceVerifiedWithUserOp(op, op.nonce)\\\",\\\"source_chunk_ids\\\":[\\\"ERC4337-SPEC-015\\\"]},{\\\"property_id\\\":\\\"PROP-SCOPE-VALIDATION-OPCODE\\\",\\\"template_type\\\":\\\"SCOPE\\\",\\\"target_role\\\":\\\"Generic\\\",\\\"bindings\\\":{\\\"validation_function\\\":\\\"validateUserOp\\\",\\\"opcode_usage\\\":\\\"prohibitedOpCodes\\\"},\\\"precondition\\\":\\\"success(validatePaymasterUserOp(op))\\\",\\\"required_condition\\\":\\\"NOT forbiddenOpcodeExecuted(tr)\\\",\\\"source_chunk_ids\\\":[\\\"ERC7562-SCOPE-026\\\"]}]}\",\n        \"refusal\": null,\n        \"role\": \"assistant\",\n        \"annotations\": [],\n        \"audio\": null,\n        \"function_call\": null,\n        \"tool_calls\": null\n      }\n    }\n  ],\n  \"created\": 1785789224,\n  \"model\": \"gpt-4o-2024-08-06\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"default\",\n  \"system_fingerprint\": \"fp_e160a45017\",\n  \"usage\": {\n    \"completion_tokens\": 387,\n    \"prompt_tokens\": 2699,\n    \"total_tokens\": 3086,\n    \"completion_tokens_details\": {\n      \"accepted_prediction_tokens\": 0,\n      \"audio_tokens\": 0,\n      \"reasoning_tokens\": 0,\n      \"rejected_prediction_tokens\": 0\n    },\n    \"prompt_tokens_details\": {\n      \"audio_tokens\": 0,\n      \"cached_tokens\": 2560\n    }\n  }\n}"
+        },
+        "binding": {
+          "validator_function": "validatePaymasterUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-PAYMASTER-REPLAY-5445",
+          "template_type": "PAYMASTER",
+          "target_role": "Paymaster",
+          "bindings": {
+            "validator_function": "validatePaymasterUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": "usedCoupon",
+            "sponsor_variable": "sponsor",
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "success(validatePaymasterUserOp(op))",
+          "required_condition": "validCoupon(op) AND NOT used(op.coupon)",
+          "source_chunk_ids": [
+            "ERC4337-SPEC-021",
+            "AUDIT-33AUDITS-AA-001",
+            "AUDIT-ETH-INFINITISM-README-007",
+            "ERC4337-SPEC-015"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validatePaymasterUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": "usedCoupon",
+          "sponsor_variable": "sponsor",
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      },
+      {
+        "property": {
+          "property_id": "PROP-SCOPE-5445",
+          "template_type": "SCOPE",
+          "target_role": "Paymaster",
+          "bindings": {
+            "validator_function": "validatePaymasterUserOp",
+            "key_mapping": null,
+            "target_policy_mapping": null,
+            "used_coupon_mapping": null,
+            "sponsor_variable": null,
+            "target_expression": null,
+            "custom_bindings": {}
+          },
+          "precondition": "simulatingValidation(op)",
+          "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+          "source_chunk_ids": [
+            "ERC7562-SCOPE-022",
+            "ERC7562-SCOPE-027",
+            "ERC7562-SCOPE-026"
+          ],
+          "raw_prompt_response": null
+        },
+        "binding": {
+          "validator_function": "validatePaymasterUserOp",
+          "key_mapping": null,
+          "target_policy_mapping": null,
+          "used_coupon_mapping": null,
+          "sponsor_variable": null,
+          "target_expression": null,
+          "custom_bindings": {}
+        }
+      }
+    ]
+  }
+}

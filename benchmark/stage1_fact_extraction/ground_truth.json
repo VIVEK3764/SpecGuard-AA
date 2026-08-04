@@ -1,0 +1,190 @@
+{
+  "benchmark_name": "SpecGuard-AA Stage 1 Fact Extraction Ground Truth Benchmark",
+  "version": "1.1",
+  "total_contracts": 16,
+  "contracts": {
+    "SessionAccount.sol": {
+      "source": "SpecGuard-AA Worked Example #1 (Paper Section 2)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp", "execute"],
+      "expected_state_tags": {
+        "owner": "owner",
+        "sessionKey": "session_key_map",
+        "allowedTarget": "allowed_target_map"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner", "sessionKey"]
+      }
+    },
+    "CouponPaymaster.sol": {
+      "source": "SpecGuard-AA Worked Example #2 (Paper Section 2)",
+      "expected_roles": ["Paymaster"],
+      "expected_functions": ["validatePaymasterUserOp", "postOp", "decodeCoupon", "recover"],
+      "expected_state_tags": {
+        "sponsor": "sponsor",
+        "usedCoupon": "used_coupon_map"
+      },
+      "expected_dataflow_reads": {
+        "validatePaymasterUserOp": ["sponsor"],
+        "postOp": []
+      }
+    },
+    "ExpirySessionAccount.sol": {
+      "source": "SpecGuard-AA Anti-Overfitting Fixture",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp", "execute"],
+      "expected_state_tags": {
+        "owner": "owner",
+        "sessionKey": "session_key_map",
+        "allowedTarget": "allowed_target_map",
+        "sessionExpiry": "expiry_map"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner", "sessionKey", "allowedTarget"]
+      }
+    },
+    "SimpleOwnerAccount.sol": {
+      "source": "SpecGuard-AA Anti-Overfitting Clean Fixture",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp", "execute"],
+      "expected_state_tags": {
+        "owner": "owner"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner"]
+      }
+    },
+    "ScopeAccountCompliant.sol": {
+      "source": "SpecGuard-AA Backend Test Fixture (Scope Positive)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp"],
+      "expected_state_tags": {
+        "owner": "owner"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner"]
+      }
+    },
+    "ScopeAccountViolating.sol": {
+      "source": "SpecGuard-AA Backend Test Fixture (Scope Negative)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp"],
+      "expected_state_tags": {
+        "owner": "owner"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner", "globalState"]
+      }
+    },
+    "SimAccountCompliant.sol": {
+      "source": "SpecGuard-AA Backend Test Fixture (DiffSim Positive)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp"],
+      "expected_state_tags": {
+        "owner": "owner"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner"]
+      }
+    },
+    "SimAccountViolating.sol": {
+      "source": "SpecGuard-AA Backend Test Fixture (DiffSim Negative)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp"],
+      "expected_state_tags": {
+        "owner": "owner"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner"]
+      }
+    },
+    "SimpleAccount.sol": {
+      "source": "https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/SimpleAccount.sol",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp", "execute", "initialize"],
+      "expected_state_tags": {
+        "owner": "owner"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner"]
+      }
+    },
+    "SimpleAccountFactory.sol": {
+      "source": "https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/SimpleAccountFactory.sol",
+      "expected_roles": ["Factory"],
+      "expected_functions": ["createAccount", "getAddress"],
+      "expected_state_tags": {
+        "accountImplementation": "factory_account_impl"
+      },
+      "expected_dataflow_reads": {
+        "createAccount": ["accountImplementation"]
+      }
+    },
+    "VerifyingPaymaster.sol": {
+      "source": "https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/VerifyingPaymaster.sol",
+      "expected_roles": ["Paymaster"],
+      "expected_functions": ["validatePaymasterUserOp", "postOp", "parsePaymasterAndData"],
+      "expected_state_tags": {
+        "verifyingSigner": "sponsor"
+      },
+      "expected_dataflow_reads": {
+        "validatePaymasterUserOp": ["verifyingSigner"],
+        "postOp": []
+      }
+    },
+    "TokenPaymaster.sol": {
+      "source": "https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/TokenPaymaster.sol",
+      "expected_roles": ["Paymaster"],
+      "expected_functions": ["validatePaymasterUserOp", "postOp"],
+      "expected_state_tags": {
+        "balances": "quota_map"
+      },
+      "expected_dataflow_reads": {
+        "validatePaymasterUserOp": ["balances"],
+        "postOp": ["balances"]
+      }
+    },
+    "ERC7579Validator.sol": {
+      "source": "https://github.com/OpenZeppelin/community-contracts (ERC-7579 Modular Validator)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp", "onInstall"],
+      "expected_state_tags": {
+        "smartAccountOwner": "owner",
+        "sessionKeys": "session_key_map"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["smartAccountOwner", "sessionKeys"]
+      }
+    },
+    "ERC7579Executor.sol": {
+      "source": "https://github.com/OpenZeppelin/community-contracts (ERC-7579 Modular Executor)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["executeViaModule"],
+      "expected_state_tags": {},
+      "expected_dataflow_reads": {
+        "executeViaModule": ["accountExecutors"]
+      }
+    },
+    "DiamondAccountFacet.sol": {
+      "source": "synthetic (EIP-2535 Diamond Pattern Facet Storage)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp"],
+      "expected_state_tags": {},
+      "expected_dataflow_reads": {
+        "validateUserOp": ["facetAddress", "owner"]
+      }
+    },
+    "AssemblySignatureAccount.sol": {
+      "source": "synthetic (Inline Assembly Signature & Storage Read)",
+      "expected_roles": ["Account"],
+      "expected_functions": ["validateUserOp"],
+      "expected_state_tags": {
+        "owner": "owner",
+        "sessionKey": "session_key_map"
+      },
+      "expected_dataflow_reads": {
+        "validateUserOp": ["owner", "sessionKey"]
+      }
+    }
+  }
+}

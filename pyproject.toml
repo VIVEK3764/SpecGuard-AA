@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "specguard"
+version = "0.1.0"
+description = "SpecGuard-AA: Retrieval-Augmented Formal Specification Mining for ERC-4337 Account Abstraction Contracts"
+authors = [{ name = "SpecGuard Team" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "slither-analyzer>=0.10.0",
+    "pydantic>=2.0.0",
+    "rank-bm25>=0.2.2",
+    "chromadb>=0.4.0",
+    "pytest>=7.0.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

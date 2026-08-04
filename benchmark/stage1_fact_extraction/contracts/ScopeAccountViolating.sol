@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+struct UserOp {
+    address sender;
+    uint256 nonce;
+    bytes initCode;
+    bytes callData;
+    uint256 callGasLimit;
+    uint256 verificationGasLimit;
+    uint256 preVerificationGas;
+    uint256 maxFeePerGas;
+    uint256 maxPriorityFeePerGas;
+    bytes paymasterAndData;
+    bytes signature;
+}
+
+contract ScopeAccountViolating {
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    function validateUserOp(UserOp calldata op, bytes32 userOpHash) external view returns (uint256) {
+        // VIOLATION: Reads block.timestamp and address(this).balance during validation trace
+        if (block.timestamp > 0 && address(this).balance >= 0) {
+            return 0; // VALIDATION_SUCCESS
+        }
+        return 1;
+    }
+}

@@ -1,0 +1,18 @@
+# Credentials & Environment
+.env
+*.env
+
+# Python & Pytest
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# SpecGuard & LLM Synthesis Caches
+.cache/
+cache/
+
+# Foundry / Solidity Build Artifacts
+out/
+cache_forge/
+lib/

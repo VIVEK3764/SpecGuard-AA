@@ -1,0 +1,402 @@
+[
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-001",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "# Description  This repository contains the tools and resources for working with [ERC-4337](https://eips.ethereum.org/EIPS/eip-4337) Account Abstraction smart contracts. This includes the code for the singleton `EntryPoint` contract that is deployed by our team on most EVM-compatible networks.  # Overview  Account abstraction allows users to interact with Ethereum using smart contract wallets instead of EOAs, without compromising decentralization, providing benefits like:  - Social recovery - Batched transactions - Sponsored transactions (gas abstraction) - Signature abstraction - Advanced aut..."
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-002",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #2",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Core Components  - **EntryPoint Contract** (`contracts/core/EntryPoint.sol`): The central contract that processes UserOperations - **BaseAccount** (`contracts/core/BaseAccount.sol`): Base implementation for smart contract accounts - **BasePaymaster** (`contracts/core/BasePaymaster.sol`): Helper class for creating a paymaster - **StakeManager** (`contracts/core/StakeManager.sol`): Manages deposits and stakes for accounts and paymasters - **NonceManager** (`contracts/core/NonceManager.sol`): Handles nonce management for accounts - **UserOperationLib** (`contracts/core/UserOperationLib.sol`): ..."
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-003",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #3",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Sample Implementations  - **SimpleAccount** (`contracts/accounts/SimpleAccount.sol`): Basic implementation of an ERC-4337 account  - **Simple7702Account** (`contracts/accounts/Simple7702Account.sol`): A minimal account to be used with EIP-7702 (for batching) and ERC-4337 (for gas sponsoring)  - **SimpleAccountFactory** (`contracts/accounts/SimpleAccountFactory.sol`): A sample factory contract for SimpleAccount   # Developer setup"
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-004",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #4",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### Clone the repository:  ````bash git clone https://github.com/eth-infinitism/account-abstraction.git cd account-abstraction yarn install ````"
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-005",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #5",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Entrypoint Deployment  The EntryPoint contract is the central hub for processing UserOperations. It: - Validates UserOperations - Handles account creation (if needed) - Executes the requested operations - Manages gas payments and refunds  The EntryPoint is deployed by using   ```bash hardhat deploy --network {net} ```  [EntryPoint v0.8](https://github.com/eth-infinitism/account-abstraction/releases/latest) is always deployed at address `0x4337084d9e255ff0702461cf8895ce9e3b5ff108`  This repository also includes a number of audited base classes and utilities that can simplify the development ..."
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-006",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #6",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### For projects integrating the library   If you are building a project that uses account abstraction and want to integrate our contracts:  ```bash yarn add @account-abstraction/contracts ```"
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-007",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #7",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### For Paymaster development  ```solidity import \"@account-abstraction/contracts/core/BasePaymaster.sol\";  contract MyCustomPaymaster is BasePaymaster {     /// implement your gas payment logic here     function _validatePaymasterUserOp(         PackedUserOperation calldata userOp,         bytes32 userOpHash,         uint256 maxCost     ) internal virtual override returns (bytes memory context, uint256 validationData) {         context = \u201c\u201d; // specify \u201ccontext\u201d if needed in postOp call.          validationData = _packValidationData(             false,             validUntil,             vali..."
+  },
+  {
+    "id": "AUDIT-ETH-INFINITISM-README-008",
+    "source": "EntryPoint Reference Implementation Spec & Architecture - Finding #8",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### For Smart Contract Account development  ```bash import \"@account-abstraction/contracts/core/BaseAccount.sol\";  contract MyAccount is BaseAccount {      /// implement your authentication logic here     function _validateSignature(PackedUserOperation calldata userOp, bytes32 userOpHash)     internal override virtual returns (uint256 validationData) {          // UserOpHash can be generated using eth_signTypedData_v4         if (owner != ECDSA.recover(userOpHash, userOp.signature))             return SIG_VALIDATION_FAILED;         return SIG_VALIDATION_SUCCESS;     } } ```  # Resources  - [Ho..."
+  },
+  {
+    "id": "AUDIT-OZ-AA-AUDIT-1-001",
+    "source": "OpenZeppelin EF Account Abstraction Audit Report - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "EIP-4337 - Ethereum Account Abstraction Audit - OpenZeppelin blog The Onchain Brief is here | Subscribe to our monthly newsletter Developers Products Networks Smart Contracts Contracts Libraries The standard for smart contracts development Contracts Wizard Generate smart contracts interactively Contracts MCP Build secure smart contracts with AI Contracts Skills New Equip AI agents with secure development skills Upgrades Plugins Deploy upgradeable contracts Open Source Tools Relayer Send onchain transactions Monitor Observe smart contract activity UI Builder Spin up a UI for your contracts Safe..."
+  },
+  {
+    "id": "AUDIT-OZ-AA-AUDIT-2-001",
+    "source": "OpenZeppelin EIP-4337 Incremental Audit Writeup - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "EIP-4337 \u2013 Ethereum Account Abstraction Incremental Audit - OpenZeppelin blog The Onchain Brief is here | Subscribe to our monthly newsletter Developers Products Networks Smart Contracts Contracts Libraries The standard for smart contracts development Contracts Wizard Generate smart contracts interactively Contracts MCP Build secure smart contracts with AI Contracts Skills New Equip AI agents with secure development skills Upgrades Plugins Deploy upgradeable contracts Open Source Tools Relayer Send onchain transactions Monitor Observe smart contract activity UI Builder Spin up a UI for your co..."
+  },
+  {
+    "id": "AUDIT-OZ-AA-AUDIT-3-001",
+    "source": "OpenZeppelin ERC-4337 Account Abstraction Incremental Audit - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "ERC-4337 Account Abstraction Incremental Audit The Onchain Brief is here | Subscribe to our monthly newsletter Developers Products Networks Smart Contracts Contracts Libraries The standard for smart contracts development Contracts Wizard Generate smart contracts interactively Contracts MCP Build secure smart contracts with AI Contracts Skills New Equip AI agents with secure development skills Upgrades Plugins Deploy upgradeable contracts Open Source Tools Relayer Send onchain transactions Monitor Observe smart contract activity UI Builder Spin up a UI for your contracts Safe Utils Verify Safe ..."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-001",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "# Coinbase Audit  Unless otherwise discussed, this repo will be made public after audit completion, sponsor review, judging, and issue mitigation window.  **Contributors to this repo:** prior to report publication, please review the [Agreements & Disclosures](https://github.com/code-423n4/2024-03-coinbase-findings/issues/1) issue.  ---"
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-002",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #2",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Audit findings are submitted to this repo  Sponsors have three critical tasks in the audit process:  1. Respond to issues. 2. Weigh in on severity. 3. Share your mitigation of findings.  Let's walk through each of these."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-003",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #3",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## High and Medium Risk Issues  Wardens submit issues without seeing each other's submissions, so keep in mind that there will always be findings that are duplicates. For all issues labeled `3 (High Risk)` or `2 (Medium Risk)`, these have been pre-sorted for you so that there is only one primary issue open per unique finding. All duplicates have been labeled `duplicate`, linked to a primary issue, and closed.  Judges have the ultimate discretion in determining validity and severity of issues, as well as whether/how issues are considered duplicates. However, sponsor input is a significant crite..."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-004",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #4",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Respond to issues  For each High or Medium risk finding that appears in the dropdown at the top of the chrome extension, please label as one of these:  - `sponsor confirmed`, meaning: \"Yes, this is a problem and we intend to fix it.\" - `sponsor disputed`, meaning either: \"We cannot duplicate this issue\" or \"We disagree that this is an issue at all.\" - `sponsor acknowledged`, meaning: \"Yes, technically the issue is correct, but we are not going to resolve it for xyz reasons.\"  Add any necessary comments explaining your rationale for your evaluation of the issue.   **Note that when the repo ..."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-005",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #5",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Weigh in on severity   If you believe a finding is technically correct but disagree with the listed severity, select the `disagree with severity` option, along with a comment indicating your reasoning for the judge to review. You may also add questions for the judge in the comments. (Note: even if you `disagree with severity`, please still choose one of the `sponsor confirmed` or `sponsor acknowledged` options as well.)  For a detailed breakdown of severity criteria and how to estimate risk, please refer to [the judging criteria in our documentation](https://docs.code4rena.com/roles/warden..."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-006",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #6",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## QA reports, Gas reports, and Analyses  All warden submissions in these three categories are submitted as bulk listings of issues and recommendations:  - **[QA reports](https://docs.code4rena.com/roles/wardens/judging-criteria#qa-reports-low-non-critical)** include\u00a0*all*\u00a0low severity and non-critical findings from an individual warden. - **[Gas reports](https://docs.code4rena.com/roles/wardens/judging-criteria#gas-reports)** include\u00a0*all*\u00a0gas optimization recommendations from an individual warden. - **[Analyses](https://docs.code4rena.com/roles/sponsors#analysis-pool)** contain high-level ad..."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-007",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #7",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Once labelling is complete  When you have finished labelling findings, drop the C4 team a note in your private Discord backroom channel and let us know you've completed the sponsor review process. At this point, we will pass the repo over to the judge to review your feedback while you work on mitigations."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-008",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #8",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Share your mitigation of findings  *Note: this section does not need to be completed in order to finalize judging. You can continue work on mitigations while the judge finalizes their decisions and even beyond that. Ultimately we won't publish the final audit report until you give us the OK.*  For each finding you have confirmed, you will want to mitigate the issue before the contest report is made public."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-009",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #9",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### If you are planning a Code4rena mitigation review: 1. In your own Github repo, create a branch based off of the commit you used for your Code4rena audit, then 2. Create a separate Pull Request for each **High or Medium risk** C4 audit finding (e.g. one PR for finding H-01, another for H-02, etc.) 3. Link the PR to the issue that it resolves within your contest findings repo.  Most C4 mitigation reviews focus exclusively on reviewing mitigations of High and Medium risk findings. Therefore, QA and Gas mitigations should be done in a separate branch. If you want your mitigation review to incl..."
+  },
+  {
+    "id": "AUDIT-C4-COINBASE-010",
+    "source": "Code4rena Coinbase Smart Wallet Security Contest Report - Finding #10",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### If you aren\u2019t planning a mitigation review  1. Within a repo in your own GitHub organization, create a pull request for each finding. 2. Link the PR to the issue that it resolves within your contest findings repo.  This will allow for complete transparency in showing the work of mitigating the issues found in the contest. If the issue in question has duplicates, please link to your PR from the open/primary issue."
+  },
+  {
+    "id": "AUDIT-33AUDITS-AA-001",
+    "source": "33Audits: Account Abstraction Security for Auditors (Paymaster Replay) - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "Account Abstraction: Security for Auditors Skip to main content Hashnode Smart Contract Auditing Open search (press Control or Command and K) Toggle theme Open menu Hashnode Smart Contract Auditing Open search (press Control or Command and K) Toggle theme Write Command Palette Search for a command to run... Account Abstraction: Security for Auditors Updated October 23, 2023 \u2022 6 min read \u2022 View as Markdown 3 33Audits On this page ValidatePaymasterUserOp should check for address(this) The validateUserOp should always return SIG_VALIDATION_FAILED : Not following EIP standard All bridged funds wil..."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-001",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "# Biconomy Contest  Unless otherwise discussed, this repo will be made public after contest completion, sponsor review, judging, and two-week issue mitigation window.  **Contributors to this repo:** prior to report publication, please review the [Agreements & Disclosures](https://github.com/code-423n4/2022-12-biconomy-findings/issues/1) issue.  ---"
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-002",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #2",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Contest findings are submitted to this repo  As a sponsor, you have three critical tasks in the contest process:  1. Weigh in on severity. 2. Respond to issues. 3. Share your mitigation of findings.  Let's walk through each of these."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-003",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #3",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## High and Medium Risk Issues  Please note: because wardens submit issues without seeing each other's submissions, there will always be findings that are duplicates. For all issues labeled `3 (High Risk)` or `2 (Medium Risk)`, these have been pre-sorted for you so that there is only one primary issue open per unique finding. All duplicates have been labeled `duplicate`, linked to a primary issue, and closed."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-004",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #4",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Weigh in on severity   Judges have the ultimate discretion in determining severity of issues, as well as whether/how issues are considered duplicates. However, sponsor input is a significant criteria.  For a detailed breakdown of severity criteria and how to estimate risk, please refer to [the judging criteria in our documentation](https://docs.code4rena.com/roles/wardens/judging-criteria#estimating-risk-tl-dr).  If you disagree with a finding's severity, **leave the severity label intact and add the label** `disagree with severity`, along with a comment indicating your opinion for the jud..."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-005",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #5",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Respond to issues  Label each open/primary High or Medium risk finding as one of these:  - `sponsor confirmed`, meaning: \"Yes, this is a problem and we intend to fix it.\" - `sponsor disputed`, meaning either: \"We cannot duplicate this issue\" or \"We disagree that this is an issue at all.\" - `sponsor acknowledged`, meaning: \"Yes, technically the issue is correct, but we are not going to resolve it for xyz reasons.\"  (Note: please *don't* use `sponsor disputed` for a finding if you think it should be considered of lower or higher severity. Instead, use the label `disagree with severity` and a..."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-006",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #6",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## QA and Gas Reports  For low and non-critical findings (AKA QA), as well as gas optimizations: all warden submissions in these three categories should now be submitted as bulk listings of issues and recommendations:   - **[QA reports](https://docs.code4rena.com/roles/wardens/judging-criteria#qa-reports-low-non-critical)** should include *all* low severity and non-critical findings, along with a summary statement. - **[Gas reports](https://docs.code4rena.com/roles/wardens/judging-criteria#gas-reports)** should include *all* gas optimization recommendations, along with a summary statement.   F..."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-007",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #7",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Once labelling is complete  When you have finished labelling findings, drop the C4 team a note in your private Discord backroom channel and let us know you've completed the sponsor review process. At this point, we will pass the repo over to the judge to review your feedback while you work on mitigations."
+  },
+  {
+    "id": "AUDIT-C4-BICONOMY-008",
+    "source": "Code4rena Biconomy Paymaster & Smart Account Security Report - Finding #8",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Share your mitigation of findings  *Note: this section does not need to be completed in order to finalize judging. You can continue work on mitigations while the judge finalizes their decisions and even beyond that. Ultimately we won't publish the final audit report until you give us the ok.*  For each finding you have confirmed, you will want to mitigate the issue before the contest report is made public.  As you undertake that process, we request that you take the following steps:  1. Within your own GitHub repo, create a pull request for each finding. 2. Link the PR to the issue that it ..."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-001",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "# Shell Protocol Audit  Unless otherwise discussed, this repo will be made public after audit completion, sponsor review, judging, and issue mitigation window.  **Contributors to this repo:** prior to report publication, please review the [Agreements & Disclosures](https://github.com/code-423n4/2023-06-shell-findings/issues/1) issue.  ---"
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-002",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #2",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Audit findings are submitted to this repo  Sponsors have three critical tasks in the audit process:  1. Weigh in on severity. 2. Respond to issues. 3. Share your mitigation of findings.  Let's walk through each of these."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-003",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #3",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## High and Medium Risk Issues  Please note: because wardens submit issues without seeing each other's submissions, there will always be findings that are duplicates. For all issues labeled `3 (High Risk)` or `2 (Medium Risk)`, these have been pre-sorted for you so that there is only one primary issue open per unique finding. All duplicates have been labeled `duplicate`, linked to a primary issue, and closed."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-004",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #4",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Weigh in on severity   Judges have the ultimate discretion in determining severity of issues, as well as whether/how issues are considered duplicates. However, sponsor input is a significant criteria.  For a detailed breakdown of severity criteria and how to estimate risk, please refer to [the judging criteria in our documentation](https://docs.code4rena.com/roles/wardens/judging-criteria#estimating-risk-tl-dr).  If you disagree with a finding's severity, **leave the severity label intact and add the label** `disagree with severity`, along with a comment indicating your opinion for the jud..."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-005",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #5",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Respond to issues  Label each open/primary High or Medium risk finding as one of these:  - `sponsor confirmed`, meaning: \"Yes, this is a problem and we intend to fix it.\" - `sponsor disputed`, meaning either: \"We cannot duplicate this issue\" or \"We disagree that this is an issue at all.\" - `sponsor acknowledged`, meaning: \"Yes, technically the issue is correct, but we are not going to resolve it for xyz reasons.\"  (Note: please *don't* use `sponsor disputed` for a finding if you think it should be considered of lower or higher severity. Instead, use the label `disagree with severity` and a..."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-006",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #6",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## QA and Gas Reports  For low and non-critical findings (AKA QA), as well as gas optimizations: wardens are required to submit these as bulk listings of issues and recommendations. They may only submit a single, compiled report in each category:  - **[QA reports](https://docs.code4rena.com/roles/wardens/judging-criteria#qa-reports-low-non-critical)** should include *all* low severity and non-critical findings, along with a summary statement. - **[Gas reports](https://docs.code4rena.com/roles/wardens/judging-criteria#gas-reports)** should include *all* gas optimization recommendations, along w..."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-007",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #7",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Once labelling is complete  When you have finished labelling findings, drop the C4 team a note in your private Discord backroom channel and let us know you've completed the sponsor review process. At this point, we will pass the repo over to the judge to review your feedback while you work on mitigations."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-008",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #8",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Share your mitigation of findings  *Note: this section does not need to be completed in order to finalize judging. You can continue work on mitigations while the judge finalizes their decisions and even beyond that. Ultimately we won't publish the final audit report until you give us the OK.*  For each finding you have confirmed, you will want to mitigate the issue before the contest report is made public."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-009",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #9",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### If you are planning a Code4rena mitigation review: 1. In your own Github repo, create a branch based off of the commit you used for your Code4rena audit, then 2. Create a separate Pull Request for each **High or Medium risk** C4 audit finding (e.g. one PR for finding H-01, another for H-02, etc.) 3. Link the PR to the issue that it resolves within your contest findings repo.  Most C4 mitigation reviews focus exclusively on reviewing mitigations of High and Medium risk findings. Therefore, QA and Gas mitigations should be done in a separate branch. If you want your mitigation review to incl..."
+  },
+  {
+    "id": "AUDIT-C4-SOULWALLET-010",
+    "source": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report - Finding #10",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### If you aren\u2019t planning a mitigation review  1. Within a repo in your own GitHub organization, create a pull request for each finding. 2. Link the PR to the issue that it resolves within your contest findings repo.  This will allow for complete transparency in showing the work of mitigating the issues found in the contest. If the issue in question has duplicates, please link to your PR from the open/primary issue."
+  },
+  {
+    "id": "AUDIT-C4-LENS-001",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #1",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "# Lens Protocol V2 Audit  Unless otherwise discussed, this repo will be made public after audit completion, sponsor review, judging, and issue mitigation window.  **Contributors to this repo:** prior to report publication, please review the [Agreements & Disclosures](https://github.com/code-423n4/2023-07-lens-findings/issues/1) issue.  ---"
+  },
+  {
+    "id": "AUDIT-C4-LENS-002",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #2",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Audit findings are submitted to this repo  Sponsors have three critical tasks in the audit process:  1. Weigh in on severity. 2. Respond to issues. 3. Share your mitigation of findings.  Let's walk through each of these."
+  },
+  {
+    "id": "AUDIT-C4-LENS-003",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #3",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## High and Medium Risk Issues  Please note: because wardens submit issues without seeing each other's submissions, there will always be findings that are duplicates. For all issues labeled `3 (High Risk)` or `2 (Medium Risk)`, these have been pre-sorted for you so that there is only one primary issue open per unique finding. All duplicates have been labeled `duplicate`, linked to a primary issue, and closed."
+  },
+  {
+    "id": "AUDIT-C4-LENS-004",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #4",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Weigh in on severity   Judges have the ultimate discretion in determining severity of issues, as well as whether/how issues are considered duplicates. However, sponsor input is a significant criteria.  For a detailed breakdown of severity criteria and how to estimate risk, please refer to [the judging criteria in our documentation](https://docs.code4rena.com/roles/wardens/judging-criteria#estimating-risk-tl-dr).  If you disagree with a finding's severity, **leave the severity label intact and add the label** `disagree with severity`, along with a comment indicating your opinion for the jud..."
+  },
+  {
+    "id": "AUDIT-C4-LENS-005",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #5",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "### Respond to issues  Label each open/primary High or Medium risk finding as one of these:  - `sponsor confirmed`, meaning: \"Yes, this is a problem and we intend to fix it.\" - `sponsor disputed`, meaning either: \"We cannot duplicate this issue\" or \"We disagree that this is an issue at all.\" - `sponsor acknowledged`, meaning: \"Yes, technically the issue is correct, but we are not going to resolve it for xyz reasons.\"  (Note: please *don't* use `sponsor disputed` for a finding if you think it should be considered of lower or higher severity. Instead, use the label `disagree with severity` and a..."
+  },
+  {
+    "id": "AUDIT-C4-LENS-006",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #6",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## QA and Gas Reports  For low and non-critical findings (AKA QA), as well as gas optimizations: wardens are required to submit these as bulk listings of issues and recommendations. They may only submit a single, compiled report in each category:  - **[QA reports](https://docs.code4rena.com/roles/wardens/judging-criteria#qa-reports-low-non-critical)** should include *all* low severity and non-critical findings, along with a summary statement. - **[Gas reports](https://docs.code4rena.com/roles/wardens/judging-criteria#gas-reports)** should include *all* gas optimization recommendations, along w..."
+  },
+  {
+    "id": "AUDIT-C4-LENS-007",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #7",
+    "role": "paymaster",
+    "phase": "validation",
+    "topic": "sponsorship",
+    "text": "## Once labelling is complete  When you have finished labelling findings, drop the C4 team a note in your private Discord backroom channel and let us know you've completed the sponsor review process. At this point, we will pass the repo over to the judge to review your feedback while you work on mitigations."
+  },
+  {
+    "id": "AUDIT-C4-LENS-008",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #8",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "## Share your mitigation of findings  *Note: this section does not need to be completed in order to finalize judging. You can continue work on mitigations while the judge finalizes their decisions and even beyond that. Ultimately we won't publish the final audit report until you give us the OK.*  For each finding you have confirmed, you will want to mitigate the issue before the contest report is made public."
+  },
+  {
+    "id": "AUDIT-C4-LENS-009",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #9",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### If you are planning a Code4rena mitigation review: 1. In your own Github repo, create a branch based off of the commit you used for your Code4rena audit, then 2. Create a separate Pull Request for each **High or Medium risk** C4 audit finding (e.g. one PR for finding H-01, another for H-02, etc.) 3. Link the PR to the issue that it resolves within your contest findings repo.  Most C4 mitigation reviews focus exclusively on reviewing mitigations of High and Medium risk findings. Therefore, QA and Gas mitigations should be done in a separate branch. If you want your mitigation review to incl..."
+  },
+  {
+    "id": "AUDIT-C4-LENS-010",
+    "source": "Code4rena Lens Protocol Security Audit Report - Finding #10",
+    "role": "account",
+    "phase": "validation",
+    "topic": "authorization",
+    "text": "### If you aren\u2019t planning a mitigation review  1. Within a repo in your own GitHub organization, create a pull request for each finding. 2. Link the PR to the issue that it resolves within your contest findings repo.  This will allow for complete transparency in showing the work of mitigating the issues found in the contest. If the issue in question has duplicates, please link to your PR from the open/primary issue."
+  }
+]

@@ -1,0 +1,186 @@
+{
+  "contract_name": "SessionAccount",
+  "source_path": "C:\\Users\\gkrmv\\Desktop\\BTP_specGaurd\\contracts\\src\\worked_examples\\SessionAccount.sol",
+  "roles": [
+    "Account"
+  ],
+  "functions": [
+    {
+      "name": "recover",
+      "visibility": "public",
+      "parameters": [
+        {
+          "name": "hash",
+          "type": "bytes32"
+        },
+        {
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "return_types": [
+        "address"
+      ],
+      "is_external_or_public": true,
+      "modifiers": [],
+      "called_functions": [],
+      "state_variables_read": [],
+      "state_variables_written": []
+    },
+    {
+      "name": "validateUserOp",
+      "visibility": "external",
+      "parameters": [
+        {
+          "name": "op",
+          "type": "UserOp"
+        },
+        {
+          "name": "userOpHash",
+          "type": "bytes32"
+        }
+      ],
+      "return_types": [
+        "uint256"
+      ],
+      "is_external_or_public": true,
+      "modifiers": [],
+      "called_functions": [],
+      "state_variables_read": [
+        "SIG_VALIDATION_FAILED",
+        "VALIDATION_SUCCESS",
+        "owner",
+        "sessionKey"
+      ],
+      "state_variables_written": []
+    },
+    {
+      "name": "execute",
+      "visibility": "external",
+      "parameters": [
+        {
+          "name": "target",
+          "type": "address"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "return_types": [],
+      "is_external_or_public": true,
+      "modifiers": [],
+      "called_functions": [],
+      "state_variables_read": [
+        "ENTRY_POINT"
+      ],
+      "state_variables_written": []
+    },
+    {
+      "name": "setSessionKey",
+      "visibility": "external",
+      "parameters": [
+        {
+          "name": "key",
+          "type": "address"
+        },
+        {
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "return_types": [],
+      "is_external_or_public": true,
+      "modifiers": [],
+      "called_functions": [],
+      "state_variables_read": [
+        "owner"
+      ],
+      "state_variables_written": [
+        "allowedTarget",
+        "sessionKey"
+      ]
+    },
+    {
+      "name": "slitherConstructorConstantVariables",
+      "visibility": "internal",
+      "parameters": [],
+      "return_types": [],
+      "is_external_or_public": false,
+      "modifiers": [],
+      "called_functions": [],
+      "state_variables_read": [],
+      "state_variables_written": [
+        "ENTRY_POINT",
+        "SIG_VALIDATION_FAILED",
+        "VALIDATION_SUCCESS"
+      ]
+    }
+  ],
+  "state_variables": [
+    {
+      "name": "ENTRY_POINT",
+      "type_str": "address",
+      "visibility": "public",
+      "role_tag": null
+    },
+    {
+      "name": "SIG_VALIDATION_FAILED",
+      "type_str": "uint256",
+      "visibility": "public",
+      "role_tag": null
+    },
+    {
+      "name": "VALIDATION_SUCCESS",
+      "type_str": "uint256",
+      "visibility": "public",
+      "role_tag": null
+    },
+    {
+      "name": "owner",
+      "type_str": "address",
+      "visibility": "public",
+      "role_tag": "owner"
+    },
+    {
+      "name": "sessionKey",
+      "type_str": "mapping(address => bool)",
+      "visibility": "public",
+      "role_tag": "session_key_map"
+    },
+    {
+      "name": "allowedTarget",
+      "type_str": "mapping(address => address)",
+      "visibility": "public",
+      "role_tag": "allowed_target_map"
+    }
+  ],
+  "data_flows": [
+    {
+      "function_name": "validateUserOp",
+      "state_vars_read": [
+        "SIG_VALIDATION_FAILED",
+        "VALIDATION_SUCCESS",
+        "owner",
+        "sessionKey"
+      ],
+      "state_vars_written": [],
+      "user_op_fields_read": [
+        "signature"
+      ],
+      "influences_validation_return": true
+    }
+  ],
+  "aa_facts": {
+    "entry_point_checked": true,
+    "uses_signature_recovery": true,
+    "decodes_paymaster_data": false,
+    "signature_recovery_functions": [
+      "recover",
+      "validateUserOp"
+    ],
+    "validation_functions": [
+      "validateUserOp"
+    ]
+  }
+}
