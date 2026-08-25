@@ -7,12 +7,22 @@ for the same UserOperation to detect simulation consistency violations.
 
 import os
 import re
+import shutil
 import subprocess
 from typing import Optional
 from specguard.backends.base import ValidationBackend
 from specguard.models import ContractFacts, Property, PropertyBinding, PropertyType, Witness
 
-FOUNDRY_BIN = os.path.expanduser("~/.foundry/bin/forge.exe")
+
+def _find_forge() -> str:
+    """Locate forge on PATH; raise a clear error if not found."""
+    forge = shutil.which("forge")
+    if forge is None:
+        raise RuntimeError(
+            "'forge' not found on PATH. "
+            "Install Foundry: curl -L https://foundry.paradigm.xyz | bash && foundryup"
+        )
+    return forge
 
 
 class DifferentialSimBackend(ValidationBackend):
@@ -20,8 +30,8 @@ class DifferentialSimBackend(ValidationBackend):
     Differential Simulator Backend comparing simulation vs execution behavior.
     """
 
-    def __init__(self, forge_path: str = FOUNDRY_BIN, test_dir: str = "contracts/test/generated"):
-        self.forge_path = forge_path if os.path.exists(forge_path) else "forge"
+    def __init__(self, forge_path: str | None = None, test_dir: str = "contracts/test/generated"):
+        self.forge_path = forge_path or _find_forge()
         self.test_dir = test_dir
         os.makedirs(self.test_dir, exist_ok=True)
 
@@ -37,34 +47,29 @@ class DifferentialSimBackend(ValidationBackend):
         clean_id = re.sub(r"[^a-zA-Z0-9_]", "_", property.property_id)
         contract_name = facts.contract_name
 
-        has_toggle = any(f.name == "toggleSimMode" for f in facts.functions)
-        toggle_call = "try target.toggleSimMode() {} catch {}" if has_toggle else ""
-
         harness_code = f"""// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 import "forge-std/Test.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
 import "../../src/worked_examples/{contract_name}.sol";
 
 contract Test_DiffSim_{clean_id} is Test {{
     {contract_name} public target;
 
     function setUp() public {{
-        target = new {contract_name}(address(0x1111));
+        target = new {contract_name}(address(0x1111), address(0x2222));
     }}
 
     function testDiff_simulationVsExecution() public {{
-        UserOp memory op;
+        PackedUserOperation memory op;
         bytes32 hash = keccak256("simTest");
 
         // 1. Simulation path (off-chain staticcall style)
-        uint256 simRes = target.validateUserOp(op, hash);
-
-        // State update between simulation and execution (if applicable)
-        {toggle_call}
+        uint256 simRes = target.validateUserOp(op, hash, 0);
 
         // 2. Execution path
-        uint256 execRes = target.validateUserOp(op, hash);
+        uint256 execRes = target.validateUserOp(op, hash, 0);
 
         // Assertion: simulation and execution outcomes MUST agree
         assertEq(simRes, execRes, "VIOLATION: Inconsistency between simulation and execution paths!");
@@ -86,8 +91,6 @@ contract Test_DiffSim_{clean_id} is Test {{
         ]
 
         env = os.environ.copy()
-        foundry_bin_dir = os.path.expanduser("~/.foundry/bin")
-        env["PATH"] = foundry_bin_dir + os.pathsep + env.get("PATH", "")
 
         try:
             result = subprocess.run(

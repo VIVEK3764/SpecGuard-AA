@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-/**
- * @title VerifyingPaymaster
- * @notice Off-chain signature verifying paymaster from eth-infinitism/account-abstraction v0.6.0.
- * Source: https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/VerifyingPaymaster.sol
- */
-contract VerifyingPaymaster {
+import "@account-abstraction/contracts/interfaces/IPaymaster.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+import "@account-abstraction/contracts/core/Helpers.sol";
+
+/// @title VerifyingPaymaster (v0.7)
+/// @notice Off-chain signature verifying paymaster updated for ERC-4337 v0.7.
+contract VerifyingPaymaster is IPaymaster {
     address public immutable entryPoint;
     address public verifyingSigner;
 
@@ -19,25 +20,27 @@ contract VerifyingPaymaster {
         verifyingSigner = _verifyingSigner;
     }
 
+    /// @dev In v0.7, paymasterAndData has a 52-byte prefix: 20b paymaster + 16b verificationGasLimit + 16b postOpGasLimit.
     function parsePaymasterAndData(bytes calldata paymasterAndData) public pure returns (uint48 validUntil, uint48 validAfter, bytes calldata signature) {
-        validUntil = uint48(bytes6(paymasterAndData[20:26]));
-        validAfter = uint48(bytes6(paymasterAndData[26:32]));
-        signature = paymasterAndData[32:];
+        require(paymasterAndData.length >= 64, "paymasterAndData too short");
+        validUntil = uint48(bytes6(paymasterAndData[52:58]));
+        validAfter = uint48(bytes6(paymasterAndData[58:64]));
+        signature = paymasterAndData[64:];
     }
 
     function validatePaymasterUserOp(
-        bytes calldata userOpBytes,
+        PackedUserOperation calldata userOp,
         bytes32 userOpHash,
         uint256 maxCost
-    ) external returns (bytes memory context, uint256 validationData) {
+    ) external override returns (bytes memory context, uint256 validationData) {
         require(msg.sender == entryPoint, "paymaster: not EntryPoint");
-        (uint48 validUntil, uint48 validAfter, bytes calldata signature) = parsePaymasterAndData(userOpBytes);
+        (uint48 validUntil, uint48 validAfter, bytes calldata signature) = parsePaymasterAndData(userOp.paymasterAndData);
         
         bytes32 hash = keccak256(abi.encodePacked(userOpHash, validUntil, validAfter));
         if (verifyingSigner != recover(hash, signature)) {
             return ("", SIG_VALIDATION_FAILED);
         }
-        return (abi.encode(validUntil, validAfter), 0);
+        return (abi.encode(validUntil, validAfter), _packValidationData(false, validUntil, validAfter));
     }
 
     function recover(bytes32 hash, bytes memory signature) internal pure returns (address) {
@@ -53,7 +56,12 @@ contract VerifyingPaymaster {
         return ecrecover(hash, v, r, s);
     }
 
-    function postOp(uint8 mode, bytes calldata context, uint256 actualGasCost) external {
+    function postOp(
+        PostOpMode mode,
+        bytes calldata context,
+        uint256 actualGasCost,
+        uint256 actualUserOpFeePerGas
+    ) external override {
         require(msg.sender == entryPoint, "paymaster: not EntryPoint");
     }
 }

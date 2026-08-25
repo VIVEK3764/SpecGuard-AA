@@ -3,4 +3,13 @@ src = "contracts/src"
 test = "contracts/test"
 out = "out"
 libs = ["lib"]
-solc_version = "0.8.20"
+solc_version = "0.8.23"
+ast = true
+
+# Remappings for account-abstraction v0.7, openzeppelin, and forge-std
+remappings = [
+    "@account-abstraction/=lib/account-abstraction/",
+    "account-abstraction/=lib/account-abstraction/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "forge-std/=lib/forge-std/src/",
+]

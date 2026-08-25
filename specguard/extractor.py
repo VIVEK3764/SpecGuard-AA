@@ -7,6 +7,7 @@ and Account Abstraction (AA) protocol interactions.
 
 import os
 import sys
+import shutil
 from typing import List, Optional
 from slither.slither import Slither
 from slither.core.declarations import Contract, Function, Structure
@@ -20,10 +21,13 @@ from specguard.models import (
     DataFlowFact,
     AAFact,
 )
+from specguard.facts.mechanisms import tag_mechanisms
 
-foundry_bin = os.path.expanduser("~/.foundry/bin")
-if foundry_bin not in os.environ.get("PATH", ""):
-    os.environ["PATH"] = foundry_bin + os.pathsep + os.environ.get("PATH", "")
+# Ensure forge is available on PATH for Slither's underlying crytic-compile platform.
+if shutil.which("forge") is None:
+    foundry_bin = os.path.expanduser("~/.foundry/bin")
+    if os.path.isdir(foundry_bin) and foundry_bin not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = foundry_bin + os.pathsep + os.environ.get("PATH", "")
 
 
 def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None) -> ContractFacts:
@@ -69,7 +73,7 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
     # 2. Extract Function Facts (E_fun)
     function_facts: List[FunctionFact] = []
     for fn in target_contract.functions:
-        if fn.is_constructor:
+        if fn.is_constructor or fn.contract_declarer != target_contract or not fn.is_implemented:
             continue
 
         params = [{"name": p.name, "type": str(p.type)} for p in fn.parameters]
@@ -118,6 +122,8 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
     validation_fn_names = ["validateUserOp", "validatePaymasterUserOp", "postOp"]
 
     for fn in target_contract.functions:
+        if fn.contract_declarer != target_contract or not fn.is_implemented:
+            continue
         if fn.name in validation_fn_names:
             st_read = [
                 sv.name for sv in fn.state_variables_read
@@ -180,6 +186,9 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
         validation_functions=validation_fns,
     )
 
+    # 6. Extract Structural Mechanism Tags E_mech
+    mechanism_tags = tag_mechanisms(target_contract)
+
     return ContractFacts(
         contract_name=target_contract.name,
         source_path=abs_path,
@@ -188,11 +197,12 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
         state_variables=state_facts,
         data_flows=data_flow_facts,
         aa_facts=aa_facts,
+        mechanism_tags=mechanism_tags,
     )
 
 
 def _tag_state_variable(name: str, type_str: str) -> Optional[str]:
-    """Helper to tag state variables with domain roles."""
+    """DEPRECATED fallback: Helper to tag state variables with domain roles via name substrings."""
     n_lower = name.lower()
 
     if "owner" in n_lower or "admin" in n_lower:

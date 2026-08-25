@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-/**
- * @title SimpleAccount
- * @notice Canonical Smart Contract Account implementation from eth-infinitism/account-abstraction v0.6.0.
- * Source: https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/SimpleAccount.sol
- */
-contract SimpleAccount {
+import "@account-abstraction/contracts/interfaces/IAccount.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+import "@account-abstraction/contracts/core/Helpers.sol";
+
+/// @title SimpleAccount (v0.7)
+/// @notice Smart Contract Account implementation updated for ERC-4337 v0.7.
+contract SimpleAccount is IAccount {
     address public owner;
     address public immutable entryPoint;
 
@@ -31,11 +32,11 @@ contract SimpleAccount {
     }
 
     function validateUserOp(
+        PackedUserOperation calldata userOp,
         bytes32 userOpHash,
-        bytes calldata signature,
         uint256 missingAccountFunds
-    ) external onlyEntryPoint returns (uint256 validationData) {
-        validationData = _validateSignature(userOpHash, signature);
+    ) external override onlyEntryPoint returns (uint256 validationData) {
+        validationData = _validateSignature(userOpHash, userOp.signature);
         _payPrefund(missingAccountFunds);
     }
 

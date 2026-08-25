@@ -10,11 +10,23 @@ authors = [{ name = "SpecGuard Team" }]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "slither-analyzer>=0.10.0",
+    # Static analysis — pin minor because state_variables_read IR API changes between minors
+    "slither-analyzer>=0.10.0,<0.11.0",
+    # Data / retrieval
     "pydantic>=2.0.0",
     "rank-bm25>=0.2.2",
     "chromadb>=0.4.0",
-    "pytest>=7.0.0"
+    # LLM backends — upper bounds guard against breaking API changes
+    "openai>=1.0.0,<3.0",
+    "anthropic>=0.25.0,<2.0",
+    # Environment / config
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-anyio",
 ]
 
 [tool.setuptools.packages.find]
@@ -23,3 +35,7 @@ where = ["."]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+markers = [
+    "rename_invariance: rename-invariance regression gate — runs on every commit",
+    "live_llm: tests that require a live LLM API key",
+]

@@ -28,7 +28,7 @@ def test_extract_facts_session_account():
     val_fn = facts.get_function("validateUserOp")
     assert val_fn is not None
     assert val_fn.visibility in ["external", "public"]
-    assert any(p["name"] == "op" for p in val_fn.parameters)
+    assert any(p["name"] in ["op", "userOp"] for p in val_fn.parameters)
 
     exec_fn = facts.get_function("execute")
     assert exec_fn is not None

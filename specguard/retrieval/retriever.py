@@ -58,6 +58,9 @@ class HybridRetriever:
         alpha: float = 0.5,
         beta: float = 0.3,
         gamma: float = 0.2,
+        use_filtering: bool = True,
+        use_sparse: bool = True,
+        use_dense: bool = True,
     ) -> List[CorpusChunk]:
         """
         Execute filtered hybrid retrieval combining dense vector similarity + sparse BM25
@@ -71,10 +74,13 @@ class HybridRetriever:
         filtered_indices: List[int] = []
 
         for idx, chunk in enumerate(self.corpus):
-            role_match = chunk.matches_role(query.target_role)
-            phase_match = chunk.matches_phase(query.target_phase)
-
-            if role_match and phase_match:
+            if use_filtering:
+                role_match = chunk.matches_role(query.target_role)
+                phase_match = chunk.matches_phase(query.target_phase)
+                if role_match and phase_match:
+                    filtered_chunks.append(chunk)
+                    filtered_indices.append(idx)
+            else:
                 filtered_chunks.append(chunk)
                 filtered_indices.append(idx)
 
@@ -88,28 +94,34 @@ class HybridRetriever:
 
         # 3. ChromaDB Dense Vector Similarity
         dense_scores_dict: Dict[str, float] = {}
-        try:
-            query_res = self.collection.query(
-                query_texts=[query.query_text],
-                n_results=len(self.corpus),
-            )
-            if query_res and "ids" in query_res and query_res["ids"]:
-                res_ids = query_res["ids"][0]
-                distances = query_res["distances"][0] if "distances" in query_res else []
-                for cid, dist in zip(res_ids, distances):
-                    sim = max(0.0, 1.0 - (dist / 2.0))
-                    dense_scores_dict[cid] = sim
-        except Exception:
-            pass
+        if use_dense:
+            try:
+                query_res = self.collection.query(
+                    query_texts=[query.query_text],
+                    n_results=len(self.corpus),
+                )
+                if query_res and "ids" in query_res and query_res["ids"]:
+                    res_ids = query_res["ids"][0]
+                    distances = query_res["distances"][0] if "distances" in query_res else []
+                    for cid, dist in zip(res_ids, distances):
+                        sim = max(0.0, 1.0 - (dist / 2.0))
+                        dense_scores_dict[cid] = sim
+            except Exception:
+                pass
 
         # 4. Hybrid Combination & Requirement-Density Ranking
         ranked_chunks: List[tuple[CorpusChunk, float]] = []
 
         for chunk, orig_idx in zip(filtered_chunks, filtered_indices):
-            sparse_score = bm25_scores[orig_idx] / max_bm25
-            dense_score = dense_scores_dict.get(chunk.id, 0.0)
+            sparse_score = (bm25_scores[orig_idx] / max_bm25) if use_sparse else 0.0
+            dense_score = dense_scores_dict.get(chunk.id, 0.0) if use_dense else 0.0
 
-            sim_score = 0.5 * sparse_score + 0.5 * dense_score
+            if use_sparse and use_dense:
+                sim_score = 0.5 * sparse_score + 0.5 * dense_score
+            elif use_sparse:
+                sim_score = sparse_score
+            else:
+                sim_score = dense_score
 
             req_score = self._compute_requirement_density(chunk.text)
             bind_score = self._compute_fact_binding(chunk.text, facts)
@@ -125,12 +137,22 @@ class HybridRetriever:
         queries: List[RetrievalQuery],
         facts: ContractFacts,
         top_k_per_query: int = 3,
+        use_filtering: bool = True,
+        use_sparse: bool = True,
+        use_dense: bool = True,
     ) -> List[CorpusChunk]:
         seen_ids: Set[str] = set()
         results: List[CorpusChunk] = []
 
         for q in queries:
-            chunks = self.retrieve(q, facts, top_k=top_k_per_query)
+            chunks = self.retrieve(
+                q,
+                facts,
+                top_k=top_k_per_query,
+                use_filtering=use_filtering,
+                use_sparse=use_sparse,
+                use_dense=use_dense,
+            )
             for c in chunks:
                 if c.id not in seen_ids:
                     seen_ids.add(c.id)

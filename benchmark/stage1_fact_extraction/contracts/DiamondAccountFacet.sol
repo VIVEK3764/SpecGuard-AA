@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-/**
- * @title DiamondAccountFacet
- * @notice Synthetic EIP-2535 Diamond Pattern Account Facet.
- * Demonstrates dynamic delegatecall dispatch where validation logic lives in a Diamond storage slot.
- */
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+
+/// @title DiamondAccountFacet (v0.7)
+/// @notice EIP-2535 Diamond Pattern Account Facet updated for ERC-4337 v0.7.
 contract DiamondAccountFacet {
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("diamond.standard.diamond.storage");
 
@@ -22,8 +21,8 @@ contract DiamondAccountFacet {
     }
 
     function validateUserOp(
+        PackedUserOperation calldata userOp,
         bytes32 userOpHash,
-        bytes calldata signature,
         uint256 missingAccountFunds
     ) external returns (uint256 validationData) {
         DiamondStorage storage ds = diamondStorage();

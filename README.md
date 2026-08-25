@@ -1,6 +1,6 @@
 # SpecGuard-AA: Formal Specification Mining & Automated Bug Verification for ERC-4337 Account Abstraction
 
-[![Tests](https://img.shields.io/badge/Tests-29%20Passed-brightgreen)](file:///c:/Users/gkrmv/Desktop/BTP_specGaurd/tests)
+[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)](https://github.com/VIVEK3764/SpecGuard-AA/actions)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-lightgrey)](https://soliditylang.org/)
 [![ERC-4337](https://img.shields.io/badge/Standard-ERC--4337-orange)](https://eips.ethereum.org/EIPS/eip-4337)

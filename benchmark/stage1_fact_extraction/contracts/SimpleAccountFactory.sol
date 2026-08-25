@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-/**
- * @title SimpleAccountFactory
- * @notice Canonical Factory implementation deploying SimpleAccount contracts behind ERC1967 proxies.
- * Source: https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/SimpleAccountFactory.sol
- */
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+
+/// @title SimpleAccountFactory (v0.7)
+/// @notice Canonical Factory implementation deploying SimpleAccount contracts updated for v0.7.
 contract SimpleAccountFactory {
     address public immutable accountImplementation;
 
     event AccountCreated(address indexed account, address indexed owner, uint256 salt);
 
     constructor(address _entryPoint) {
-        // Implementation logic contract
         accountImplementation = address(new SimpleAccountImplementation(_entryPoint));
     }
 
@@ -49,7 +47,11 @@ contract SimpleAccountImplementation {
         owner = _owner;
     }
 
-    function validateUserOp(bytes32 userOpHash, bytes calldata signature, uint256 missingAccountFunds) external returns (uint256) {
+    function validateUserOp(
+        PackedUserOperation calldata userOp,
+        bytes32 userOpHash,
+        uint256 missingAccountFunds
+    ) external returns (uint256) {
         if (msg.sender != entryPoint) return 1;
         if (owner != ecrecover(userOpHash, 27, bytes32(0), bytes32(0))) return 1;
         return 0;

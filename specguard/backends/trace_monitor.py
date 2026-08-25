@@ -7,12 +7,22 @@ ERC-7562 validation scope rules.
 
 import os
 import re
+import shutil
 import subprocess
 from typing import Optional, List
 from specguard.backends.base import ValidationBackend
 from specguard.models import ContractFacts, Property, PropertyBinding, PropertyType, Witness
 
-FOUNDRY_BIN = os.path.expanduser("~/.foundry/bin/forge.exe")
+
+def _find_forge() -> str:
+    """Locate forge on PATH; raise a clear error if not found."""
+    forge = shutil.which("forge")
+    if forge is None:
+        raise RuntimeError(
+            "'forge' not found on PATH. "
+            "Install Foundry: curl -L https://foundry.paradigm.xyz | bash && foundryup"
+        )
+    return forge
 
 
 class TraceMonitorBackend(ValidationBackend):
@@ -20,8 +30,8 @@ class TraceMonitorBackend(ValidationBackend):
     Validation Trace Monitor Backend checking ERC-7562 scope rules.
     """
 
-    def __init__(self, forge_path: str = FOUNDRY_BIN, test_dir: str = "contracts/test/generated"):
-        self.forge_path = forge_path if os.path.exists(forge_path) else "forge"
+    def __init__(self, forge_path: str | None = None, test_dir: str = "contracts/test/generated"):
+        self.forge_path = forge_path or _find_forge()
         self.test_dir = test_dir
         os.makedirs(self.test_dir, exist_ok=True)
 
@@ -50,24 +60,25 @@ class TraceMonitorBackend(ValidationBackend):
                             forbidden_found.append(f"Forbidden opcode/expression detected: {forbidden}")
 
         harness_code = f"""// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
 import "forge-std/Test.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
 import "../../src/worked_examples/{contract_name}.sol";
 
 contract Test_TraceScope_{clean_id} is Test {{
     {contract_name} public target;
 
     function setUp() public {{
-        target = new {contract_name}(address(0x1111));
+        target = new {contract_name}(address(0x1111), address(0x2222));
     }}
 
     function testTrace_validationScope() public {{
-        UserOp memory op;
+        PackedUserOperation memory op;
         bytes32 hash = keccak256("scopeTest");
 
         vm.record();
-        target.validateUserOp(op, hash);
+        target.validateUserOp(op, hash, 0);
     }}
 }}
 """
@@ -86,8 +97,6 @@ contract Test_TraceScope_{clean_id} is Test {{
         ]
 
         env = os.environ.copy()
-        foundry_bin_dir = os.path.expanduser("~/.foundry/bin")
-        env["PATH"] = foundry_bin_dir + os.pathsep + env.get("PATH", "")
 
         try:
             result = subprocess.run(

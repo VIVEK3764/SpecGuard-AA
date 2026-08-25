@@ -16,3 +16,8 @@ cache/
 out/
 cache_forge/
 lib/
+
+# Generated test harnesses (produced at runtime by backends — not source-controlled)
+contracts/test/generated/
+contracts/test/reproductions/
+contracts/src/generated/

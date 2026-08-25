@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-/**
- * @title AssemblySignatureAccount
- * @notice Synthetic Smart Account implementing signature validation and state access using inline assembly.
- */
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+
+/// @title AssemblySignatureAccount (v0.7)
+/// @notice Smart Account implementing signature validation updated for ERC-4337 v0.7.
 contract AssemblySignatureAccount {
     address public owner;
     mapping(address => bool) public sessionKey;
@@ -14,11 +14,12 @@ contract AssemblySignatureAccount {
     }
 
     function validateUserOp(
+        PackedUserOperation calldata userOp,
         bytes32 userOpHash,
-        bytes calldata signature,
         uint256 missingAccountFunds
     ) external view returns (uint256 validationData) {
         address recovered;
+        bytes calldata signature = userOp.signature;
         assembly {
             // Low level signature recovery inline assembly
             let r := calldataload(signature.offset)

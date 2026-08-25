@@ -28,6 +28,20 @@ load_dotenv()
 # Disk cache directory for LLM raw responses (§4.3 Property Response Cache)
 CACHE_DIR = os.path.join(".cache", "llm_synthesis")
 
+
+def _stable_prop_id(prefix: str, type_tag: str, role: str, precond: str, req_cond: str) -> str:
+    """
+    Compute a deterministic, cross-run-stable property ID using SHA-256 over structural content.
+
+    Python's built-in hash() is randomised per-process (PYTHONHASHSEED), so
+    ``hash(x) % 10000`` produces different IDs across runs for the same logical
+    property — breaking duplicate elimination.  This function is stable: the same
+    (type, role, precondition, required_condition) always maps to the same 8-hex suffix.
+    """
+    content = f"{type_tag}|{role}|{precond.strip()}|{req_cond.strip()}"
+    digest = hashlib.sha256(content.encode("utf-8")).hexdigest()[:8].upper()
+    return f"{prefix}-{digest}"
+
 # Allowed Predicates Whitelist per Property Type (Paper §4.3)
 PREDICATE_WHITELIST = {
     PropertyType.SESSION: [
@@ -191,11 +205,22 @@ class PropertySynthesizer:
                 f"LLM_PROVIDER='{self.provider}' is configured for live synthesis, but matching API key is missing from environment/.env!"
             )
 
-    def get_llm_prompt(self, facts: ContractFacts, evidence_chunks: List[CorpusChunk]) -> str:
-        """Expose the literal prompt text sent to the LLM API with anti-leakage few-shot filtering."""
-        facts_dict = facts.model_dump()
-        evidence_dict = [c.model_dump() for c in evidence_chunks]
-        few_shot_section = _build_few_shot_prompt(facts)
+    def get_llm_prompt(self, facts: ContractFacts, evidence_chunks: List[CorpusChunk], mode: str = "full_specguard") -> str:
+        """Expose the literal prompt text sent to the LLM API with mode-specific ablation configuration."""
+        if mode == "zero_shot":
+            facts_dict = {"contract_name": facts.contract_name, "functions": [f.name for f in facts.functions]}
+            evidence_dict = []
+        elif mode == "facts_only":
+            facts_dict = facts.model_dump()
+            evidence_dict = []
+        elif mode == "rag_only":
+            facts_dict = {"contract_name": facts.contract_name}
+            evidence_dict = [c.model_dump() for c in evidence_chunks]
+        else:
+            facts_dict = facts.model_dump()
+            evidence_dict = [c.model_dump() for c in evidence_chunks]
+
+        few_shot_section = _build_few_shot_prompt(facts) if mode == "full_specguard" else ""
         return PROMPT_TEMPLATE.format(
             facts_json=json.dumps(facts_dict, indent=2),
             evidence_json=json.dumps(evidence_dict, indent=2),
@@ -203,21 +228,24 @@ class PropertySynthesizer:
         )
 
     def synthesize(
-        self, facts: ContractFacts, evidence_chunks: List[CorpusChunk], force_live: bool = False
+        self, facts: ContractFacts, evidence_chunks: List[CorpusChunk], force_live: bool = False, mode: str = "full_specguard"
     ) -> List[Property]:
         """
-        Synthesize raw candidate properties P_raw from E(c) and retrieved C.
+        Synthesize raw candidate properties P_raw from E(c) and retrieved C under mode configuration.
         """
         raw_properties: List[Property] = []
 
         is_live = self.live or force_live
 
         if is_live or (self.api_key and self.api_key.strip()):
-            llm_props = self._synthesize_llm(facts, evidence_chunks)
+            llm_props = self._synthesize_llm(facts, evidence_chunks, mode=mode)
             raw_properties.extend(llm_props)
 
-        # Dynamic fact-driven property generation fallback / complement
-        rule_props = self._synthesize_fact_driven(facts, evidence_chunks)
+        # Dynamic fact-driven property generation fallback / complement (only for full_specguard or facts_only)
+        if mode in ["full_specguard", "facts_only"]:
+            rule_props = self._synthesize_fact_driven(facts, evidence_chunks)
+        else:
+            rule_props = []
 
         seen_ids = set()
         combined: List[Property] = []
@@ -229,13 +257,13 @@ class PropertySynthesizer:
 
         return combined
 
-    def _get_cache_key(self, facts: ContractFacts, evidence_chunks: List[CorpusChunk]) -> str:
+    def _get_cache_key(self, facts: ContractFacts, evidence_chunks: List[CorpusChunk], mode: str = "full_specguard") -> str:
         chunk_ids = sorted([c.id for c in evidence_chunks])
-        raw_key = f"{facts.contract_name}:{facts.source_path}:{','.join(chunk_ids)}:{self.model}"
+        raw_key = f"{facts.contract_name}:{facts.source_path}:{','.join(chunk_ids)}:{self.model}:{mode}"
         return hashlib.sha256(raw_key.encode("utf-8")).hexdigest()
 
     def _synthesize_llm(
-        self, facts: ContractFacts, evidence_chunks: List[CorpusChunk]
+        self, facts: ContractFacts, evidence_chunks: List[CorpusChunk], mode: str = "full_specguard"
     ) -> List[Property]:
         """
         Executes real structured LLM API call (Anthropic or OpenAI) with disk caching (§4.3).
@@ -247,7 +275,7 @@ class PropertySynthesizer:
             return []
 
         # Check response disk cache first
-        cache_key = self._get_cache_key(facts, evidence_chunks)
+        cache_key = self._get_cache_key(facts, evidence_chunks, mode=mode)
         os.makedirs(CACHE_DIR, exist_ok=True)
         cache_path = os.path.join(CACHE_DIR, f"{cache_key}.json")
 
@@ -260,7 +288,7 @@ class PropertySynthesizer:
             except Exception as e:
                 print(f"[-] Cache read error: {e}")
 
-        prompt = self.get_llm_prompt(facts, evidence_chunks)
+        prompt = self.get_llm_prompt(facts, evidence_chunks, mode=mode)
         parsed_props: List[Property] = []
         raw_envelope_str = ""
 
@@ -386,11 +414,21 @@ class PropertySynthesizer:
 
             raw_envelope_str = resp.model_dump_json(indent=2)
             raw_response_text = resp.choices[0].message.content or ""
-            parsed_json = json.loads(raw_response_text)
-            for item in parsed_json.get("properties", []):
-                p = self._parse_and_validate_property(item, raw_envelope_str)
-                if p:
-                    parsed_props.append(p)
+            cleaned_text = raw_response_text.strip()
+            if cleaned_text.startswith("```"):
+                cleaned_text = re.sub(r"^```(?:json)?\s*", "", cleaned_text)
+                cleaned_text = re.sub(r"\s*```$", "", cleaned_text)
+
+            try:
+                parsed_json = json.loads(cleaned_text)
+                if isinstance(parsed_json, dict) and "properties" in parsed_json:
+                    for item in parsed_json.get("properties", []):
+                        if isinstance(item, dict):
+                            p = self._parse_and_validate_property(item, raw_envelope_str)
+                            if p:
+                                parsed_props.append(p)
+            except Exception as e:
+                print(f"[-] JSON decode error: {e}")
 
         # Store in Property Response Cache (§4.3)
         if parsed_props:
@@ -447,7 +485,10 @@ class PropertySynthesizer:
                         return None
 
             return Property(
-                property_id=item.get("property_id", f"PROP-LLM-{hash(req_cond) % 10000}"),
+                property_id=item.get(
+                    "property_id",
+                    _stable_prop_id("PROP-LLM", t_type.value, role.value, pre_cond, req_cond),
+                ),
                 template_type=t_type,
                 target_role=role,
                 bindings=bindings,
@@ -486,7 +527,11 @@ class PropertySynthesizer:
                 session_sources = [cid for cid, c in chunk_map.items() if c.topic in ["authorization", "session key"]]
                 properties.append(
                     Property(
-                        property_id=f"PROP-SESSION-TARGET-{hash(facts.source_path) % 10000}",
+                        property_id=_stable_prop_id(
+                            "PROP-SESSION-TARGET", "SESSION", "Account",
+                            "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+                            "target(op) == allowedTarget[K]",
+                        ),
                         template_type=PropertyType.SESSION,
                         target_role=Role.ACCOUNT,
                         bindings=PropertyBinding(
@@ -506,7 +551,11 @@ class PropertySynthesizer:
                 expiry_sources = [cid for cid, c in chunk_map.items() if c.topic == "session key"]
                 properties.append(
                     Property(
-                        property_id=f"PROP-SESSION-EXPIRY-{hash(facts.source_path) % 10000}",
+                        property_id=_stable_prop_id(
+                            "PROP-SESSION-EXPIRY", "SESSION", "Account",
+                            "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+                            "notExpired(K)",
+                        ),
                         template_type=PropertyType.SESSION,
                         target_role=Role.ACCOUNT,
                         bindings=PropertyBinding(
@@ -524,7 +573,11 @@ class PropertySynthesizer:
             nonce_sources = [cid for cid, c in chunk_map.items() if c.topic == "nonce"]
             properties.append(
                 Property(
-                    property_id=f"PROP-NONCE-{hash(facts.source_path) % 10000}",
+                    property_id=_stable_prop_id(
+                        "PROP-NONCE", "NONCE", "Account",
+                        "success(validateUserOp(op))",
+                        "nonceFresh(op)",
+                    ),
                     template_type=PropertyType.NONCE,
                     target_role=Role.ACCOUNT,
                     bindings=PropertyBinding(validator_function="validateUserOp"),
@@ -548,7 +601,11 @@ class PropertySynthesizer:
             if has_coupon and val_df and "usedCoupon" not in val_df.state_vars_read:
                 properties.append(
                     Property(
-                        property_id=f"PROP-PAYMASTER-REPLAY-{hash(facts.source_path) % 10000}",
+                        property_id=_stable_prop_id(
+                            "PROP-PAYMASTER-REPLAY", "PAYMASTER", "Paymaster",
+                            "success(validatePaymasterUserOp(op))",
+                            "validCoupon(op) AND NOT used(op.coupon)",
+                        ),
                         template_type=PropertyType.PAYMASTER,
                         target_role=Role.PAYMASTER,
                         bindings=PropertyBinding(
@@ -569,7 +626,13 @@ class PropertySynthesizer:
         if scope_sources:
             properties.append(
                 Property(
-                    property_id=f"PROP-SCOPE-{hash(facts.source_path) % 10000}",
+                    property_id=_stable_prop_id(
+                        "PROP-SCOPE",
+                        "SCOPE",
+                        facts.roles[0].value if facts.roles else "Account",
+                        "simulatingValidation(op)",
+                        "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+                    ),
                     template_type=PropertyType.SCOPE,
                     target_role=facts.roles[0] if facts.roles else Role.ACCOUNT,
                     bindings=PropertyBinding(

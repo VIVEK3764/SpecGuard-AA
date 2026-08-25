@@ -1,54 +1,64 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-struct UserOp {
-    address sender;
-    uint256 nonce;
-    bytes initCode;
-    bytes callData;
-    uint256 callGasLimit;
-    uint256 verificationGasLimit;
-    uint256 preVerificationGas;
-    uint256 maxFeePerGas;
-    uint256 maxPriorityFeePerGas;
-    bytes paymasterAndData;
-    bytes signature;
-}
+import "@account-abstraction/contracts/interfaces/IAccount.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+import "@account-abstraction/contracts/core/Helpers.sol";
 
-contract SimpleOwnerAccount {
-    address public constant ENTRY_POINT = 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789;
-    
-    uint256 public constant SIG_VALIDATION_FAILED = 1;
-    uint256 public constant VALIDATION_SUCCESS = 0;
+/// @title SimpleOwnerAccount (v0.7, SpecGuard-AA Anti-Overfitting Clean Fixture)
+/// @notice ERC-4337 account with clean single-owner ECDSA authorization.
+///
+/// EntryPoint version: v0.7  (PackedUserOperation, 3-arg validateUserOp)
+contract SimpleOwnerAccount is IAccount {
 
+    address public immutable entryPoint;
     address public owner;
 
-    constructor(address _owner) {
+    constructor(address _entryPoint, address _owner) {
+        entryPoint = _entryPoint;
         owner = _owner;
     }
 
-    function recover(bytes32 hash, bytes memory signature) public pure returns (address) {
-        if (signature.length != 65) return address(0);
+    modifier onlyEntryPoint() {
+        require(msg.sender == entryPoint, "account: caller is not EntryPoint");
+        _;
+    }
+
+    /// @dev Recover signer from a 65-byte ECDSA signature.
+    function recover(bytes32 hash, bytes memory sig) public pure returns (address) {
+        if (sig.length != 65) return address(0);
         bytes32 r;
         bytes32 s;
         uint8 v;
         assembly {
-            r := mload(add(signature, 0x20))
-            s := mload(add(signature, 0x40))
-            v := byte(0, mload(add(signature, 0x60)))
+            r := mload(add(sig, 0x20))
+            s := mload(add(sig, 0x40))
+            v := byte(0, mload(add(sig, 0x60)))
         }
         return ecrecover(hash, v, r, s);
     }
 
-    function validateUserOp(UserOp calldata op, bytes32 userOpHash) external view returns (uint256) {
-        address signer = recover(userOpHash, op.signature);
-        if (signer == owner) return VALIDATION_SUCCESS;
+    /// @inheritdoc IAccount
+    function validateUserOp(
+        PackedUserOperation calldata userOp,
+        bytes32 userOpHash,
+        uint256 missingAccountFunds
+    ) external override onlyEntryPoint returns (uint256 validationData) {
+        if (missingAccountFunds > 0) {
+            (bool ok, ) = payable(entryPoint).call{value: missingAccountFunds}("");
+            (ok);
+        }
+
+        address signer = recover(userOpHash, userOp.signature);
+        if (signer == owner) return SIG_VALIDATION_SUCCESS;
         return SIG_VALIDATION_FAILED;
     }
 
-    function execute(address target, bytes calldata data) external {
-        require(msg.sender == ENTRY_POINT, "account: not EntryPoint");
-        (bool success, ) = target.call(data);
-        require(success, "call failed");
+    /// @notice Execute an arbitrary call, gated by the EntryPoint.
+    function execute(address target, uint256 value, bytes calldata data) external onlyEntryPoint {
+        (bool success, ) = target.call{value: value}(data);
+        require(success, "account: call failed");
     }
+
+    receive() external payable {}
 }

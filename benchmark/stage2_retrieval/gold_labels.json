@@ -1,0 +1,136 @@
+{
+  "benchmark_name": "SpecGuard-AA Stage 2 Retrieval Gold-Standard Label Set",
+  "version": "1.0",
+  "frozen_timestamp": "2026-08-12T13:45:00Z",
+  "note": "Gold labels frozen BEFORE running retrieval evaluation to prevent back-fitting bias (Part B.1).",
+  "total_contracts": 16,
+  "gold_labels": {
+    "SessionAccount.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-AUTH-010",
+        "AUDIT-ETH-INFINITISM-README-008",
+        "ERC4337-SPEC-001",
+        "ERC7562-SCOPE-029"
+      ]
+    },
+    "CouponPaymaster.sol": {
+      "target_role": "paymaster",
+      "relevant_chunk_ids": [
+        "AUDIT-33AUDITS-AA-001",
+        "ERC4337-SPEC-021",
+        "AUDIT-ETH-INFINITISM-README-007",
+        "ERC4337-SPEC-004"
+      ]
+    },
+    "ExpirySessionAccount.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-AUTH-010",
+        "AUDIT-ETH-INFINITISM-README-008",
+        "ERC4337-SPEC-021",
+        "ERC7562-LIM-010"
+      ]
+    },
+    "SimpleOwnerAccount.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "AUDIT-ETH-INFINITISM-README-008",
+        "ERC4337-SPEC-001",
+        "ERC4337-SPEC-008"
+      ]
+    },
+    "ScopeAccountCompliant.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-SCOPE-001",
+        "ERC7562-SCOPE-026",
+        "ERC7562-SCOPE-027"
+      ]
+    },
+    "ScopeAccountViolating.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-SCOPE-026",
+        "ERC7562-SCOPE-027",
+        "ERC7562-SCOPE-005"
+      ]
+    },
+    "SimAccountCompliant.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-SCOPE-003",
+        "ERC4337-SPEC-015"
+      ]
+    },
+    "SimAccountViolating.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-SCOPE-003",
+        "ERC4337-SPEC-015"
+      ]
+    },
+    "SimpleAccount.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "AUDIT-ETH-INFINITISM-README-008",
+        "ERC4337-SPEC-001",
+        "ERC4337-SPEC-008"
+      ]
+    },
+    "SimpleAccountFactory.sol": {
+      "target_role": "factory",
+      "relevant_chunk_ids": [
+        "ERC4337-SPEC-012",
+        "ERC4337-SPEC-020",
+        "ERC4337-SPEC-023"
+      ]
+    },
+    "VerifyingPaymaster.sol": {
+      "target_role": "paymaster",
+      "relevant_chunk_ids": [
+        "ERC4337-SPEC-021",
+        "AUDIT-33AUDITS-AA-001",
+        "AUDIT-ETH-INFINITISM-README-007",
+        "ERC4337-SPEC-013"
+      ]
+    },
+    "TokenPaymaster.sol": {
+      "target_role": "paymaster",
+      "relevant_chunk_ids": [
+        "ERC4337-SPEC-021",
+        "ERC4337-SPEC-014",
+        "AUDIT-ETH-INFINITISM-README-007"
+      ]
+    },
+    "ERC7579Validator.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-AUTH-010",
+        "AUDIT-ETH-INFINITISM-README-008",
+        "ERC4337-SPEC-001"
+      ]
+    },
+    "ERC7579Executor.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-AUTH-020",
+        "ERC7562-AUTH-030"
+      ]
+    },
+    "DiamondAccountFacet.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "ERC7562-SCOPE-027",
+        "ERC7562-AUTH-030"
+      ]
+    },
+    "AssemblySignatureAccount.sol": {
+      "target_role": "account",
+      "relevant_chunk_ids": [
+        "AUDIT-ETH-INFINITISM-README-008",
+        "ERC7562-SCOPE-026"
+      ]
+    }
+  }
+}

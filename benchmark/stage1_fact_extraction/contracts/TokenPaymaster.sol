@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-/**
- * @title TokenPaymaster
- * @notice ERC20 Token Sponsoring Paymaster from eth-infinitism/account-abstraction v0.6.0.
- * Source: https://github.com/eth-infinitism/account-abstraction/blob/v0.6.0/contracts/samples/TokenPaymaster.sol
- */
-contract TokenPaymaster {
+import "@account-abstraction/contracts/interfaces/IPaymaster.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
+
+/// @title TokenPaymaster (v0.7)
+/// @notice ERC20 Token Sponsoring Paymaster updated for ERC-4337 v0.7.
+contract TokenPaymaster is IPaymaster {
     address public immutable entryPoint;
     address public token;
     address public oracle;
@@ -20,12 +20,12 @@ contract TokenPaymaster {
     }
 
     function validatePaymasterUserOp(
-        bytes calldata userOpBytes,
+        PackedUserOperation calldata userOp,
         bytes32 userOpHash,
         uint256 maxCost
-    ) external returns (bytes memory context, uint256 validationData) {
+    ) external override returns (bytes memory context, uint256 validationData) {
         require(msg.sender == entryPoint, "paymaster: not EntryPoint");
-        address sender = address(bytes20(userOpBytes[0:20]));
+        address sender = userOp.sender;
         uint256 tokenBalance = balances[sender];
         if (tokenBalance < maxCost) {
             return ("", 1); // SIG_VALIDATION_FAILED
@@ -33,7 +33,12 @@ contract TokenPaymaster {
         return (abi.encode(sender, tokenBalance), 0);
     }
 
-    function postOp(uint8 mode, bytes calldata context, uint256 actualGasCost) external {
+    function postOp(
+        PostOpMode mode,
+        bytes calldata context,
+        uint256 actualGasCost,
+        uint256 actualUserOpFeePerGas
+    ) external override {
         require(msg.sender == entryPoint, "paymaster: not EntryPoint");
         (address sender, uint256 preBalance) = abi.decode(context, (address, uint256));
         balances[sender] = preBalance - actualGasCost;

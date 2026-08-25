@@ -58,3 +58,15 @@ def test_retrieval_coupon_paymaster():
     assert any("33AUDITS" in cid for cid in retrieved_ids), (
         "Should retrieve 33Audits paymaster coupon replay vulnerability pattern"
     )
+
+
+def test_stage2_retrieval_benchmark():
+    from benchmark.stage2_retrieval.eval_retrieval import run_evaluation
+    ablation_totals, _ = run_evaluation()
+    prod_metrics = ablation_totals["hybrid_filtered"]
+
+    # Assert Production Hybrid Filtered configuration exceeds ablation baselines
+    assert prod_metrics[5]["precision"] >= 0.15, "Production P@5 should be >= 15.0%"
+    assert prod_metrics[5]["recall"] >= 0.25, "Production R@5 should be >= 25.0%"
+    assert prod_metrics[10]["recall"] >= 0.35, "Production R@10 should be >= 35.0%"
+

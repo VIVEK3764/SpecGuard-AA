@@ -1,0 +1,225 @@
+{
+  "benchmark_name": "SpecGuard-AA Stage 3 Synthesis Gold-Standard Property Benchmark",
+  "version": "1.0",
+  "frozen_timestamp": "2026-08-12T14:00:00Z",
+  "note": "Gold dataset frozen prior to Stage 3 evaluation to ensure unbiased RQ2 benchmarking.",
+  "total_contracts": 16,
+  "gold_properties": {
+    "SessionAccount.sol": [
+      {
+        "property_id": "PROP-SESSION-TARGET",
+        "template_type": "SESSION",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "target_policy_mapping": "allowedTarget"
+        },
+        "precondition": "success(validateUserOp(op)) AND signedBySessionKey(op, K)",
+        "required_condition": "target(op) == allowedTarget[K]",
+        "source_chunk_ids": ["AUDIT-ETH-INFINITISM-README-008", "ERC7562-AUTH-010"]
+      }
+    ],
+    "CouponPaymaster.sol": [
+      {
+        "property_id": "PROP-PAYMASTER-REPLAY",
+        "template_type": "PAYMASTER",
+        "target_role": "Paymaster",
+        "bindings": {
+          "validator_function": "validatePaymasterUserOp",
+          "used_coupon_mapping": "usedCoupon",
+          "sponsor_variable": "sponsor"
+        },
+        "precondition": "success(validatePaymasterUserOp(op))",
+        "required_condition": "validCoupon(op) AND NOT used(op.coupon)",
+        "source_chunk_ids": ["AUDIT-33AUDITS-AA-001", "ERC4337-SPEC-021"]
+      }
+    ],
+    "ExpirySessionAccount.sol": [
+      {
+        "property_id": "PROP-SESSION-EXPIRY",
+        "template_type": "SESSION",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp",
+          "key_mapping": "sessionKey",
+          "custom_bindings": {
+            "expiry_mapping": "sessionExpiry"
+          }
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "signedBySessionKey(op, K) AND notExpired(K)",
+        "source_chunk_ids": ["AUDIT-ETH-INFINITISM-README-008", "ERC7562-AUTH-010"]
+      }
+    ],
+    "SimpleOwnerAccount.sol": [
+      {
+        "property_id": "PROP-AUTH-OWNER",
+        "template_type": "AUTH",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "signedByOwner(op, owner)",
+        "source_chunk_ids": ["AUDIT-ETH-INFINITISM-README-008", "ERC4337-SPEC-001"]
+      }
+    ],
+    "ScopeAccountCompliant.sol": [
+      {
+        "property_id": "PROP-SCOPE-COMPLIANT",
+        "template_type": "SCOPE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "inValidationPhase(tr)",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr)",
+        "source_chunk_ids": ["ERC7562-SCOPE-001", "ERC7562-SCOPE-026"]
+      }
+    ],
+    "ScopeAccountViolating.sol": [
+      {
+        "property_id": "PROP-SCOPE-VIOLATING",
+        "template_type": "SCOPE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "inValidationPhase(tr)",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr) AND NOT externalStorageAccessed(tr)",
+        "source_chunk_ids": ["ERC7562-SCOPE-026", "ERC7562-SCOPE-027"]
+      }
+    ],
+    "SimAccountCompliant.sol": [
+      {
+        "property_id": "PROP-SIM-COMPLIANT",
+        "template_type": "SIM",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "success(simulateValidation(op))",
+        "required_condition": "simulationEqualsExecution(op)",
+        "source_chunk_ids": ["ERC7562-SCOPE-003", "ERC4337-SPEC-015"]
+      }
+    ],
+    "SimAccountViolating.sol": [
+      {
+        "property_id": "PROP-SIM-VIOLATING",
+        "template_type": "SIM",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "success(simulateValidation(op))",
+        "required_condition": "simulationEqualsExecution(op)",
+        "source_chunk_ids": ["ERC7562-SCOPE-003", "ERC4337-SPEC-015"]
+      }
+    ],
+    "SimpleAccount.sol": [
+      {
+        "property_id": "PROP-AUTH-SIMPLE",
+        "template_type": "AUTH",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "signedByOwner(op, owner)",
+        "source_chunk_ids": ["AUDIT-ETH-INFINITISM-README-008", "ERC4337-SPEC-001"]
+      }
+    ],
+    "SimpleAccountFactory.sol": [
+      {
+        "property_id": "PROP-FACTORY-INIT",
+        "template_type": "AUTH",
+        "target_role": "Factory",
+        "bindings": {
+          "validator_function": "createAccount"
+        },
+        "precondition": "success(createAccount(owner, salt))",
+        "required_condition": "accountCreated(op)",
+        "source_chunk_ids": ["ERC4337-SPEC-012", "ERC4337-SPEC-020"]
+      }
+    ],
+    "VerifyingPaymaster.sol": [
+      {
+        "property_id": "PROP-PAYMASTER-VERIFYING",
+        "template_type": "PAYMASTER",
+        "target_role": "Paymaster",
+        "bindings": {
+          "validator_function": "validatePaymasterUserOp"
+        },
+        "precondition": "success(validatePaymasterUserOp(op))",
+        "required_condition": "validPaymasterSignature(op)",
+        "source_chunk_ids": ["ERC4337-SPEC-021", "AUDIT-33AUDITS-AA-001"]
+      }
+    ],
+    "TokenPaymaster.sol": [
+      {
+        "property_id": "PROP-PAYMASTER-TOKEN",
+        "template_type": "PAYMASTER",
+        "target_role": "Paymaster",
+        "bindings": {
+          "validator_function": "validatePaymasterUserOp"
+        },
+        "precondition": "success(validatePaymasterUserOp(op))",
+        "required_condition": "tokenBalanceSufficient(op)",
+        "source_chunk_ids": ["ERC4337-SPEC-021", "ERC4337-SPEC-014"]
+      }
+    ],
+    "ERC7579Validator.sol": [
+      {
+        "property_id": "PROP-MODULE-VALIDATOR",
+        "template_type": "AUTH",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "validModuleSignature(op)",
+        "source_chunk_ids": ["ERC7562-AUTH-010", "ERC4337-SPEC-001"]
+      }
+    ],
+    "ERC7579Executor.sol": [
+      {
+        "property_id": "PROP-MODULE-EXECUTOR",
+        "template_type": "AUTH",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "executeFromModule"
+        },
+        "precondition": "success(executeFromModule(op))",
+        "required_condition": "authorizedModuleExecution(op)",
+        "source_chunk_ids": ["ERC7562-AUTH-020", "ERC7562-AUTH-030"]
+      }
+    ],
+    "DiamondAccountFacet.sol": [
+      {
+        "property_id": "PROP-DIAMOND-SCOPE",
+        "template_type": "SCOPE",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "inValidationPhase(tr)",
+        "required_condition": "NOT forbiddenOpcodeExecuted(tr)",
+        "source_chunk_ids": ["ERC7562-SCOPE-027", "ERC7562-AUTH-030"]
+      }
+    ],
+    "AssemblySignatureAccount.sol": [
+      {
+        "property_id": "PROP-ASSEMBLY-AUTH",
+        "template_type": "AUTH",
+        "target_role": "Account",
+        "bindings": {
+          "validator_function": "validateUserOp"
+        },
+        "precondition": "success(validateUserOp(op))",
+        "required_condition": "signedByOwner(op, owner)",
+        "source_chunk_ids": ["AUDIT-ETH-INFINITISM-README-008", "ERC7562-SCOPE-026"]
+      }
+    ]
+  }
+}

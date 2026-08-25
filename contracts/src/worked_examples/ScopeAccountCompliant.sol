@@ -1,29 +1,25 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.23;
 
-struct UserOp {
-    address sender;
-    uint256 nonce;
-    bytes initCode;
-    bytes callData;
-    uint256 callGasLimit;
-    uint256 verificationGasLimit;
-    uint256 preVerificationGas;
-    uint256 maxFeePerGas;
-    uint256 maxPriorityFeePerGas;
-    bytes paymasterAndData;
-    bytes signature;
-}
+import "@account-abstraction/contracts/interfaces/IAccount.sol";
+import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
 
-contract ScopeAccountCompliant {
+/// @title ScopeAccountCompliant (v0.7)
+/// @notice Compliant ERC-4337 account for scope trace testing.
+contract ScopeAccountCompliant is IAccount {
+    address public immutable entryPoint;
     address public owner;
 
-    constructor(address _owner) {
+    constructor(address _entryPoint, address _owner) {
+        entryPoint = _entryPoint;
         owner = _owner;
     }
 
-    function validateUserOp(UserOp calldata op, bytes32 userOpHash) external pure returns (uint256) {
-        // Compliant validation trace: pure owner check
+    function validateUserOp(
+        PackedUserOperation calldata userOp,
+        bytes32 userOpHash,
+        uint256 missingAccountFunds
+    ) external pure override returns (uint256 validationData) {
         return 0; // VALIDATION_SUCCESS
     }
 }

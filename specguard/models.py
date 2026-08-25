@@ -69,6 +69,12 @@ class AAFacts(BaseModel):
 AAFact = AAFacts
 
 
+class MechanismTag(BaseModel):
+    tag: str
+    evidence_nodes: List[str] = Field(default_factory=list)
+    confidence: float = 1.0
+
+
 class ContractFacts(BaseModel):
     contract_name: str
     source_path: str
@@ -77,6 +83,7 @@ class ContractFacts(BaseModel):
     state_variables: List[StateVariableFact] = Field(default_factory=list)
     data_flows: List[DataFlowFact] = Field(default_factory=list)
     aa_facts: AAFacts = Field(default_factory=AAFacts)
+    mechanism_tags: List[MechanismTag] = Field(default_factory=list)
 
     def has_role(self, role: Role) -> bool:
         return role in self.roles
