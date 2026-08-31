@@ -6,7 +6,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "--- eip: 7562 title: Account Abstraction Validation Scope Rules description: A set of limitations on validation EVM code to protect Account Abstraction nodes from denial-of-service attacks through unpaid computation. author: Yoav Weiss (@yoavw), Dror Tirosh (@drortirosh), Alex Forshtat (@forshtat), Shahaf Nacson (@shahafn) discussions-to: https://ethereum-magicians.org/t/erc-7562-account-abstraction-validation-scope-rules/16683 status: Draft type: Standards Track category: ERC created: 2023-09-01 ---"
+    "text": "",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-ERC-433",
@@ -15,7 +22,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "## Abstract  This document describes the validation rules that [ERC-4337](./eip-4337) Account Abstraction protocol participants must follow for user transactions represented as `UserOperation` structs, alongside the rationale for each rule. Block builders and standalone bundlers enforce these rules off-chain."
+    "text": "## Abstract  This document describes the validation rules that [ERC-4337](./eip-4337) Account Abstraction protocol participants must follow for user transactions represented as `UserOperation` structs, alongside the rationale for each rule. Block builders and standalone bundlers enforce these rules off-chain.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-003",
@@ -24,7 +38,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Validation Rule Types We define two types of validation rules: **network-wide rules** and **local rules**.  A violation of any validation rule by a UserOperation results in the UserOperation being dropped from the mempool and excluded from a bundle.  A **network-wide rule** is a rule whose violation by a `UserOperation` damages the reputation of the peer bundler that sent this `UserOperation` into the P2P mempool. A peer bundler with critically low reputation is eventually marked as a malicious **spammer** peer.  A **local rule** is enforced according to each bundler's own local state. Bec..."
+    "text": "### Validation Rule Types We define two types of validation rules: **network-wide rules** and **local rules**.  A violation of any validation rule by a UserOperation results in the UserOperation being dropped from the mempool and excluded from a bundle.  A **network-wide rule** is a rule whose violation by a `UserOperation` damages the reputation of the peer bundler that sent this `UserOperation` into the P2P mempool. A peer bundler with critically low reputation is eventually marked as a malicious **spammer** peer.  A **local rule** is enforced according to each bundler's own local state. Bec...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-004",
@@ -33,7 +54,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Constants  | Title                                | Value                       | Comment                                                                                                                 | |--------------------------------------|-----------------------------|-------------------------------------------------------------------------------------------------------------------------| | `MIN_UNSTAKE_DELAY`                  | 86400                       | 1 day, which provides a sufficient withdrawal delay to prevent most Sybil attacks                                       | | `MIN..."
+    "text": "### Constants  | Title                                | Value                       | Comment                                                                                                                 | |--------------------------------------|-----------------------------|-------------------------------------------------------------------------------------------------------------------------| | `MIN_UNSTAKE_DELAY`                  | 86400                       | 1 day, which provides a sufficient withdrawal delay to prevent most Sybil attacks                                       | | `MIN...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-005",
@@ -42,7 +70,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Definitions 1. **Validation Phase**: There are up to three on-chain frames during the validation phase:     1. `sender` deployment frame (once per account)     2. `sender` validation (required)     3. `paymaster` validation frame (optional)  2. **Execution Phase**: There are up to two on-chain frames during the execution phase:    1. `sender` execution frame (required)    2. `paymaster` post-transaction frame (optional)     The validation rules only apply during the validation phase. Once a `UserOperation` is validated, it is guaranteed to pay. There are no restrictions on execution, neith..."
+    "text": "### Definitions 1. **Validation Phase**: There are up to three on-chain frames during the validation phase:     1. `sender` deployment frame (once per account)     2. `sender` validation (required)     3. `paymaster` validation frame (optional)  2. **Execution Phase**: There are up to two on-chain frames during the execution phase:    1. `sender` execution frame (required)    2. `paymaster` post-transaction frame (optional)     The validation rules only apply during the validation phase. Once a `UserOperation` is validated, it is guaranteed to pay. There are no restrictions on execution, neith...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-006",
@@ -51,7 +86,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Reputation Definitions 1. **opsSeen**: A per-entity counter of how many times a unique valid `UserOperation` referencing this entity    was received by this bundler.    This includes `UserOperation`s received via incoming RPC calls or through a P2P mempool protocol.  2. **opsIncluded**: A per-entity counter of how many times a unique valid `UserOperation` referencing this entity    appeared in an actual included `UserOperation`.    Calculation of this value is based on `UserOperationEvent`s and is only counted for `UserOperation`s that were    previously counted as `opsSeen` by this bundle..."
+    "text": "### Reputation Definitions 1. **opsSeen**: A per-entity counter of how many times a unique valid `UserOperation` referencing this entity    was received by this bundler.    This includes `UserOperation`s received via incoming RPC calls or through a P2P mempool protocol.  2. **opsIncluded**: A per-entity counter of how many times a unique valid `UserOperation` referencing this entity    appeared in an actual included `UserOperation`.    Calculation of this value is based on `UserOperationEvent`s and is only counted for `UserOperation`s that were    previously counted as `opsSeen` by this bundle...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-007",
@@ -60,7 +102,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Reputation Calculation  We define a value `max_seen = opsSeen // MIN_INCLUSION_RATE_DENOMINATOR`.  The reputation state of each entity is determined as follows:  1. **BANNED**: `max_seen > opsIncluded + BAN_SLACK` 2. **THROTTLED**: `max_seen > opsIncluded + THROTTLING_SLACK` 3. **OK**: otherwise  New entities start with an `OK` reputation.  The reputation refresh rate limits a malicious paymaster to processing at most `BAN_SLACK * MIN_INCLUSION_RATE_DENOMINATOR / 24` non-paying `UserOperation`s per hour. This affects only the P2P network, not the blockchain."
+    "text": "### Reputation Calculation  We define a value `max_seen = opsSeen // MIN_INCLUSION_RATE_DENOMINATOR`.  The reputation state of each entity is determined as follows:  1. **BANNED**: `max_seen > opsIncluded + BAN_SLACK` 2. **THROTTLED**: `max_seen > opsIncluded + THROTTLING_SLACK` 3. **OK**: otherwise  New entities start with an `OK` reputation.  The reputation refresh rate limits a malicious paymaster to processing at most `BAN_SLACK * MIN_INCLUSION_RATE_DENOMINATOR / 24` non-paying `UserOperation`s per hour. This affects only the P2P network, not the blockchain.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-008",
@@ -69,7 +118,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Running the Validation Rules  1. A block builder or a bundler should perform a full validation once before accepting a `UserOperation` into its mempool, and again before including it in a bundle/block. 2. The bundler should trace the validation phase of the `UserOperation` and apply all the rules defined in this document. 3. A bundler should also perform a full validation of the entire bundle before submission. 4. The validation rules prevent an unstaked entity from altering its behavior between simulation and execution of the `UserOperation`.    However, a malicious staked entity can dete..."
+    "text": "### Running the Validation Rules  1. A block builder or a bundler should perform a full validation once before accepting a `UserOperation` into its mempool, and again before including it in a bundle/block. 2. The bundler should trace the validation phase of the `UserOperation` and apply all the rules defined in this document. 3. A bundler should also perform a full validation of the entire bundle before submission. 4. The validation rules prevent an unstaked entity from altering its behavior between simulation and execution of the `UserOperation`.    However, a malicious staked entity can dete...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-009",
@@ -78,7 +134,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Mempool Validation Rules  1. A `UserOperation` is broadcast over the P2P protocol with the following information:     1. The `UserOperation` itself.     2. The blockhash this `UserOperation` was originally verified against. 2. Once a `UserOperation` is received from another bundler, it should be verified locally by the receiving bundler. 3. A received `UserOperation` may fail one of several static checks, such as an invalid format, values below the minimum, or an outdated blockhash.    In this case, the bundler should drop this particular `UserOperation` but keep the connection. 4. The bun..."
+    "text": "### Mempool Validation Rules  1. A `UserOperation` is broadcast over the P2P protocol with the following information:     1. The `UserOperation` itself.     2. The blockhash this `UserOperation` was originally verified against. 2. Once a `UserOperation` is received from another bundler, it should be verified locally by the receiving bundler. 3. A received `UserOperation` may fail one of several static checks, such as an invalid format, values below the minimum, or an outdated blockhash.    In this case, the bundler should drop this particular `UserOperation` but keep the connection. 4. The bun...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-OP-011",
@@ -87,7 +150,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Opcode Rules * Opcodes that access information outside of storage and code, referred to here as the \"environment\", are blocked:     * **[OP-011]** Blocked opcodes:         * `ORIGIN` (`0x32`)         * `GASPRICE` (`0x3A`)         * `BLOCKHASH` (`0x40`)         * `COINBASE` (`0x41`)         * `TIMESTAMP` (`0x42`)         * `NUMBER` (`0x43`)         * `PREVRANDAO`/`DIFFICULTY` (`0x44`)         * `GASLIMIT` (`0x45`)         * `BASEFEE` (`0x48`)         * `BLOBHASH` (`0x49`)         * `BLOBBASEFEE` (`0x4A`)         * `CREATE` (`0xF0`), except as allowed by the [Contract Creation](#contract-cre..."
+    "text": "### Opcode Rules * Opcodes that access information outside of storage and code, referred to here as the \"environment\", are blocked:     * **[OP-011]** Blocked opcodes:         * `ORIGIN` (`0x32`)         * `GASPRICE` (`0x3A`)         * `BLOCKHASH` (`0x40`)         * `COINBASE` (`0x41`)         * `TIMESTAMP` (`0x42`)         * `NUMBER` (`0x43`)         * `PREVRANDAO`/`DIFFICULTY` (`0x44`)         * `GASLIMIT` (`0x45`)         * `BASEFEE` (`0x48`)         * `BLOBHASH` (`0x49`)         * `BLOBBASEFEE` (`0x4A`)         * `CREATE` (`0xF0`), except as allowed by the [Contract Creation](#contract-cre...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-COD-010",
@@ -96,7 +166,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Code Rules  * **[COD-010]** Between the first and second validations, the `EXTCODEHASH` value of any visited address,   entity, or referenced library may not be changed.   If the code is modified, the `UserOperation` is considered invalid."
+    "text": "### Code Rules  * **[COD-010]** Between the first and second validations, the `EXTCODEHASH` value of any visited address,   entity, or referenced library may not be changed.   If the code is modified, the `UserOperation` is considered invalid.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-STO-010",
@@ -105,7 +182,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Storage Rules  Storage access using the `SLOAD`, `SSTORE`, `TLOAD`, and `TSTORE` instructions is limited within each phase as follows:  * **[STO-010]** Access to the \"account\" storage is always allowed. * Access to associated storage of the account in an external contract that is not an entity is allowed if either:     * **[STO-021]** The account already exists.     * **[STO-022]** There is an `initCode` and the `factory` contract is staked. * If the `paymaster` or `factory` entity is staked, then it is also allowed:     * **[STO-031]** Access the entity's own storage.     * **[STO-032]** ..."
+    "text": "### Storage Rules  Storage access using the `SLOAD`, `SSTORE`, `TLOAD`, and `TSTORE` instructions is limited within each phase as follows:  * **[STO-010]** Access to the \"account\" storage is always allowed. * Access to associated storage of the account in an external contract that is not an entity is allowed if either:     * **[STO-021]** The account already exists.     * **[STO-022]** There is an `initCode` and the `factory` contract is staked. * If the `paymaster` or `factory` entity is staked, then it is also allowed:     * **[STO-031]** Access the entity's own storage.     * **[STO-032]** ...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-STO-040",
@@ -114,7 +198,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Local Rules  Local storage rules protect the bundler against denial of service at the time of bundling. They do not affect mempool propagation and cannot cause a bundler to be marked as a \"spammer\". * **[STO-040]** A `UserOperation` may not use a `factory`, `paymaster`, or `aggregator` address that is used as an \"account\" in another `UserOperation` in the mempool.   This means that `paymaster`, `factory`, or `aggregator` contracts cannot practically be an \"account\" contract as well. * **[STO-041]** A `UserOperation` may not use associated storage of either its account or a staked entity, i..."
+    "text": "### Local Rules  Local storage rules protect the bundler against denial of service at the time of bundling. They do not affect mempool propagation and cannot cause a bundler to be marked as a \"spammer\". * **[STO-040]** A `UserOperation` may not use a `factory`, `paymaster`, or `aggregator` address that is used as an \"account\" in another `UserOperation` in the mempool.   This means that `paymaster`, `factory`, or `aggregator` contracts cannot practically be an \"account\" contract as well. * **[STO-041]** A `UserOperation` may not use associated storage of either its account or a staked entity, i...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-GREP-010",
@@ -123,7 +214,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### General Reputation Rules  The following reputation rules apply to all staked entities and to unstaked paymasters. All rules apply to all of these entities unless specified otherwise.  * **[GREP-010]** A `BANNED` address is not allowed into the mempool.   Also, all existing `UserOperations` referencing this address are removed from the mempool. * **[GREP-020]** A `THROTTLED` address is limited to:     * `THROTTLED_ENTITY_MEMPOOL_COUNT` entries in the mempool.     * `THROTTLED_ENTITY_BUNDLE_COUNT` `UserOperations` in a bundle.     * `THROTTLED_ENTITY_LIVE_BLOCKS` blocks of residency in the m..."
+    "text": "### General Reputation Rules  The following reputation rules apply to all staked entities and to unstaked paymasters. All rules apply to all of these entities unless specified otherwise.  * **[GREP-010]** A `BANNED` address is not allowed into the mempool.   Also, all existing `UserOperations` referencing this address are removed from the mempool. * **[GREP-020]** A `THROTTLED` address is limited to:     * `THROTTLED_ENTITY_MEMPOOL_COUNT` entries in the mempool.     * `THROTTLED_ENTITY_BUNDLE_COUNT` `UserOperations` in a bundle.     * `THROTTLED_ENTITY_LIVE_BLOCKS` blocks of residency in the m...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SREP-010",
@@ -132,7 +230,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Staked Entities Reputation Rules  * **[SREP-010]** The \"canonical mempool\" defines an entity as staked if it has at least `MIN_STAKE_VALUE` and an unstake delay of at least `MIN_UNSTAKE_DELAY`. * **[SREP-020]** MOVED TO GREP-010 * **[SREP-030]** MOVED TO GREP-020 * **[SREP-040]** An `OK` staked entity faces no limit under the reputation rules:     * Allowed in unlimited numbers in the mempool.     * Allowed in unlimited numbers in a bundle. * **[SREP-050]** MOVED TO GREP-040"
+    "text": "### Staked Entities Reputation Rules  * **[SREP-010]** The \"canonical mempool\" defines an entity as staked if it has at least `MIN_STAKE_VALUE` and an unstake delay of at least `MIN_UNSTAKE_DELAY`. * **[SREP-020]** MOVED TO GREP-010 * **[SREP-030]** MOVED TO GREP-020 * **[SREP-040]** An `OK` staked entity faces no limit under the reputation rules:     * Allowed in unlimited numbers in the mempool.     * Allowed in unlimited numbers in a bundle. * **[SREP-050]** MOVED TO GREP-040",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-EREP-010",
@@ -141,7 +246,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Entity-specific Rules  * **[EREP-010]** For each `paymaster`, the bundler must track the total gas that `UserOperations` using this `paymaster` may consume.     * The bundler should not accept a new `UserOperation` with a paymaster into the mempool if the maximum total gas cost of all UserOperations in the mempool, including this new `UserOperation`, is above the deposit of that `paymaster` at the current gas price. * **[EREP-011]** REMOVED * **[EREP-015]** A `paymaster` should not have its opsSeen incremented because of a failure of the factory or account.   * The second validation runs b..."
+    "text": "### Entity-specific Rules  * **[EREP-010]** For each `paymaster`, the bundler must track the total gas that `UserOperations` using this `paymaster` may consume.     * The bundler should not accept a new `UserOperation` with a paymaster into the mempool if the maximum total gas cost of all UserOperations in the mempool, including this new `UserOperation`, is above the deposit of that `paymaster` at the current gas price. * **[EREP-011]** REMOVED * **[EREP-015]** A `paymaster` should not have its opsSeen incremented because of a failure of the factory or account.   * The second validation runs b...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-UREP-010",
@@ -150,7 +262,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Unstaked Entities Reputation Rules  * Definitions:     * **`opsSeen`, `opsIncluded`, and reputation calculation** are defined in the [Reputation Definitions](#reputation-definitions) and [Reputation Calculation](#reputation-calculation) sections above.     * The `UnstakedReputation` of an entity determines the maximum number of entries using this entity allowed in the mempool.     * `opsAllowed` is a reputation-based calculation for an unstaked entity, representing how many `UserOperations` it is allowed to have in the mempool.     * Rules:         * **[UREP-010]** An unstaked sender that ..."
+    "text": "### Unstaked Entities Reputation Rules  * Definitions:     * **`opsSeen`, `opsIncluded`, and reputation calculation** are defined in the [Reputation Definitions](#reputation-definitions) and [Reputation Calculation](#reputation-calculation) sections above.     * The `UnstakedReputation` of an entity determines the maximum number of entries using this entity allowed in the mempool.     * `opsAllowed` is a reputation-based calculation for an unstaked entity, representing how many `UserOperations` it is allowed to have in the mempool.     * Rules:         * **[UREP-010]** An unstaked sender that ...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-ALT-010",
@@ -159,7 +278,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Alt-mempools Rules  An alternate mempool is an agreed-upon rule that bundlers may opt into, in addition to the canonical mempool. The alt-mempool \"topic\" is a unique identifier. By convention, this is the IPFS hash of the document that describes the specifics of this alt mempool, written in clear text and a YAML file.  * **[ALT-010]** The bundler listens to the alt-mempool \"topic\" over the P2P protocol. * **[ALT-020]** The alt-mempool rules MUST be checked only when a canonical rule is violated.     * That is, if validation follows the canonical rules above, it is not considered part of an..."
+    "text": "### Alt-mempools Rules  An alternate mempool is an agreed-upon rule that bundlers may opt into, in addition to the canonical mempool. The alt-mempool \"topic\" is a unique identifier. By convention, this is the IPFS hash of the document that describes the specifics of this alt mempool, written in clear text and a YAML file.  * **[ALT-010]** The bundler listens to the alt-mempool \"topic\" over the P2P protocol. * **[ALT-020]** The alt-mempool rules MUST be checked only when a canonical rule is violated.     * That is, if validation follows the canonical rules above, it is not considered part of an...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-AREP-010",
@@ -168,7 +294,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Alt-mempool Reputation  Alt-mempools are served by the same bundlers participating in the canonical mempool, but change the rules and may introduce denial-of-service attack vectors. To prevent them from taking the canonical mempool or other alt-mempools down with them, a reputation is managed for each. An alt-mempool that causes too many invalidations gets throttled. This limits the scope of the attack and lets the bundler continue doing its work for other mempools.  * **[AREP-010]** Each alt-mempool has `opsSeen` and `opsIncluded`, much like entities. The `opsSeen` is incremented after `U..."
+    "text": "### Alt-mempool Reputation  Alt-mempools are served by the same bundlers participating in the canonical mempool, but change the rules and may introduce denial-of-service attack vectors. To prevent them from taking the canonical mempool or other alt-mempools down with them, a reputation is managed for each. An alt-mempool that causes too many invalidations gets throttled. This limits the scope of the attack and lets the bundler continue doing its work for other mempools.  * **[AREP-010]** Each alt-mempool has `opsSeen` and `opsIncluded`, much like entities. The `opsSeen` is incremented after `U...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-AUTH-010",
@@ -177,7 +310,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Authorizations  * **[AUTH-010]** A UserOperation may only contain a single [EIP-7702](./eip-7702) authorization tuple. * **[AUTH-020]** An account with EIP-7702 delegation can only be used as the Sender of the UserOperation.   Using the authorized account as any other kind of UserOperation entity is not allowed. * **[AUTH-030]** An account with EIP-7702 delegation can only be **accessed** using `*CALL` or `EXTCODE*` opcodes, and only if it is the Sender of the current UserOperation. * **[AUTH-040]** If there are multiple UserOperations by the same sender with an authorization tuple in the ..."
+    "text": "### Authorizations  * **[AUTH-010]** A UserOperation may only contain a single [EIP-7702](./eip-7702) authorization tuple. * **[AUTH-020]** An account with EIP-7702 delegation can only be used as the Sender of the UserOperation.   Using the authorized account as any other kind of UserOperation entity is not allowed. * **[AUTH-030]** An account with EIP-7702 delegation can only be **accessed** using `*CALL` or `EXTCODE*` opcodes, and only if it is the Sender of the current UserOperation. * **[AUTH-040]** If there are multiple UserOperations by the same sender with an authorization tuple in the ...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-LIM-010",
@@ -186,7 +326,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Limitations  The validation rules attempt to guarantee a degree of isolation between individual `UserOperation`s' validations. In order to prevent hitting the memory expansion limitations that the Ethereum EVM imposes when creating a bundle, `UserOperation`s must meet the following limitations:  * **[LIM-010]** Maximum size of a single packed and ABI-encoded `UserOperation` in bytes MUST not exceed `MAX_USEROP_SIZE`. * **[LIM-020]** Maximum size of a `context` byte array returned by a paymaster in a single `UserOperation` in bytes MUST not exceed `MAX_CONTEXT_SIZE`. * **[LIM-030]** The `ve..."
+    "text": "### Limitations  The validation rules attempt to guarantee a degree of isolation between individual `UserOperation`s' validations. In order to prevent hitting the memory expansion limitations that the Ethereum EVM imposes when creating a bundle, `UserOperation`s must meet the following limitations:  * **[LIM-010]** Maximum size of a single packed and ABI-encoded `UserOperation` in bytes MUST not exceed `MAX_USEROP_SIZE`. * **[LIM-020]** Maximum size of a `context` byte array returned by a paymaster in a single `UserOperation` in bytes MUST not exceed `MAX_CONTEXT_SIZE`. * **[LIM-030]** The `ve...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-022",
@@ -195,7 +342,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "## Rationale  All transactions initiated by EOAs have an implicit validation phase where balance, nonce, and signature are checked against the current state of the Ethereum blockchain. Once a node has validated the transaction, only another transaction by the same EOA can modify the Ethereum state in a way that invalidates the first transaction.  With Account Abstraction, however, validation can also include arbitrary EVM code and rely on storage, which means that unrelated `UserOperation`s or transactions may invalidate each other.  If not addressed, this would make maintaining a mempool of v..."
+    "text": "## Rationale  All transactions initiated by EOAs have an implicit validation phase where balance, nonce, and signature are checked against the current state of the Ethereum blockchain. Once a node has validated the transaction, only another transaction by the same EOA can modify the Ethereum state in a way that invalidates the first transaction.  With Account Abstraction, however, validation can also include arbitrary EVM code and rely on storage, which means that unrelated `UserOperation`s or transactions may invalidate each other.  If not addressed, this would make maintaining a mempool of v...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-ERC-776",
@@ -204,7 +358,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### The high-level goal  The purpose of this specification is to define a consensus between nodes, whether bundlers or block builders, when processing incoming `UserOperation`s from an external source. This external source is either an end-user node submitting via the [ERC-7769](./eip-7769) RPC, or another node in the P2P network.  The protocol detects \"spam\" \u2014 large bursts of `UserOperation`s that cannot be included on-chain and thus cannot pay fees. The network is protected by throttling requests from such spammer nodes.  All network nodes must share the same definition of \"spam\". If some no..."
+    "text": "### The high-level goal  The purpose of this specification is to define a consensus between nodes, whether bundlers or block builders, when processing incoming `UserOperation`s from an external source. This external source is either an end-user node submitting via the [ERC-7769](./eip-7769) RPC, or another node in the P2P network.  The protocol detects \"spam\" \u2014 large bursts of `UserOperation`s that cannot be included on-chain and thus cannot pay fees. The network is protected by throttling requests from such spammer nodes.  All network nodes must share the same definition of \"spam\". If some no...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-024",
@@ -213,7 +374,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### The processing flow of a UserOperation  - First, a `UserOperation` is received, either via RPC or via the P2P protocol from another mempool node. - The node validates the `UserOperation`, adds it to its local mempool, and broadcasts it to its peers. - Finally, when building a block, a node collects `UserOperation`s from the mempool, performs a second validation to ensure they remain valid as a bundle, and includes them in the next block."
+    "text": "### The processing flow of a UserOperation  - First, a `UserOperation` is received, either via RPC or via the P2P protocol from another mempool node. - The node validates the `UserOperation`, adds it to its local mempool, and broadcasts it to its peers. - Finally, when building a block, a node collects `UserOperation`s from the mempool, performs a second validation to ensure they remain valid as a bundle, and includes them in the next block.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-025",
@@ -222,7 +390,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### The need for a second validation before submitting a block  A standard Ethereum transaction can be invalidated if replaced by another transaction with the same nonce. The replacement transaction must pay a higher gas price, satisfying the rule that mempool inclusion requires payment. With contract-based accounts, a `UserOperation`'s validity may depend on mutable state. Other transactions can invalidate a previously valid `UserOperation`, necessitating a second validation before block inclusion."
+    "text": "### The need for a second validation before submitting a block  A standard Ethereum transaction can be invalidated if replaced by another transaction with the same nonce. The replacement transaction must pay a higher gas price, satisfying the rule that mempool inclusion requires payment. With contract-based accounts, a `UserOperation`'s validity may depend on mutable state. Other transactions can invalidate a previously valid `UserOperation`, necessitating a second validation before block inclusion.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-026",
@@ -231,7 +406,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Rationale for limiting opcodes  - Validation occurs off-chain, before block creation. Certain opcodes access block-specific information that is not yet finalized. - Using these opcodes during validation enables scenarios where a `UserOperation` succeeds off-chain but consistently reverts on-chain, facilitating DoS attacks. - For example, `require(block.number == 12345)` might pass during mempool validation but fail when the transaction is eventually included in a later block."
+    "text": "### Rationale for limiting opcodes  - Validation occurs off-chain, before block creation. Certain opcodes access block-specific information that is not yet finalized. - Using these opcodes during validation enables scenarios where a `UserOperation` succeeds off-chain but consistently reverts on-chain, facilitating DoS attacks. - For example, `require(block.number == 12345)` might pass during mempool validation but fail when the transaction is eventually included in a later block.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-027",
@@ -240,7 +422,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Rationale for limiting storage access  - Validation processes must not overlap, ensuring a single storage modification cannot invalidate a large number of mempool `UserOperation`s. By restricting storage access to the account's associated storage, bundlers can guarantee the inclusion of at least one `UserOperation` per account in a bundle. - A bundler MAY include multiple `UserOperation`s of the same account in a bundle, but MUST first validate them together."
+    "text": "### Rationale for limiting storage access  - Validation processes must not overlap, ensuring a single storage modification cannot invalidate a large number of mempool `UserOperation`s. By restricting storage access to the account's associated storage, bundlers can guarantee the inclusion of at least one `UserOperation` per account in a bundle. - A bundler MAY include multiple `UserOperation`s of the same account in a bundle, but MUST first validate them together.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-028",
@@ -249,7 +438,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Rationale for requiring a stake  We want to allow globally-used contracts, such as paymasters, factories, and aggregators, to use storage not associated with the account, but still prevent them from spamming the mempool. If a contract causes too many `UserOperation`s to fail in their second validation after succeeding in their first, we can throttle its use in the mempool.  Requiring a stake prevents Sybil attacks by making it economically unviable to spawn numerous malicious paymasters to sustain a spam attack.  The validation rules allow nodes to detect and throttle contracts responsible..."
+    "text": "### Rationale for requiring a stake  We want to allow globally-used contracts, such as paymasters, factories, and aggregators, to use storage not associated with the account, but still prevent them from spamming the mempool. If a contract causes too many `UserOperation`s to fail in their second validation after succeeding in their first, we can throttle its use in the mempool.  Requiring a stake prevents Sybil attacks by making it economically unviable to spawn numerous malicious paymasters to sustain a spam attack.  The validation rules allow nodes to detect and throttle contracts responsible...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-029",
@@ -258,7 +454,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### Definition of the mass invalidation attack  A series of actions constitutes a **mass invalidation attack** if a large number of `UserOperation`s\u2014having passed initial validation and propagated through the mempool\u2014subsequently become invalid and ineligible for block inclusion.  There are three ways to execute such an attack:  1. Submitting `UserOperation`s that pass initial validation but fail the second validation during bundle creation. 2. Submitting `UserOperation`s that are valid in isolation but become invalid when bundled together. 3. Front-running valid `UserOperation`s with an econo..."
+    "text": "### Definition of the mass invalidation attack  A series of actions constitutes a **mass invalidation attack** if a large number of `UserOperation`s\u2014having passed initial validation and propagated through the mempool\u2014subsequently become invalid and ineligible for block inclusion.  There are three ways to execute such an attack:  1. Submitting `UserOperation`s that pass initial validation but fail the second validation during bundle creation. 2. Submitting `UserOperation`s that are valid in isolation but become invalid when bundled together. 3. Front-running valid `UserOperation`s with an econo...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-030",
@@ -267,7 +470,14 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "### What is not considered a mass invalidation attack  A `UserOperation` that fails initial validation without entering the mempool is not considered an attack. Nodes are expected to implement standard security measures, throttling requests based on API keys, IP addresses, or P2P peer scoring, to prevent spam.  Furthermore, if invalidating `N` `UserOperation`s costs an attacker `N * X` (where `X` is sufficiently large), the attack is not considered economically viable.  - The minimum change to cause an invalidation is a storage modification, which costs 5,000 gas. - Assuming a node can process..."
+    "text": "### What is not considered a mass invalidation attack  A `UserOperation` that fails initial validation without entering the mempool is not considered an attack. Nodes are expected to implement standard security measures, throttling requests based on API keys, IP addresses, or P2P peer scoring, to prevent spam.  Furthermore, if invalidating `N` `UserOperation`s costs an attacker `N * X` (where `X` is sufficiently large), the attack is not considered economically viable.  - The minimum change to cause an invalidation is a storage modification, which costs 5,000 gas. - Assuming a node can process...",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   },
   {
     "id": "ERC7562-SCOPE-031",
@@ -276,6 +486,13 @@
     "role": "generic",
     "phase": "validation",
     "topic": "validation scope",
-    "text": "## Security Considerations  This document describes the security considerations that bundlers must take to protect themselves, and the entire mempool network, from denial-of-service attacks."
+    "text": "## Security Considerations  This document describes the security considerations that bundlers must take to protect themselves, and the entire mempool network, from denial-of-service attacks.",
+    "authority": 1.0,
+    "kind": "standard",
+    "version_scope": [
+      "0.6",
+      "0.7",
+      "0.8"
+    ]
   }
 ]

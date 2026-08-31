@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT
 """
-Property Normalization and Binding Engine for SpecGuard-AA (Algorithm 1 Lines 10-20).
-Validates Supported(), TemplateCheck(), TypeCheck(), and computes Bind(p, E(c))
-with explicit confidence-threshold scoring and ambiguity rejection.
+Property Normalization, Grounding, and Binding Engine for SpecGuard-AA (Algorithm 1 Lines 10-20).
+Validates Supported(), SentenceLevelGrounding(), Normalize(), TemplateCheck(), TypeCheck(), and Bind(p, E(c))
+with explicit confidence-threshold scoring and zero arbitrary fallback citations.
 """
 
 import re
@@ -15,31 +15,34 @@ from specguard.models import (
     PropertyBinding,
 )
 from specguard.retrieval.corpus import CorpusChunk
+from specguard.binding.grounding import SentenceLevelGroundingEngine, GroundingRejection
 
 
 class NormalizerAndBinder:
     """
-    Normalizes candidate properties and binds abstract symbols to concrete AST elements.
-    Discards candidate properties when binding confidence is below threshold.
+    Normalizes candidate properties, validates sentence-level grounding against cited evidence,
+    and binds abstract symbols to concrete AST elements.
     """
 
     def __init__(self, confidence_threshold: float = 0.65):
         self.confidence_threshold = confidence_threshold
+        self.grounding_engine = SentenceLevelGroundingEngine()
 
     def process(
         self, property: Property, facts: ContractFacts, evidence_chunks: List[CorpusChunk]
     ) -> Optional[Tuple[Property, PropertyBinding]]:
         """
         Run Algorithm 1 filtering pipeline:
-        Supported -> Normalize -> TemplateCheck -> TypeCheck -> Bind
+        Supported/Grounded -> Normalize -> TemplateCheck -> TypeCheck -> Bind
         Returns (normalized_property, concrete_binding) or None if rejected.
         """
-        # 1. Supported Check (Paper Section 3.3)
-        if not self.is_supported(property, evidence_chunks):
+        # 1. Sentence-Level Supported Check (Step C5)
+        grounded_prop = self.is_supported(property, evidence_chunks)
+        if grounded_prop is None:
             return None
 
         # 2. Normalize Property
-        normalized_prop = self.normalize(property)
+        normalized_prop = self.normalize(grounded_prop)
 
         # 3. Template Check
         if not self.template_check(normalized_prop):
@@ -57,15 +60,13 @@ class NormalizerAndBinder:
         normalized_prop.bindings = binding
         return (normalized_prop, binding)
 
-    def is_supported(self, property: Property, evidence_chunks: List[CorpusChunk]) -> bool:
-        if not property.source_chunk_ids:
-            return False
-
-        chunk_ids = {c.id for c in evidence_chunks}
-        for cited_id in property.source_chunk_ids:
-            if cited_id not in chunk_ids:
-                return False
-        return True
+    def is_supported(self, property: Property, evidence_chunks: List[CorpusChunk]) -> Optional[Property]:
+        """
+        Validates per-obligation grounding with sentence-level co-occurrence.
+        Returns the grounded Property if supported, or None if rejected.
+        """
+        grounded_prop, _ = self.grounding_engine.validate_property_grounding(property, evidence_chunks)
+        return grounded_prop
 
     def normalize(self, property: Property) -> Property:
         prop_copy = property.model_copy(deep=True)

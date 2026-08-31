@@ -542,7 +542,7 @@ class PropertySynthesizer:
                         ),
                         precondition="success(validateUserOp(op)) AND signedBySessionKey(op, K)",
                         required_condition="target(op) == allowedTarget[K]",
-                        source_chunk_ids=session_sources if session_sources else chunk_ids[:1],
+                        source_chunk_ids=session_sources,
                     )
                 )
 
@@ -565,7 +565,7 @@ class PropertySynthesizer:
                         ),
                         precondition="success(validateUserOp(op)) AND signedBySessionKey(op, K)",
                         required_condition="notExpired(K)",
-                        source_chunk_ids=expiry_sources if expiry_sources else chunk_ids[:1],
+                        source_chunk_ids=expiry_sources,
                     )
                 )
 
@@ -583,7 +583,7 @@ class PropertySynthesizer:
                     bindings=PropertyBinding(validator_function="validateUserOp"),
                     precondition="success(validateUserOp(op))",
                     required_condition="nonceFresh(op)",
-                    source_chunk_ids=nonce_sources if nonce_sources else chunk_ids[:1],
+                    source_chunk_ids=nonce_sources,
                 )
             )
 
@@ -615,7 +615,7 @@ class PropertySynthesizer:
                         ),
                         precondition="success(validatePaymasterUserOp(op))",
                         required_condition="validCoupon(op) AND NOT used(op.coupon)",
-                        source_chunk_ids=paymaster_sources if paymaster_sources else chunk_ids[:1],
+                        source_chunk_ids=paymaster_sources,
                     )
                 )
 

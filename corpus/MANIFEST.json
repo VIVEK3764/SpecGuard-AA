@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-08-02T12:21:29.723321+00:00",
   "total_sources": 11,
-  "total_chunks": 113,
+  "total_chunks": 13356,
   "sources": [
     {
       "source_id": "SRC-ERC4337-SPEC",
@@ -135,5 +135,13 @@
       "raw_words": 878,
       "chunks_derived": 10
     }
-  ]
+  ],
+  "audit_knowledge": {
+    "source_type": "git_cloned_audit_reports",
+    "repos_ingested": 34,
+    "pre_filter_chunks": 21695,
+    "post_filter_chunks": 13285,
+    "filtered_count": 8410,
+    "status": "verified_clean"
+  }
 }

@@ -21,3 +21,6 @@ lib/
 contracts/test/generated/
 contracts/test/reproductions/
 contracts/src/generated/
+
+# Scratch directory & temporary cloned repos
+scratch/
