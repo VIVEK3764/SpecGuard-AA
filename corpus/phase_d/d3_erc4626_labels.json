@@ -1,0 +1,518 @@
+{
+  "domain": "ERC-4626",
+  "annotator": "Consensus",
+  "obligation_count": 15,
+  "scoping_rule": "Standard tokenized vault interface per EIP-4626 specifications.",
+  "contracts": [
+    {
+      "file": "OpenZeppelin_ERC4626.sol",
+      "kind": "OZ reference tokenized vault base (v5.0 with virtual shares)",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_enforced"
+        },
+        "V-015": {
+          "label": "applicable_absent"
+        }
+      }
+    },
+    {
+      "file": "Solmate_ERC4626.sol",
+      "kind": "Solmate gas-optimized minimal vault",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_absent"
+        },
+        "V-015": {
+          "label": "applicable_absent"
+        }
+      }
+    },
+    {
+      "file": "Morpho_MetaMorpho.sol",
+      "kind": "MetaMorpho lending optimizer vault with supply caps",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_enforced"
+        },
+        "V-015": {
+          "label": "not_applicable"
+        }
+      }
+    },
+    {
+      "file": "Yearn_v3_TokenizedVault.sol",
+      "kind": "Yearn v3 single-asset multi-strategy vault",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_enforced"
+        },
+        "V-015": {
+          "label": "not_applicable"
+        }
+      }
+    },
+    {
+      "file": "Spark_sDAI.sol",
+      "kind": "Maker/Spark Savings DAI vault (DSR accumulator)",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "not_applicable"
+        },
+        "V-015": {
+          "label": "not_applicable"
+        }
+      }
+    },
+    {
+      "file": "Euler_EVault.sol",
+      "kind": "Euler v2 lending vault with cash/borrow accounting",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_enforced"
+        },
+        "V-015": {
+          "label": "applicable_absent"
+        }
+      }
+    },
+    {
+      "file": "Beefy_ERC4626Wrapper.sol",
+      "kind": "Beefy auto-compounding vault wrapper",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_absent"
+        },
+        "V-015": {
+          "label": "not_applicable"
+        }
+      }
+    },
+    {
+      "file": "YieldSpace_PoolVault.sol",
+      "kind": "Yield Space fixed yield invariant vault",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_enforced"
+        },
+        "V-015": {
+          "label": "not_applicable"
+        }
+      }
+    },
+    {
+      "file": "Aave_v3_ERC4626Wrapper.sol",
+      "kind": "Aave v3 aToken 1:1 wrapper vault",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "not_applicable"
+        },
+        "V-015": {
+          "label": "not_applicable"
+        }
+      }
+    },
+    {
+      "file": "Balancer_BoostedPoolVault.sol",
+      "kind": "Balancer boosted pool buffer vault",
+      "labels": {
+        "V-001": {
+          "label": "applicable_enforced"
+        },
+        "V-002": {
+          "label": "applicable_enforced"
+        },
+        "V-003": {
+          "label": "applicable_enforced"
+        },
+        "V-004": {
+          "label": "applicable_enforced"
+        },
+        "V-005": {
+          "label": "applicable_enforced"
+        },
+        "V-006": {
+          "label": "applicable_enforced"
+        },
+        "V-007": {
+          "label": "applicable_enforced"
+        },
+        "V-008": {
+          "label": "applicable_enforced"
+        },
+        "V-009": {
+          "label": "applicable_enforced"
+        },
+        "V-010": {
+          "label": "applicable_enforced"
+        },
+        "V-011": {
+          "label": "applicable_enforced"
+        },
+        "V-012": {
+          "label": "applicable_enforced"
+        },
+        "V-013": {
+          "label": "applicable_enforced"
+        },
+        "V-014": {
+          "label": "applicable_enforced"
+        },
+        "V-015": {
+          "label": "applicable_absent"
+        }
+      }
+    }
+  ]
+}

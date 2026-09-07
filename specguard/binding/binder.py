@@ -36,8 +36,8 @@ class NormalizerAndBinder:
         Supported/Grounded -> Normalize -> TemplateCheck -> TypeCheck -> Bind
         Returns (normalized_property, concrete_binding) or None if rejected.
         """
-        # 1. Sentence-Level Supported Check (Step C5)
-        grounded_prop = self.is_supported(property, evidence_chunks)
+        # 1. Sentence-Level Grounding Check (Step C5)
+        grounded_prop = self.validate_grounding(property, evidence_chunks)
         if grounded_prop is None:
             return None
 
@@ -60,7 +60,7 @@ class NormalizerAndBinder:
         normalized_prop.bindings = binding
         return (normalized_prop, binding)
 
-    def is_supported(self, property: Property, evidence_chunks: List[CorpusChunk]) -> Optional[Property]:
+    def validate_grounding(self, property: Property, evidence_chunks: List[CorpusChunk]) -> Optional[Property]:
         """
         Validates per-obligation grounding with sentence-level co-occurrence.
         Returns the grounded Property if supported, or None if rejected.
@@ -75,7 +75,7 @@ class NormalizerAndBinder:
         req = prop_copy.required_condition
 
         pre = re.sub(r"\b(validSignature|authorizedSigner|signatureAccepted)\b", "signedBy", pre)
-        req = re.sub(r"\b(targetAllowed|allowedTargetMap)\b", "allowedTarget", req)
+        req = re.sub(r"\b(targetAllowedMap|targetAllowed)\b", "permittedTarget", req)
         req = re.sub(r"\b(couponValid|validCouponSig)\b", "validCoupon", req)
 
         prop_copy.precondition = pre

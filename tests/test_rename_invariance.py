@@ -156,3 +156,49 @@ def test_rename_invariance_synthesis_templates(sol_path: str):
         f"Original property types: {orig_types}\n"
         f"Renamed property types:  {renamed_types}"
     )
+
+
+@pytest.mark.rename_invariance
+def test_rename_with_enforcing_check_no_session_target_problem():
+    """
+    Step E1 Verification:
+    SessionAccount with `allowedTarget` renamed to `permittedDestination` AND
+    an active enforcing check:
+        `if (permittedDestination[signer] != target) return SIG_VALIDATION_FAILED;`
+    
+    1. The contract is genuinely correct.
+    2. The legacy hardcoded detector (checking `"allowedTarget" not in val_df.state_vars_read`)
+       falsely flagged this as a defect because the string 'allowedTarget' was absent.
+    3. The rebuilt pipeline extracts `permittedDestination` in `state_vars_read` and
+       records `unread_in_validation: []`.
+    4. The synthesizer reports NO session-target defect property for this contract.
+    """
+    enforced_sol_path = "contracts/src/worked_examples/SessionAccount_Enforced.sol"
+    facts = extract_facts(enforced_sol_path)
+    
+    # 1. Verify structural extraction: permittedDestination is read in validation
+    val_df = next((df for df in facts.data_flows if df.function_name == "validateUserOp"), None)
+    assert val_df is not None, "validateUserOp data flow fact not found"
+    assert "permittedDestination" in val_df.state_vars_read, (
+        f"Expected permittedDestination to be in state_vars_read, got: {val_df.state_vars_read}"
+    )
+    assert "permittedDestination" not in val_df.unread_in_validation, (
+        f"permittedDestination must NOT be in unread_in_validation! Got: {val_df.unread_in_validation}"
+    )
+    assert val_df.unread_in_validation == [], (
+        f"Expected empty unread_in_validation for enforced contract, got: {val_df.unread_in_validation}"
+    )
+
+    # 2. Confirm the legacy hardcoded check would have falsely failed
+    legacy_hardcoded_condition = ("allowedTarget" not in val_df.state_vars_read)
+    assert legacy_hardcoded_condition is True, (
+        "Legacy check should evaluate to True (confirming the false-positive flaw of the old detector)"
+    )
+
+    # 3. Verify the pipeline reports NO session-target defect
+    synthesizer = PropertySynthesizer(live=False)
+    props = synthesizer.synthesize(facts, [], obligation_id="SES-001", mode="full_specguard")
+    assert len(props) == 0, (
+        f"Expected 0 session-target violation properties for correctly enforced contract, got {len(props)}: {props}"
+    )
+

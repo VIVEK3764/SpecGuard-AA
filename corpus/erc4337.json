@@ -12,7 +12,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-002",
@@ -27,7 +28,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-003",
@@ -42,7 +44,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-004",
@@ -57,7 +60,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-005",
@@ -72,7 +76,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-006",
@@ -87,7 +92,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-007",
@@ -102,7 +108,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-008",
@@ -117,7 +124,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-009",
@@ -132,7 +140,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-010",
@@ -147,7 +156,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-011",
@@ -162,7 +172,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-012",
@@ -177,7 +188,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-013",
@@ -192,7 +204,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-014",
@@ -207,7 +220,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-015",
@@ -222,7 +236,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-016",
@@ -237,7 +252,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-017",
@@ -252,7 +268,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-018",
@@ -267,7 +284,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-019",
@@ -282,7 +300,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-020",
@@ -297,7 +316,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-021",
@@ -312,7 +332,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-022",
@@ -327,7 +348,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-023",
@@ -342,7 +364,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-024",
@@ -357,7 +380,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-025",
@@ -372,7 +396,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-026",
@@ -387,7 +412,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-027",
@@ -402,7 +428,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-028",
@@ -417,7 +444,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-029",
@@ -432,7 +460,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-030",
@@ -447,7 +476,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-031",
@@ -462,7 +492,8 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   },
   {
     "id": "ERC4337-SPEC-032",
@@ -477,6 +508,7 @@
       "0.6",
       "0.7",
       "0.8"
-    ]
+    ],
+    "version_uncertain": false
   }
 ]

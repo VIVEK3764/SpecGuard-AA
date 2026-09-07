@@ -146,12 +146,19 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
                         if f".{field}" in node_str or field in node_str:
                             op_fields.add(field)
 
+            all_mutable_state_vars = [
+                sv.name for sv in target_contract.state_variables
+                if not getattr(sv, "is_constant", False) and not getattr(sv, "is_immutable", False) and not sv.name.isupper()
+            ]
+            unread_vars = [v for v in all_mutable_state_vars if v not in st_read]
+
             data_flow_facts.append(
                 DataFlowFact(
                     function_name=fn.name,
                     state_vars_read=st_read,
                     state_vars_written=st_written,
                     user_op_fields_read=list(op_fields),
+                    unread_in_validation=unread_vars,
                     influences_validation_return=True,
                 )
             )

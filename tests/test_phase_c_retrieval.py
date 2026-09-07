@@ -32,7 +32,7 @@ def test_corpus_rebuild_quality_and_schema():
 
     for c in audit_chunks:
         assert c.source_commit != "", f"Chunk {c.id} missing git source_commit hash"
-        assert c.authority >= 0.70, f"Chunk {c.id} has invalid authority {c.authority}"
+        assert 0.40 <= c.authority <= 1.0, f"Chunk {c.id} has invalid authority {c.authority}"
         assert c.kind in ["description", "recommendation", "finding", "standard"]
         assert len(c.text.strip()) >= 50, f"Chunk {c.id} text too short"
 

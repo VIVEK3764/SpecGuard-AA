@@ -1,0 +1,692 @@
+{
+  "domain": "ERC-20",
+  "annotator": "A",
+  "obligation_count": 15,
+  "scoping_rule": "the concrete token plus one level of base contracts; OZ extension mixins are labelled composed with ERC20.sol, since neither is deployable alone",
+  "contracts": [
+    {
+      "file": "OZ_ERC20.sol + ERC20Permit.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "transfer and transferFrom return true explicitly (ERC20 L~200)",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve with no increase/decrease helper; OZ removed increaseAllowance in v5 and documents the race as the caller's problem",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "_spendAllowance reverts ERC20InsufficientAllowance",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer is permitted; only the zero address is rejected",
+          "confidence": "high"
+        },
+        "T-005": {
+          "label": "not_applicable",
+          "reason": "no fee mechanism; the amount credited equals the amount debited",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing; balances change only on transfer, mint or burn",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "not_applicable",
+          "reason": "decimals is 18 and no internal arithmetic depends on it",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "_update is the single mutation path for balances and totalSupply",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "not_applicable",
+          "reason": "ERC20.sol exposes no public mint; _mint is internal",
+          "confidence": "high"
+        },
+        "T-010": {
+          "label": "not_applicable",
+          "reason": "no public burn in the base",
+          "confidence": "high"
+        },
+        "T-011": {
+          "label": "not_applicable",
+          "reason": "not pausable in this composition",
+          "confidence": "high"
+        },
+        "T-012": {
+          "label": "applicable_enforced",
+          "reason": "ERC20Permit builds an EIP-712 digest with a nonce (L~50) and a deadline check (L~40), over EIP712's domain separator carrying chainId and address(this)",
+          "confidence": "high"
+        },
+        "T-013": {
+          "label": "applicable_enforced",
+          "reason": "uses ECDSA.recover, which reverts on a malformed signature and rejects high-s",
+          "confidence": "high"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no transfer hooks in this composition",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "not_applicable",
+          "reason": "not upgradeable",
+          "confidence": "high"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 6,
+        "applicable_absent": 1,
+        "not_applicable": 8
+      }
+    },
+    {
+      "file": "OZ_ERC20.sol + ERC20Pausable.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "returns true explicitly",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve, no race mitigation",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "_spendAllowance reverts on insufficient allowance",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer permitted",
+          "confidence": "high"
+        },
+        "T-005": {
+          "label": "not_applicable",
+          "reason": "no fee mechanism",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "not_applicable",
+          "reason": "18 decimals, no dependent arithmetic",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "_update is the single mutation path",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "not_applicable",
+          "reason": "no public mint",
+          "confidence": "high"
+        },
+        "T-010": {
+          "label": "not_applicable",
+          "reason": "no public burn",
+          "confidence": "high"
+        },
+        "T-011": {
+          "label": "unclear",
+          "reason": "ERC20Pausable overrides _update with whenNotPaused (L~28), so a pause halts every transfer. Whether that strands funds depends on the pause authority, which this mixin does not define",
+          "confidence": "low"
+        },
+        "T-012": {
+          "label": "not_applicable",
+          "reason": "no permit in this composition",
+          "confidence": "high"
+        },
+        "T-013": {
+          "label": "not_applicable",
+          "reason": "no permit",
+          "confidence": "high"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "not_applicable",
+          "reason": "not upgradeable",
+          "confidence": "high"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 4,
+        "applicable_absent": 1,
+        "not_applicable": 9,
+        "unclear": 1
+      }
+    },
+    {
+      "file": "USDT_TetherToken.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_absent",
+          "reason": "transfer, transferFrom and approve are declared with no return value (L85, L95, L96) and the implementations return nothing (L126, L171, L199). This is the canonical non-compliant token that broke integrators",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "approve requires the allowance be zeroed first (L~200), which mitigates the race but is itself the behaviour that breaks safeApprove integrations",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "transferFrom checks the allowance before decrementing",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "unclear",
+          "reason": "onlyPayloadSize(2*32) at L126 constrains calldata length; zero-value transfer is not explicitly rejected but the modifier has broken integrators historically",
+          "confidence": "low"
+        },
+        "T-005": {
+          "label": "applicable_absent",
+          "reason": "basisPointsRate at L110 and the fee computed at L127 and L177 mean the recipient receives less than the amount sent. The rate is currently zero, but the mechanism is present and the obligation is unmet by construction",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "applicable_enforced",
+          "reason": "decimals is a constructor parameter and USDT deploys with 6; SafeMath is used throughout",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "issue and redeem adjust totalSupply alongside the owner balance",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "applicable_enforced",
+          "reason": "issue is onlyOwner",
+          "confidence": "high"
+        },
+        "T-010": {
+          "label": "applicable_enforced",
+          "reason": "redeem is onlyOwner and burns only from the owner balance",
+          "confidence": "high"
+        },
+        "T-011": {
+          "label": "applicable_absent",
+          "reason": "addBlackList plus destroyBlackFunds permanently removes a holder's balance with no recovery path, and pause halts all transfers indefinitely",
+          "confidence": "high"
+        },
+        "T-012": {
+          "label": "not_applicable",
+          "reason": "no permit",
+          "confidence": "high"
+        },
+        "T-013": {
+          "label": "not_applicable",
+          "reason": "no permit",
+          "confidence": "high"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "applicable_absent",
+          "reason": "the upgrade path forwards to UpgradedStandardToken by legacy call rather than a proxy, and deprecation is irreversible once set",
+          "confidence": "high"
+        }
+      },
+      "summary": {
+        "applicable_absent": 5,
+        "applicable_enforced": 5,
+        "unclear": 1,
+        "not_applicable": 4
+      }
+    },
+    {
+      "file": "USDC_FiatTokenV2_2.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "inherits FiatTokenV1 transfer semantics, which return bool",
+          "confidence": "medium"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve inherited; no race mitigation",
+          "confidence": "medium"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "allowance checked in the inherited transferFrom",
+          "confidence": "medium"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer permitted",
+          "confidence": "medium"
+        },
+        "T-005": {
+          "label": "not_applicable",
+          "reason": "no fee mechanism",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "applicable_enforced",
+          "reason": "6 decimals, fixed at initialisation",
+          "confidence": "medium"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "mint and burn adjust totalSupply",
+          "confidence": "medium"
+        },
+        "T-009": {
+          "label": "applicable_enforced",
+          "reason": "minting is restricted to configured minters with allowances",
+          "confidence": "medium"
+        },
+        "T-010": {
+          "label": "applicable_enforced",
+          "reason": "burn is minter-restricted and burns only own balance",
+          "confidence": "medium"
+        },
+        "T-011": {
+          "label": "applicable_absent",
+          "reason": "blacklisting freezes a holder's balance with no recovery path. L61 blacklists address(this) deliberately. This is a designed regulatory feature, not an oversight",
+          "confidence": "high"
+        },
+        "T-012": {
+          "label": "applicable_enforced",
+          "reason": "permit at L95 delegates to _permit with a deadline and the inherited EIP-712 domain",
+          "confidence": "medium"
+        },
+        "T-013": {
+          "label": "applicable_enforced",
+          "reason": "V2_2 added support for ERC-1271 contract signatures and validates via SignatureChecker",
+          "confidence": "medium"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no transfer hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "unclear",
+          "reason": "upgradeable behind FiatTokenProxy. V2_2 is an implementation with an initializeV2_2 reinitialiser (L~40); storage-layout preservation across V1 to V2_2 cannot be verified from this file alone",
+          "confidence": "low"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 9,
+        "applicable_absent": 2,
+        "not_applicable": 3,
+        "unclear": 1
+      }
+    },
+    {
+      "file": "Lido_StETH.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "transfer, transferFrom and approve all return bool (L196, L226, L252)",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve; no increase/decrease helper",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "_spendAllowance equivalent checks the allowance",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer permitted",
+          "confidence": "high"
+        },
+        "T-005": {
+          "label": "applicable_absent",
+          "reason": "transfer takes a token amount, converts to shares via getSharesByPooledEth, and rounding means the recipient can receive one wei less than sent. Documented at L340-342 with a RoundUp variant provided",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "applicable_absent",
+          "reason": "balanceOf returns getPooledEthByShares(_sharesOf(account)) at L178, so every holder's balance changes when the pool rebases, with no transfer occurring. This is the defining rebasing case and the obligation not to assume constant balances is unmet by design",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "applicable_enforced",
+          "reason": "decimals is 18 (L148) and share arithmetic is explicit",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "totalSupply is derived from total pooled ether rather than a stored sum, so it cannot drift from balances",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "unclear",
+          "reason": "_mintShares is internal; the minting authority lives in Lido.sol, not this file",
+          "confidence": "low"
+        },
+        "T-010": {
+          "label": "unclear",
+          "reason": "_burnShares is internal; burn authority lives in Lido.sol",
+          "confidence": "low"
+        },
+        "T-011": {
+          "label": "unclear",
+          "reason": "transfers are gated on a not-paused condition (L192, L248) but the pause authority is defined in the Lido contract",
+          "confidence": "low"
+        },
+        "T-012": {
+          "label": "not_applicable",
+          "reason": "no permit in StETH.sol",
+          "confidence": "high"
+        },
+        "T-013": {
+          "label": "not_applicable",
+          "reason": "no permit",
+          "confidence": "high"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no transfer hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "unclear",
+          "reason": "deployed behind a proxy; layout preservation not verifiable from this file",
+          "confidence": "low"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 5,
+        "applicable_absent": 3,
+        "unclear": 4,
+        "not_applicable": 3
+      }
+    },
+    {
+      "file": "Maker_Dai.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "transfer, transferFrom and approve return bool (L75, L78, L106)",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve; no race mitigation",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "transferFrom checks and decrements the allowance, with uint(-1) treated as infinite",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer permitted",
+          "confidence": "high"
+        },
+        "T-005": {
+          "label": "not_applicable",
+          "reason": "no fee mechanism",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "applicable_enforced",
+          "reason": "18 decimals throughout",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "mint and burn adjust totalSupply alongside balances (L91, L96)",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "applicable_enforced",
+          "reason": "mint is auth-gated through the wards mapping (L29-32, L91)",
+          "confidence": "high"
+        },
+        "T-010": {
+          "label": "applicable_enforced",
+          "reason": "burn at L96 requires the caller be the holder or hold allowance",
+          "confidence": "high"
+        },
+        "T-011": {
+          "label": "not_applicable",
+          "reason": "no pause or blacklist",
+          "confidence": "high"
+        },
+        "T-012": {
+          "label": "applicable_absent",
+          "reason": "permit predates EIP-2612 and uses a different typehash with (holder, spender, nonce, expiry, allowed) at L60-61, and grants infinite rather than exact allowance. Functionally sound and domain-separated (L65) but not EIP-2612 compliant, which breaks integrators expecting the standard signature",
+          "confidence": "high"
+        },
+        "T-013": {
+          "label": "applicable_absent",
+          "reason": "bare ecrecover at L140 with no zero-address guard and no low-s check. The holder comparison saves it in practice because holder is caller-supplied and non-zero, but the guard is absent",
+          "confidence": "medium"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "not_applicable",
+          "reason": "not upgradeable; authority is via wards",
+          "confidence": "high"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 7,
+        "applicable_absent": 3,
+        "not_applicable": 5
+      }
+    },
+    {
+      "file": "Uniswap_Uni.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "transfer, transferFrom and approve return bool",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve; no race mitigation",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "allowance checked and decremented, with uint96 max treated as infinite (L152)",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer permitted",
+          "confidence": "high"
+        },
+        "T-005": {
+          "label": "not_applicable",
+          "reason": "no fee mechanism",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "applicable_enforced",
+          "reason": "18 decimals; balances stored as uint96 with safe96 casts throughout",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "mint at L110-121 adjusts totalSupply with safe96 checks",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "applicable_enforced",
+          "reason": "mint requires msg.sender == minter and enforces both a time lock (L116) and a 2% cap (L120)",
+          "confidence": "high"
+        },
+        "T-010": {
+          "label": "not_applicable",
+          "reason": "no burn function",
+          "confidence": "high"
+        },
+        "T-011": {
+          "label": "not_applicable",
+          "reason": "no pause or blacklist",
+          "confidence": "high"
+        },
+        "T-012": {
+          "label": "applicable_enforced",
+          "reason": "permit at L173 with DOMAIN_TYPEHASH including chainId and verifyingContract (L53) and a deadline",
+          "confidence": "high"
+        },
+        "T-013": {
+          "label": "applicable_absent",
+          "reason": "bare ecrecover in permit with no low-s check; the recovered address is compared against owner, and a zero owner cannot hold a balance, so impact is limited",
+          "confidence": "medium"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "not_applicable",
+          "reason": "not upgradeable",
+          "confidence": "high"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 7,
+        "applicable_absent": 2,
+        "not_applicable": 6
+      }
+    },
+    {
+      "file": "Compound_Comp.sol",
+      "labels": {
+        "T-001": {
+          "label": "applicable_enforced",
+          "reason": "transfer, transferFrom and approve return bool",
+          "confidence": "high"
+        },
+        "T-002": {
+          "label": "applicable_absent",
+          "reason": "plain approve; no race mitigation",
+          "confidence": "high"
+        },
+        "T-003": {
+          "label": "applicable_enforced",
+          "reason": "allowance checked with uint96 max as infinite (L89)",
+          "confidence": "high"
+        },
+        "T-004": {
+          "label": "applicable_enforced",
+          "reason": "zero-value transfer permitted",
+          "confidence": "high"
+        },
+        "T-005": {
+          "label": "not_applicable",
+          "reason": "no fee mechanism",
+          "confidence": "high"
+        },
+        "T-006": {
+          "label": "not_applicable",
+          "reason": "no rebasing",
+          "confidence": "high"
+        },
+        "T-007": {
+          "label": "applicable_enforced",
+          "reason": "18 decimals; uint96 balances with safe96 casts",
+          "confidence": "high"
+        },
+        "T-008": {
+          "label": "applicable_enforced",
+          "reason": "totalSupply is a constant at L15 and the full supply is assigned at construction (L64), so it cannot drift",
+          "confidence": "high"
+        },
+        "T-009": {
+          "label": "not_applicable",
+          "reason": "no mint function; supply is fixed at deployment",
+          "confidence": "high"
+        },
+        "T-010": {
+          "label": "not_applicable",
+          "reason": "no burn function",
+          "confidence": "high"
+        },
+        "T-011": {
+          "label": "not_applicable",
+          "reason": "no pause or blacklist",
+          "confidence": "high"
+        },
+        "T-012": {
+          "label": "applicable_enforced",
+          "reason": "permit present with an EIP-712 domain",
+          "confidence": "medium"
+        },
+        "T-013": {
+          "label": "applicable_absent",
+          "reason": "bare ecrecover with no low-s check",
+          "confidence": "medium"
+        },
+        "T-014": {
+          "label": "not_applicable",
+          "reason": "no hooks",
+          "confidence": "high"
+        },
+        "T-015": {
+          "label": "not_applicable",
+          "reason": "not upgradeable",
+          "confidence": "high"
+        }
+      },
+      "summary": {
+        "applicable_enforced": 6,
+        "applicable_absent": 2,
+        "not_applicable": 7
+      }
+    }
+  ]
+}

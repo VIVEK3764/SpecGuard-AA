@@ -54,6 +54,7 @@ class DataFlowFact(BaseModel):
     state_vars_read: List[str] = Field(default_factory=list)
     state_vars_written: List[str] = Field(default_factory=list)
     user_op_fields_read: List[str] = Field(default_factory=list)
+    unread_in_validation: List[str] = Field(default_factory=list)
     influences_validation_return: bool = False
 
 

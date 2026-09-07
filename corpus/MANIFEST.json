@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-02T12:21:29.723321+00:00",
-  "total_sources": 11,
-  "total_chunks": 13356,
+  "generated_at": "2026-09-01T04:40:00.000000+00:00",
+  "total_sources": 36,
+  "total_chunks": 4278,
   "sources": [
     {
       "source_id": "SRC-ERC4337-SPEC",
@@ -26,122 +26,14 @@
       "raw_bytes": 34616,
       "raw_words": 4759,
       "chunks_derived": 31
-    },
-    {
-      "source_id": "SRC-ETH-INFINITISM-README",
-      "name": "EntryPoint Reference Implementation Spec & Architecture",
-      "url": "https://raw.githubusercontent.com/eth-infinitism/account-abstraction/develop/README.md",
-      "category": "B",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:23.279085+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 5177,
-      "raw_words": 506,
-      "chunks_derived": 8
-    },
-    {
-      "source_id": "SRC-OZ-AA-AUDIT-1",
-      "name": "OpenZeppelin EF Account Abstraction Audit Report",
-      "url": "https://www.openzeppelin.com/news/eth-foundation-account-abstraction-audit",
-      "category": "B",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:23.945598+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 214932,
-      "raw_words": 14597,
-      "chunks_derived": 1
-    },
-    {
-      "source_id": "SRC-OZ-AA-AUDIT-2",
-      "name": "OpenZeppelin EIP-4337 Incremental Audit Writeup",
-      "url": "https://www.openzeppelin.com/news/eip-4337-ethereum-account-abstraction-incremental-audit",
-      "category": "B",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:24.604251+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 204471,
-      "raw_words": 9856,
-      "chunks_derived": 1
-    },
-    {
-      "source_id": "SRC-OZ-AA-AUDIT-3",
-      "name": "OpenZeppelin ERC-4337 Account Abstraction Incremental Audit",
-      "url": "https://www.openzeppelin.com/news/erc-4337-account-abstraction-incremental-audit",
-      "category": "B",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:25.125028+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 169318,
-      "raw_words": 9568,
-      "chunks_derived": 1
-    },
-    {
-      "source_id": "SRC-C4-COINBASE",
-      "name": "Code4rena Coinbase Smart Wallet Security Contest Report",
-      "url": "https://raw.githubusercontent.com/code-423n4/2024-03-coinbase-findings/main/README.md",
-      "category": "C",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:25.477803+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 5680,
-      "raw_words": 875,
-      "chunks_derived": 10
-    },
-    {
-      "source_id": "SRC-33AUDITS-AA",
-      "name": "33Audits: Account Abstraction Security for Auditors (Paymaster Replay)",
-      "url": "https://33audits.hashnode.dev/account-abstraction-security-for-auditors",
-      "category": "C",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:25.907120+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 197218,
-      "raw_words": 9214,
-      "chunks_derived": 1
-    },
-    {
-      "source_id": "SRC-C4-BICONOMY",
-      "name": "Code4rena Biconomy Paymaster & Smart Account Security Report",
-      "url": "https://raw.githubusercontent.com/code-423n4/2023-01-biconomy-findings/main/README.md",
-      "category": "C",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:27.274319+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 4896,
-      "raw_words": 747,
-      "chunks_derived": 8
-    },
-    {
-      "source_id": "SRC-C4-SOULWALLET",
-      "name": "Code4rena SoulWallet ERC-4337 Account Abstraction Audit Report",
-      "url": "https://raw.githubusercontent.com/code-423n4/2023-08-shell-findings/main/README.md",
-      "category": "C",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:28.697363+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 5619,
-      "raw_words": 877,
-      "chunks_derived": 10
-    },
-    {
-      "source_id": "SRC-C4-LENS",
-      "name": "Code4rena Lens Protocol Security Audit Report",
-      "url": "https://raw.githubusercontent.com/code-423n4/2023-07-lens-findings/main/README.md",
-      "category": "C",
-      "http_status": 200,
-      "fetch_timestamp": "2026-08-02T12:21:29.284235+00:00",
-      "fetch_method": "urllib.request.urlopen (real HTTP GET)",
-      "raw_bytes": 5620,
-      "raw_words": 878,
-      "chunks_derived": 10
     }
   ],
   "audit_knowledge": {
     "source_type": "git_cloned_audit_reports",
     "repos_ingested": 34,
-    "pre_filter_chunks": 21695,
-    "post_filter_chunks": 13285,
-    "filtered_count": 8410,
-    "status": "verified_clean"
+    "pre_filter_chunks": 7008,
+    "post_filter_chunks": 4215,
+    "filtered_count": 2793,
+    "status": "verified_clean_with_authority_and_permalinks"
   }
 }

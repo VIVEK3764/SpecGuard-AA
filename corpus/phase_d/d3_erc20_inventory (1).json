@@ -1,0 +1,158 @@
+{
+  "domain": "ERC-20",
+  "note": "Contrast inventory for D3 only. Built to the same shape as the ERC-4337 inventory but deliberately small: the point is to measure how much the applicable set varies across contracts in a mature, homogeneous domain, not to audit ERC-20 tokens. One annotator is sufficient because this is a baseline, and that is stated in the paper.",
+  "obligations": [
+    {
+      "id": "T-001",
+      "statement": "transfer and transferFrom must return a boolean and callers must check it",
+      "triggers": [
+        "transfer_fn"
+      ],
+      "source_class": "ERC-20 spec; the USDT non-returning class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-002",
+      "statement": "approve must be guarded against the allowance race, or a safe increase/decrease path provided",
+      "triggers": [
+        "approve_fn"
+      ],
+      "source_class": "ERC-20 spec note; long-standing audit class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-003",
+      "statement": "transferFrom must not silently succeed when the allowance is insufficient",
+      "triggers": [
+        "approve_fn"
+      ],
+      "source_class": "ERC-20 spec",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-004",
+      "statement": "transfer of zero value must not revert",
+      "triggers": [
+        "transfer_fn"
+      ],
+      "source_class": "ERC-20 spec; integration-breaking class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-005",
+      "statement": "the contract must not assume the amount received equals the amount sent (fee-on-transfer)",
+      "triggers": [
+        "transfer_fn"
+      ],
+      "source_class": "audit class; affects integrators",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-006",
+      "statement": "balance must not be assumed constant between reads (rebasing)",
+      "triggers": [
+        "rebasing"
+      ],
+      "source_class": "audit class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-007",
+      "statement": "decimals must be honoured by any arithmetic on amounts",
+      "triggers": [
+        "decimals_nonstandard"
+      ],
+      "source_class": "ERC-20 spec",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-008",
+      "statement": "totalSupply must equal the sum of balances across every mint, burn and transfer path",
+      "triggers": [
+        "burn_fn",
+        "mint_fn"
+      ],
+      "source_class": "invariant; audit class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-009",
+      "statement": "mint must be access-controlled",
+      "triggers": [
+        "mint_fn"
+      ],
+      "source_class": "audit class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-010",
+      "statement": "burn must not allow burning another holder's balance without allowance",
+      "triggers": [
+        "burn_fn"
+      ],
+      "source_class": "audit class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-011",
+      "statement": "a pause or blacklist mechanism must not permanently strand funds",
+      "triggers": [
+        "blacklist",
+        "pausable"
+      ],
+      "source_class": "audit class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-012",
+      "statement": "permit must follow EIP-2612: domain separator with chainId and address(this), a nonce, and a deadline",
+      "triggers": [
+        "permit_fn"
+      ],
+      "source_class": "EIP-2612",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-013",
+      "statement": "permit must be resistant to signature malleability and must reject the zero address recovery",
+      "triggers": [
+        "permit_fn"
+      ],
+      "source_class": "EIP-2612; ECDSA class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-014",
+      "statement": "hooks or callbacks in transfer must not enable reentrancy into the token or its integrators",
+      "triggers": [
+        "transfer_hook"
+      ],
+      "source_class": "ERC-777/ERC-1363 class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    },
+    {
+      "id": "T-015",
+      "statement": "an upgradeable token must preserve storage layout and must not leave the implementation initialisable",
+      "triggers": [
+        "upgradeable"
+      ],
+      "source_class": "proxy class",
+      "domain": "ERC-20",
+      "stream": "COMPILED_CONTRAST"
+    }
+  ]
+}

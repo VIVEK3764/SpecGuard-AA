@@ -18,8 +18,9 @@ class CorpusChunk(BaseModel):
     phase: str = "generic"  # "validation", "execution", "deployment", "postOp", "generic"
     topic: str = "general"
     text: str
-    authority: float = 0.85  # 1.0 = Canonical standard, 0.85 = Competitive audit, 0.70 = Advisory/QA
+    authority: float = 0.85  # Calculated via compute_authority() or 1.0 for canonical standards
     version_scope: Optional[List[str]] = Field(default_factory=lambda: ["0.6", "0.7", "0.8"])
+    version_uncertain: bool = False  # True when version cannot be deterministically inferred from content
     obligation_ids: List[str] = Field(default_factory=list)
     source_url: str = ""
     source_commit: str = ""

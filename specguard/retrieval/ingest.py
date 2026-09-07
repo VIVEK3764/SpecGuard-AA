@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: MIT
 """
-High-Scale Audit Finding Corpus Builder & Ingestion Engine (Step C1).
+High-Scale Audit Finding Corpus Builder & Ingestion Engine (Step C1 & C4 Fixes).
 Parses real git-cloned audit reports from Code4rena, Sherlock, and Pashov Audit Group.
-Segregates findings into description and recommendation chunks with normative modal quality filtering.
+Derives real authority scores via compute_authority(), resolves genuine remote GitHub URLs,
+infers deterministic protocol version scopes, and eliminates hardcoded constant proxies.
 """
 
 import os
@@ -12,6 +13,7 @@ import glob
 import subprocess
 from typing import List, Dict, Any, Tuple, Optional
 from specguard.retrieval.corpus import CorpusChunk
+from specguard.obligations.authority import compute_authority
 
 NORMATIVE_MODALS = re.compile(
     r"\b(must|should|shall|must not|cannot|require|required|revert|reverts|enforce|enforces|validate|validates|ensure|ensures|prevent|prevents|restrict|restricts|bound|bounds|check|checks|guarantee|prohibit|prohibits)\b",
@@ -57,14 +59,127 @@ def get_git_commit(repo_path: str) -> str:
         return "unknown"
 
 
+def get_git_remote_url(repo_path: str) -> str:
+    """Retrieve actual remote origin URL for a cloned repo without .git suffix."""
+    try:
+        res = subprocess.run(
+            ["git", "remote", "get-url", "origin"],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        url = res.stdout.strip()
+        if url.endswith(".git"):
+            url = url[:-4]
+        return url
+    except Exception:
+        return "https://github.com/code-423n4"
+
+
+def get_git_default_branch(repo_path: str) -> str:
+    """Retrieve active or default branch name."""
+    try:
+        res = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        branch = res.stdout.strip()
+        if branch and branch != "HEAD":
+            return branch
+    except Exception:
+        pass
+    return "main"
+
+
+def derive_authority_score(text: str) -> float:
+    """
+    Calculate statement-level authority dynamically via compute_authority() in specguard.obligations.authority.
+    Replaces hardcoded constants (0.85/0.90) with real text-derived scores.
+    """
+    t = text.lower()
+
+    # 1. Modal strength: MUST (1.0) vs SHOULD (0.6) vs MAY/descriptive (0.3)
+    if any(w in t for w in ["must", "shall", "required", "cannot", "must not", "revert"]):
+        modal = "MUST"
+    elif any(w in t for w in ["should", "recommend", "recommended", "enforce", "enforced"]):
+        modal = "SHOULD"
+    else:
+        modal = "MAY"
+
+    # 2. Corroboration: Multi-warden / multiple finding references
+    if any(w in t for w in ["duplicate", "wardens", "confirmed by sponsor", "multiple", "assessed by"]):
+        corr = 2
+    else:
+        corr = 1
+
+    # 3. Specificity: concrete AST fields/functions/opcodes vs general advisory
+    concrete_indicators = [
+        "validateuserop", "userop", "paymasteranddata", "calldata", "nonce",
+        "calldatacopy", "create2", "balance", "sender", "hash", "ecrecover",
+        "signature", "entrypoint", "sponsor", "postop", "uint256", "bytes32"
+    ]
+    matched_indicators = sum(1 for ind in concrete_indicators if ind in t)
+    if matched_indicators >= 2:
+        spec = "field-level"
+    else:
+        spec = "general-advice"
+
+    auth = compute_authority(modal_strength=modal, corroboration=corr, specificity=spec)
+    return auth.score
+
+
+def infer_version_scope(text: str) -> Tuple[List[str], bool]:
+    """
+    Infer protocol version scope from text content.
+    Returns (version_scope, version_uncertain).
+    """
+    t = text.lower()
+
+    # v0.7+ packed indicators
+    has_v07 = any(
+        kw in t for kw in [
+            "packeduseroperation",
+            "paymasterverificationgaslimit",
+            "paymasterpostopgaslimit",
+            "postopmode",
+            "v0.7",
+            "erc-4337 v0.7",
+            "entrypoint v0.7",
+            "0.7.0"
+        ]
+    )
+
+    # v0.6-specific unpacked indicators
+    has_v06 = any(
+        kw in t for kw in [
+            "paymasteranddata[:20]",
+            "paymasteranddata[0:20]",
+            "v0.6",
+            "erc-4337 v0.6",
+            "entrypoint v0.6",
+            "0.6.0"
+        ]
+    ) or ("paymasteranddata" in t and "packed" not in t)
+
+    if has_v07 and not has_v06:
+        return ["0.7", "0.8"], False  # Deterministically inferred v0.7+
+    elif has_v06 and not has_v07:
+        return ["0.6"], False          # Deterministically inferred v0.6
+    else:
+        # Genuinely indeterminate across versions -> broad scope, marked uncertain
+        return ["0.6", "0.7", "0.8"], True
+
+
 def extract_sections_from_markdown(md_text: str) -> List[Tuple[str, str, str]]:
     """
     Parse markdown report into individual findings: (finding_title, description_text, recommendation_text).
     """
     findings = []
     
-    # Split on finding headers:
-    # ## [[H-01] Title] or # [H-01] Title or ## [M-01] Title or ## Issue H-1: Title or ### [CRIT-01] Title
     finding_split = re.split(
         r"(?m)^(?=#{1,3}\s+\[?(?:(?:\[[HMLQC]-\d+\])|(?:[HMLQC]-\d+)|(?:HIGH-\d+)|(?:MED-\d+)|(?:LOW-\d+)|(?:CRIT-\d+)|(?:Issue\s+[HMLC]-\d+))[^\]\n]+\]?)",
         md_text
@@ -97,7 +212,6 @@ def extract_sections_from_markdown(md_text: str) -> List[Tuple[str, str, str]]:
         desc_text = "\n".join(desc_parts).strip()
         rec_text = "\n".join(rec_parts).strip()
         
-        # If no explicit recommendation header was found, take the last paragraph if it has modal verbs
         if not rec_text and desc_text:
             paragraphs = [p.strip() for p in desc_text.split("\n\n") if p.strip()]
             if len(paragraphs) > 1 and NORMATIVE_MODALS.search(paragraphs[-1]):
@@ -169,12 +283,13 @@ def ingest_all_repos(repos_dir: str = os.path.join("scratch", "repos")) -> Tuple
     for repo in repo_dirs:
         repo_name = os.path.basename(repo)
         commit = get_git_commit(repo)
+        base_remote_url = get_git_remote_url(repo)
+        branch = get_git_default_branch(repo)
         
         target_mds = []
         if repo_name == "pashov_audits":
             target_mds = glob.glob(os.path.join(repo, "team", "md", "*.md")) + glob.glob(os.path.join(repo, "solo", "*.md"))
         else:
-            # Code4rena or Sherlock repos: target report.md or README.md
             rep = os.path.join(repo, "report.md")
             rdm = os.path.join(repo, "README.md")
             if os.path.exists(rep):
@@ -184,7 +299,7 @@ def ingest_all_repos(repos_dir: str = os.path.join("scratch", "repos")) -> Tuple
             else:
                 target_mds = glob.glob(os.path.join(repo, "*.md"))
                 
-        print(f"[+] Processing {repo_name}: {len(target_mds)} report files (commit {commit[:8]})...")
+        print(f"[+] Processing {repo_name}: {len(target_mds)} files (remote: {base_remote_url})...")
         
         global_chunk_counter = 0
         sanitized_repo = re.sub(r"[^A-Z0-9]", "", repo_name.upper())[:18]
@@ -196,6 +311,8 @@ def ingest_all_repos(repos_dir: str = os.path.join("scratch", "repos")) -> Tuple
                 continue
                 
             findings = extract_sections_from_markdown(content)
+            rel_file_path = os.path.relpath(md_path, repo).replace("\\", "/")
+            resolved_source_url = f"{base_remote_url}/blob/{branch}/{rel_file_path}"
             
             for idx, (title, desc, rec) in enumerate(findings):
                 base_name = os.path.splitext(os.path.basename(md_path))[0]
@@ -207,6 +324,8 @@ def ingest_all_repos(repos_dir: str = os.path.join("scratch", "repos")) -> Tuple
                         global_chunk_counter += 1
                         role, phase, topic = determine_role_and_phase(desc)
                         c_id = f"AUDIT-{sanitized_repo}-{global_chunk_counter:04d}-DESC"
+                        auth_score = derive_authority_score(desc)
+                        v_scope, v_uncertain = infer_version_scope(desc)
                         valid_chunks.append(
                             CorpusChunk(
                                 id=c_id,
@@ -215,21 +334,24 @@ def ingest_all_repos(repos_dir: str = os.path.join("scratch", "repos")) -> Tuple
                                 phase=phase,
                                 topic=topic,
                                 text=desc[:3000],
-                                authority=0.85,
-                                version_scope=["0.6", "0.7", "0.8"],
-                                source_url=f"https://github.com/code-423n4/{repo_name}",
+                                authority=auth_score,
+                                version_scope=v_scope,
+                                version_uncertain=v_uncertain,
+                                source_url=resolved_source_url,
                                 source_commit=commit,
                                 kind="description",
                             )
                         )
                         
-                # 2. Recommendation Chunk (carries high normative requirement density!)
+                # 2. Recommendation Chunk
                 if rec:
                     pre_filter_count += 1
                     if not is_boilerplate(rec) and NORMATIVE_MODALS.search(rec):
                         global_chunk_counter += 1
                         role, phase, topic = determine_role_and_phase(rec)
                         c_id = f"AUDIT-{sanitized_repo}-{global_chunk_counter:04d}-REC"
+                        auth_score = derive_authority_score(rec)
+                        v_scope, v_uncertain = infer_version_scope(rec)
                         valid_chunks.append(
                             CorpusChunk(
                                 id=c_id,
@@ -238,9 +360,10 @@ def ingest_all_repos(repos_dir: str = os.path.join("scratch", "repos")) -> Tuple
                                 phase=phase,
                                 topic=topic,
                                 text=rec[:3000],
-                                authority=0.90,
-                                version_scope=["0.6", "0.7", "0.8"],
-                                source_url=f"https://github.com/code-423n4/{repo_name}",
+                                authority=auth_score,
+                                version_scope=v_scope,
+                                version_uncertain=v_uncertain,
+                                source_url=resolved_source_url,
                                 source_commit=commit,
                                 kind="recommendation",
                             )
@@ -267,13 +390,14 @@ def clean_standards_yaml_frontmatter(corpus_dir: str = "corpus") -> None:
                     if len(parts) >= 3:
                         text = parts[2].strip()
                         it["text"] = text
-                # Ensure extended fields exist
                 if "authority" not in it:
                     it["authority"] = 1.0  # Canonical standards have 1.0 authority
                 if "kind" not in it:
                     it["kind"] = "standard"
                 if "version_scope" not in it:
                     it["version_scope"] = ["0.6", "0.7", "0.8"]
+                if "version_uncertain" not in it:
+                    it["version_uncertain"] = False
                 cleaned.append(it)
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(cleaned, f, indent=2)
