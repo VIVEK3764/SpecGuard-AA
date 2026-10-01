@@ -13,7 +13,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-002",
@@ -29,7 +30,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-003",
@@ -45,7 +47,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-004",
@@ -57,11 +60,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-005",
@@ -73,11 +75,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-006",
@@ -89,11 +90,11 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-007",
@@ -105,11 +106,16 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-001",
+      "DIG-002",
+      "DIG-005",
+      "PRE-001"
+    ]
   },
   {
     "id": "ERC4337-SPEC-008",
@@ -125,7 +131,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-009",
@@ -137,11 +144,13 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-002",
+      "DIG-004"
+    ]
   },
   {
     "id": "ERC4337-SPEC-010",
@@ -153,11 +162,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-011",
@@ -173,7 +181,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-012",
@@ -189,7 +198,12 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": [
+      "AUTH-010",
+      "AUTH-020",
+      "DIG-004"
+    ]
   },
   {
     "id": "ERC4337-SPEC-013",
@@ -201,11 +215,12 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-002"
+    ]
   },
   {
     "id": "ERC4337-SPEC-014",
@@ -217,11 +232,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-015",
@@ -233,11 +247,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-016",
@@ -249,11 +262,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-017",
@@ -269,7 +281,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-018",
@@ -281,11 +294,12 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-004"
+    ]
   },
   {
     "id": "ERC4337-SPEC-019",
@@ -301,7 +315,11 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": [
+      "DIG-002",
+      "DIG-004"
+    ]
   },
   {
     "id": "ERC4337-SPEC-020",
@@ -317,7 +335,11 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": [
+      "DIG-002",
+      "DIG-004"
+    ]
   },
   {
     "id": "ERC4337-SPEC-021",
@@ -333,7 +355,12 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": [
+      "DIG-002",
+      "PAY-001",
+      "PAY-005"
+    ]
   },
   {
     "id": "ERC4337-SPEC-022",
@@ -349,7 +376,10 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": [
+      "DIG-002"
+    ]
   },
   {
     "id": "ERC4337-SPEC-023",
@@ -361,11 +391,14 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": [
+      "AUTH-020",
+      "DIG-002",
+      "DIG-004"
+    ]
   },
   {
     "id": "ERC4337-SPEC-024",
@@ -377,11 +410,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-025",
@@ -397,7 +429,11 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": [
+      "DIG-004",
+      "STO-031"
+    ]
   },
   {
     "id": "ERC4337-SPEC-026",
@@ -413,7 +449,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-027",
@@ -429,7 +466,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-028",
@@ -441,11 +479,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-029",
@@ -461,7 +498,8 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-030",
@@ -473,11 +511,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-031",
@@ -489,11 +526,10 @@
     "authority": 1.0,
     "kind": "standard",
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": false
+    "version_uncertain": false,
+    "obligation_ids": []
   },
   {
     "id": "ERC4337-SPEC-032",
@@ -509,6 +545,7 @@
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false
+    "version_uncertain": true,
+    "obligation_ids": []
   }
 ]

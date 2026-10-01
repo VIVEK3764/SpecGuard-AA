@@ -1,7 +1,7 @@
 import json
 import numpy as np
 
-with open("corpus/phase_d/d1_labels_ALL (1).json", "r", encoding="utf-8") as f:
+with open("corpus/phase_d/d1_labels_ALL.json", "r", encoding="utf-8") as f:
     d1 = json.load(f)
 
 # Annotator 1 (initial assessment before resolution) vs Annotator 2 (resolved / consensus)

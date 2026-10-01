@@ -48,9 +48,11 @@ def load_corpus(corpus_dir: str = "corpus") -> List[CorpusChunk]:
     if not os.path.exists(corpus_dir):
         return chunks
 
-    for root, _, files in os.walk(corpus_dir):
+    for root, dirs, files in os.walk(corpus_dir):
+        if "phase_d" in root:
+            continue
         for f in files:
-            if f.endswith(".json") and f != "MANIFEST.json":
+            if f.endswith(".json") and f != "MANIFEST.json" and not f.startswith("d1_") and not f.startswith("d2_") and not f.startswith("d3_"):
                 full_path = os.path.join(root, f)
                 try:
                     with open(full_path, "r", encoding="utf-8") as file:

@@ -21,7 +21,7 @@ def main():
     print("=" * 70)
 
     # 1. Account Abstraction (AA)
-    with open("corpus/phase_d/d1_labels_ALL (1).json", "r", encoding="utf-8") as f:
+    with open("corpus/phase_d/d1_labels_ALL.json", "r", encoding="utf-8") as f:
         d1 = json.load(f)
     aa_app = {}
     for c in d1["contracts"]:
@@ -37,7 +37,7 @@ def main():
     print(f"  delta_AA = {delta_aa:.4f}")
 
     # 2. ERC-20 Tokens
-    with open("corpus/phase_d/d3_erc20_labels (1).json", "r", encoding="utf-8") as f:
+    with open("corpus/phase_d/d3_erc20_labels.json", "r", encoding="utf-8") as f:
         d3_e20 = json.load(f)
     e20_app = {}
     for c in d3_e20["contracts"]:

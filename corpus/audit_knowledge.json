@@ -697,7 +697,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-astaria-findings/blob/main/report.md",
     "source_commit": "8059d5e7c4b3b7155259c7990226c91dc2f375fb",
     "kind": "description"
@@ -925,7 +927,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-astaria-findings/blob/main/report.md",
     "source_commit": "8059d5e7c4b3b7155259c7990226c91dc2f375fb",
     "kind": "recommendation"
@@ -1096,7 +1100,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-astaria-findings/blob/main/report.md",
     "source_commit": "8059d5e7c4b3b7155259c7990226c91dc2f375fb",
     "kind": "recommendation"
@@ -1267,7 +1273,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-astaria-findings/blob/main/report.md",
     "source_commit": "8059d5e7c4b3b7155259c7990226c91dc2f375fb",
     "kind": "description"
@@ -1590,7 +1598,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "recommendation"
@@ -1628,7 +1638,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "recommendation"
@@ -1661,11 +1673,9 @@
     "text": "Since `validatePaymasterUserOp` function is not limited to view function in erc4337 spec, add simple boolean data for mapping if hash is used or not\n\n    mapping(bytes32 => boolean) public usedHash\n\n        function validatePaymasterUserOp(UserOperation calldata userOp, bytes32 /*userOpHash*/, uint256 requiredPreFund)\n        external override returns (bytes memory context, uint256 deadline) {\n            (requiredPreFund);\n            bytes32 hash = getHash(userOp);\n            require(!usedHash[hash], \"used hash\");\n            usedHash[hash] = true;\n\n**[livingrockrises (Biconomy) confirmed, but commented](https://github.com/code-423n4/2023-01-biconomy-findings/issues/151#issuecomment-1423007244):**\n > Unhappy with the recommendation.\n\n\n\n***",
     "authority": 0.91,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
@@ -1704,7 +1714,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "OP-011"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "recommendation"
@@ -1737,11 +1749,9 @@
     "text": "*Submitted by [V\\_B](https://github.com/code-423n4/2023-01-biconomy-findings/issues/499), also found by [peanuts](https://github.com/code-423n4/2023-01-biconomy-findings/issues/511), [HE1M](https://github.com/code-423n4/2023-01-biconomy-findings/issues/392), and [debo](https://github.com/code-423n4/2023-01-biconomy-findings/issues/102)*\n\n[contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L68](https://github.com/code-423n4/2023-01-biconomy/blob/5df2e8f8c0fd3393b9ecdad9ef356955f07fbbdd/scw-contracts/contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L68)<br>\n[contracts/smart-contract-wallet/libs/MultiSend.sol#L26](https://github.com/code-423n4/2023-01-biconomy/blob/5df2e8f8c0fd3393b9ecdad9ef356955f07fbbdd/scw-contracts/contracts/smart-contract-wallet/libs/MultiSend.sol#L26)\n\nThe `handleOps` function executes an array of `UserOperation`. If at least one user operation fails the whole transaction will revert. That means the error on one user ops will fully reverts the other executed ops.\n\nThe `multiSend` function reverts if at least one of the transactions fails, so it is also vulnerable to such type of attacks.\n\n### Attack scenario\n\nRelayer offchain verify the batch of `UserOperation`s, convinced that they will receive fees, then send the `handleOps` transaction to the mempool. An attacker front-run the relayers transaction with another `handleOps` transaction that executes only one `UserOperation`, the last user operation from the relayers `handleOps` operations. An attacker will receive the funds for one `UserOperation`. Original relayers transaction will consume gas for the execution of all except one, user ops, but reverts at the end.\n\n### Impact\n\nGriefing attacks on the gas used for `handleOps` and `multiSend` function calls.\n\nPlease note, that while an attacker have no direct incentive to make such an attacks, they could short the token before the attack.",
     "authority": 0.91,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
@@ -1775,12 +1785,13 @@
     "text": "*Submitted by [Franfran](https://github.com/code-423n4/2023-01-biconomy-findings/issues/498), also found by [gogo](https://github.com/code-423n4/2023-01-biconomy-findings/issues/516), [immeas](https://github.com/code-423n4/2023-01-biconomy-findings/issues/386), [Koolex](https://github.com/code-423n4/2023-01-biconomy-findings/issues/318), [zaskoh](https://github.com/code-423n4/2023-01-biconomy-findings/issues/231), [MalfurionWhitehat](https://github.com/code-423n4/2023-01-biconomy-findings/issues/212), and [zaskoh](https://github.com/code-423n4/2023-01-biconomy-findings/issues/198)*\n\n[contracts/smart-contract-wallet/BaseSmartAccount.sol#L60-L68](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/BaseSmartAccount.sol#L60-L68)<br>\n[contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L319-L329](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L319-L329)<br>\n[contracts/smart-contract-wallet/BaseSmartAccount.sol#L60-L68](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/BaseSmartAccount.sol#L60-L68)\n\nSome parts of the codebase are not compliant with the EIP-4337 from the [EIP-4337 specifications](https://eips.ethereum.org/EIPS/eip-4337#specification), at multiple degrees of severity.\n\n### Proof of Concept\n\n**Sender existence**\n\n```text\nCreate the account if it does not yet exist, using the initcode provided in the UserOperation. If the account does not exist, and the initcode is empty, or does not deploy a contract at the \u201csender\u201d address, the call must fail.\n```\n\nIf we take a look at the [`_createSenderIfNeeded()`]() function, we can see that it's not properly implemented:\n\n```solidity\nfunction _createSenderIfNeeded(uint256 opIndex, UserOpInfo memory opInfo, bytes calldata initCode) internal {\n\tif (initCode.length != 0) {\n\t\taddress sender = opInfo.mUserOp.sender;\n    \tif (sender.code.length != 0) revert FailedOp(opIndex, address(0), \"AA10 sender already constructed\");\n      \taddress sender1 = senderCreator.createSender{gas: opInfo.mUserOp.verificationGasLimit}(initCode);\n        if (sender1 == address(0)) revert FailedOp(opIndex, address(0), \"AA13 initCode failed or OOG\");\n        if (sender1 != sender) revert FailedOp(opIndex, address(0), \"AA14 initCode must return sender\");\n        if (sender1.code.length == 0) revert FailedOp(opIndex, address(0), \"AA15 initCode must create sender\");\n        address factory = address(bytes20(initCode[0:20]));\n      \temit AccountDeployed(opInfo.userOpHash, sender, factory, opInfo.mUserOp.paymaster);\n\t}\n}\n```\n\nThe statement in the EIP implies that if the account does not exist, the initcode **must** be used.<br>\nIn this case, it first check if the initcode exists, but this condition should be checked later.\n\nThis could be rewritten to:\n\n```solidity\nfunction _createSenderIfNeeded(uint256 opIndex, UserOpInfo memory opInfo, bytes",
     "authority": 1.0,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
-    "obligation_ids": [],
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-004",
+      "SIG-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "description"
@@ -1794,12 +1805,12 @@
     "text": "*Submitted by [gogo](https://github.com/code-423n4/2023-01-biconomy-findings/issues/466), also found by [V\\_B](undefined) and [taek](https://github.com/code-423n4/2023-01-biconomy-findings/issues/150)*\n\nUser operations can be replayed on smart accounts accross different chains. This can lead to user's losing funds or any unexpected behaviour that transaction replay attacks usually lead to.\n\n### Proof of Concept\n\nAs specified by the [EIP4337](https://eips.ethereum.org/EIPS/eip-4337) standard `to prevent replay attacks ... the signature should depend on chainid`. In [VerifyingSingletonPaymaster.sol#getHash](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/paymasters/verifying/singleton/VerifyingSingletonPaymaster.sol#L77-L90) the chainId is missing which means that the same UserOperation can be replayed on a different chain for the same smart contract account if the `verifyingSigner` is the same (and most likely this will be the case).",
     "authority": 0.75,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
-    "obligation_ids": [],
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "description"
@@ -1816,7 +1827,10 @@
       "0.6"
     ],
     "version_uncertain": false,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001",
+      "DIG-003"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "recommendation"
@@ -1830,12 +1844,12 @@
     "text": "*Submitted by [immeas](https://github.com/code-423n4/2023-01-biconomy-findings/issues/390), also found by [Kutu](https://github.com/code-423n4/2023-01-biconomy-findings/issues/495), [0xDave](https://github.com/code-423n4/2023-01-biconomy-findings/issues/411), [betweenETHlines](https://github.com/code-423n4/2023-01-biconomy-findings/issues/395), [hansfriese](https://github.com/code-423n4/2023-01-biconomy-findings/issues/389), [wait](https://github.com/code-423n4/2023-01-biconomy-findings/issues/377), [peanuts](https://github.com/code-423n4/2023-01-biconomy-findings/issues/350), [hihen](https://github.com/code-423n4/2023-01-biconomy-findings/issues/332), [prc](https://github.com/code-423n4/2023-01-biconomy-findings/issues/312), [0xbepresent](https://github.com/code-423n4/2023-01-biconomy-findings/issues/106), and [HE1M](https://github.com/code-423n4/2023-01-biconomy-findings/issues/89)*\n\n[contracts/smart-contract-wallet/SmartAccount.sol#L460-L461](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/SmartAccount.sol#L460-L461)<br>\n[contracts/smart-contract-wallet/SmartAccount.sol#L465-L466](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/SmartAccount.sol#L465-L466)\n\n`execute` and `executeBatch` in `SmartAccount.sol` can only be called by owner, not EntryPoint:\n\n```javascript\nFile: SmartAccount.sol\n\n460:    function execute(address dest, uint value, bytes calldata func) external onlyOwner{\n461:        _requireFromEntryPointOrOwner();\n462:        _call(dest, value, func);\n463:    }\n464:\n465:    function executeBatch(address[] calldata dest, bytes[] calldata func) external onlyOwner{\n466:        _requireFromEntryPointOrOwner();\n467:        require(dest.length == func.length, \"wrong array lengths\");\n468:        for (uint i = 0; i < dest.length;) {\n469:            _call(dest[i], 0, func[i]);\n470:            unchecked {\n471:                ++i;\n472:            }\n473:        }\n474:    }\n```\n\nFrom [EIP-4337](https://eips.ethereum.org/EIPS/eip-4337):\n\n> *   **Call the account with the `UserOperation`\u2019s calldata.** It\u2019s up to the account to choose how to parse the calldata; an expected workflow is for the account to have an execute function that parses the remaining calldata as a series of one or more calls that the account should make.\n\n### Impact\n\nThis breaks the interaction with EntryPoint.\n\n### Proof of Concept\n\nThe reference implementation has both these functions without any onlyOwner modifiers:\n\n<https://github.com/eth-infinitism/account-abstraction/blob/develop/contracts/samples/SimpleAccount.sol#L56-L73>\n\n```javascript\n56:    /**\n57:     * execute a transaction (called directly from owner, not by entryPoint)\n58:     */\n59:    function execute(address dest, uint256 value, bytes calldata func) external {\n60:        _requireFromEntryPointOrOwner();\n61:        _call(dest, value, func);\n62:    }\n63:\n64:    /**\n65:     * execute a sequence of transacti",
     "authority": 0.75,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
-    "obligation_ids": [],
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-005"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "description"
@@ -1849,11 +1863,9 @@
     "text": "*Submitted by [peakbolt](https://github.com/code-423n4/2023-01-biconomy-findings/issues/303), also found by [V\\_B](https://github.com/code-423n4/2023-01-biconomy-findings/issues/513), [zaskoh](https://github.com/code-423n4/2023-01-biconomy-findings/issues/145), and [csanuragjain](https://github.com/code-423n4/2023-01-biconomy-findings/issues/45)*\n\n[contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L68-L86](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L68-L86)<br>\n[contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L168-L190](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L168-L190)\n\nAn attacker (e.g. a malicious bundler) could submit a bundle of high gas usage user operations with insufficient gas value, causing the bundle to fail even when the users calculated the gas limits correctly. This will result in a DoS for the user and the user/paymaster still have to pay for the execution, potentially draining their funds. This attack is possible as user operations are included by bundlers from the UserOperation mempool into the Ethereum block (see post on ERC-4337 <https://medium.com/infinitism/erc-4337-account-abstraction-without-ethereum-protocol-changes-d75c9d94dc4a>).\n\nReference for this issue: <https://github.com/eth-infinitism/account-abstraction/commit/4fef857019dc2efbc415ac9fc549b222b07131ef>\n\n### Proof of Concept\n\nIn innerHandleOp(), a call was made to handle the operation with the specified mUserOp.callGasLimit. However, a malicious bundler could call the innerHandleOp() via handleOps() with a gas value that is insufficient for the transactions, resulting in the call to fail.\n\nThe remaining gas amount (e.g. gasLeft()) at this point was not verified to ensure that it is more than enough to fulfill the specified mUserOp.callGasLimit for the user operation. Even though the operation failed, the user/payment will still pay for the transactions due to the post operation logic.\n\n[contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L176](https://github.com/code-423n4/2023-01-biconomy/blob/main/scw-contracts/contracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol#L176)\n\n    (bool success,bytes memory result) = address(mUserOp.sender).call{gas : mUserOp.callGasLimit}(callData);",
     "authority": 0.63,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
@@ -1873,7 +1885,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-003",
+      "SIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "description"
@@ -1906,12 +1921,12 @@
     "text": "*Submitted by [0xdeadbeef0x](https://github.com/code-423n4/2023-01-biconomy-findings/issues/246), also found by [romand](https://github.com/code-423n4/2023-01-biconomy-findings/issues/168)*\n\nThe protocol supports 2D nonces through a `batchId` mechanism.<br>\nDue to different ways to execute transaction on the wallet there could be a collision between `batchIds` being used.\n\nThis can result in unexpected failing of transactions\n\n### Proof of Concept\n\nThere are two main ways to execute transaction from the smart wallet\n\n1.  Via EntryPoint - calls `execFromEntryPoint`/`execute`\n2.  Via `execTransaction`\n\n`SmartAccount` has locked the `batchId` #0  to be used by the `EntryPoint`.<br>\nWhen an `EntryPoint` calls `validateUserOp` before execution, the hardcoded nonce of `batchId` #0 will be incremented and validated, [contracts/smart-contract-wallet/SmartAccount.sol#L501](https://github.com/code-423n4/2023-01-biconomy/blob/53c8c3823175aeb26dee5529eeefa81240a406ba/scw-contracts/contracts/smart-contract-wallet/SmartAccount.sol#L501)\n\n        // @notice Nonce space is locked to 0 for AA transactions\n        // userOp could have batchId as well\n        function _validateAndUpdateNonce(UserOperation calldata userOp) internal override {\n            require(nonces[0]++ == userOp.nonce, \"account: invalid nonce\");\n        }\n\nCalls to `execTransaction` are more immediate and are likely to be executed before a `UserOp` through `EntryPoint`.<br>\nThere is no limitation in `execTransaction` to use `batchId` #0 although it should be called only by `EntryPoint`.\n\nIf there is a call to `execTransaction` with `batchId` set to `0`. It will increment the nonce and `EntryPoint` transactions will revert.\n[contracts/smart-contract-wallet/SmartAccount.sol#L216](https://github.com/code-423n4/2023-01-biconomy/blob/53c8c3823175aeb26dee5529eeefa81240a406ba/scw-contracts/contracts/smart-contract-wallet/SmartAccount.sol#L216)\n\n        function execTransaction(\n            Transaction memory _tx,\n            uint256 batchId,\n            FeeRefund memory refundInfo,\n            bytes memory signatures\n        ) public payable virtual override returns (bool success) {\n    -------\n                nonces[batchId]++;\n    -------\n            }\n        }\n\n### Tools Used\n\nVS Code",
     "authority": 0.91,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
-    "obligation_ids": [],
+    "version_uncertain": false,
+    "obligation_ids": [
+      "DIG-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "description"
@@ -1963,9 +1978,11 @@
     "text": "```js\ncontracts/smart-contract-wallet/SmartAccountFactory.sol:\n  28       * @param _owner EOA signatory of the wallet\n  29:      * @param _entryPoint AA 4337 entry point address\n  30       * @param _handler fallback handler address\n\n  49       * @param _owner EOA signatory of the wallet\n  50:      * @param _entryPoint AA 4337 entry point address\n  51       * @param _handler fallback handler address\n\ncontracts/smart-contract-wallet/aa-4337/core/EntryPoint.sol:\n  1  /**\n  2:  ** Account-Abstraction (EIP-4337) singleton EntryPoint implementation.\n  3   ** Only one instance required on each chain.\n\ncontracts/smart-contract-wallet/aa-4337/interfaces/IEntryPoint.sol:\n  1  /**\n  2:  ** Account-Abstraction (EIP-4337) singleton EntryPoint implementation.\n  3   ** Only one instance required on each chain.\n\ncontracts/smart-contract-wallet/aa-4337/samples/DepositPaymaster.sol:\n  21   * paymasterAndData holds the paymaster address followed by the token address to use.\n  22:  * @notice This paymaster will be rejected by the standard rules of EIP4337, as it uses an external oracle.\n  23   * (the standard rules ban accessing data of an external contract)\n```\n\nAn account abstraction proposal which completely avoids the need for consensus-layer protocol changes.\n\nHowever, this EIP has not been finalized yet, there is a warning situation that is not of general use.\n\nIf it is desired to be used, it is recommended to perform high-level security controls such as Formal Verification.\n\nhttps://eips.ethereum.org/EIPS/eip-4337",
     "authority": 0.91,
     "version_scope": [
-      "0.6"
+      "0.6",
+      "0.7",
+      "0.8"
     ],
-    "version_uncertain": false,
+    "version_uncertain": true,
     "obligation_ids": [],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
@@ -2061,7 +2078,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "recommendation"
@@ -2080,7 +2099,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
     "kind": "description"
@@ -2189,11 +2210,9 @@
     "text": "Add this code;\n\n```js\n\nuint256 txcost = 21_000;\n\n function changeTxCost(uint256 _amount) public onlyOwner {\n        txcost = _amount;\n    }\n\n```\n\n## [N-01] Insufficient coverage\n\n### Description\nThe test coverage rate of the project is 76%. Testing all functions is best practice in terms of security criteria.\n\n```js\n-------------------------------------------------------|----------|----------|----------|----------|----------------|\nFile                                                   |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |\n-------------------------------------------------------|----------|----------|----------|----------|----------------|\n smart-contract-wallet/                                |     35.1 |       16 |    29.87 |    35.79 |                |\n  BaseSmartAccount.sol                                 |        0 |        0 |        0 |        0 |... 107,108,109 |\n  Proxy.sol                                            |      100 |      100 |      100 |      100 |                |\n  SmartAccount.sol                                     |    63.92 |     32.2 |    52.94 |    64.23 |... 528,537,546 |\n  SmartAccountFactory.sol                              |    81.82 |       50 |       75 |    76.47 |    54,56,59,60 |\n smart-contract-wallet/aa-4337/core/                   |    98.46 |    81.15 |    93.18 |    97.16 |                |\n  EntryPoint.sol                                       |      100 |    88.16 |      100 |    98.09 |373,421,463,471 |\n  SenderCreator.sol                                    |      100 |      100 |      100 |      100 |                |\n  StakeManager.sol                                     |      100 |    76.92 |      100 |      100 |                |\n smart-contract-wallet/aa-4337/interfaces/             |       80 |       25 |       80 |    84.62 |                |\n  UserOperation.sol                                    |       80 |       25 |       80 |    84.62 |          53,78 |\n smart-contract-wallet/base/                           |       24 |    17.86 |    27.27 |    23.08 |                |\n  Executor.sol                                         |       75 |       75 |      100 |      100 |                |\n  FallbackManager.sol                                  |       25 |        0 |    33.33 |    33.33 |    27,28,33,35 |\n  ModuleManager.sol                                    |    11.76 |     9.09 |    14.29 |    10.34 |... 124,126,129 |\n smart-contract-wallet/common/                         |       25 |        0 |    33.33 |    33.33 |                |\n  Enum.sol                                             |      100 |      100 |      100 |      100 |                |\n  SecuredTokenTransfer.sol                             |      100 |      100 |      100 |      100 |                |\n  SignatureDecoder.sol                                 |      100 |      100 |      100 |      100 |                |\n  Singleton.sol                                        |        0 |      100 |        ",
     "authority": 1.0,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/code-423n4/2023-01-biconomy-findings/blob/main/report.md",
     "source_commit": "7461cb5d4e557a6f38e635ecc41fa00011ee8bf7",
@@ -2251,7 +2270,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002",
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-ondo-findings/blob/main/report.md",
     "source_commit": "c20cf640328b76a787828b15c5021b53d004beca",
     "kind": "description"
@@ -2327,7 +2349,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004",
+      "SES-005"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-ondo-findings/blob/main/report.md",
     "source_commit": "c20cf640328b76a787828b15c5021b53d004beca",
     "kind": "description"
@@ -2346,7 +2371,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-ondo-findings/blob/main/report.md",
     "source_commit": "c20cf640328b76a787828b15c5021b53d004beca",
     "kind": "recommendation"
@@ -2403,7 +2430,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-ondo-findings/blob/main/report.md",
     "source_commit": "c20cf640328b76a787828b15c5021b53d004beca",
     "kind": "description"
@@ -2422,7 +2451,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-ondo-findings/blob/main/report.md",
     "source_commit": "c20cf640328b76a787828b15c5021b53d004beca",
     "kind": "recommendation"
@@ -2688,7 +2719,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-01-popcorn-findings/blob/main/report.md",
     "source_commit": "1046b31e99006e4f462a664b34a3c5e8428e8d26",
     "kind": "description"
@@ -3828,7 +3861,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "ORD-002",
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-02-ethos-findings/blob/main/report.md",
     "source_commit": "3bc3ce44263d6db57d8a9bdc3ee327dbfea3a5bc",
     "kind": "recommendation"
@@ -4246,7 +4282,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-03-neotokyo-findings/blob/main/report.md",
     "source_commit": "95032586df4eeef06a231d2f3b35638f96a6e043",
     "kind": "description"
@@ -4322,7 +4360,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-caviar-findings/blob/main/report.md",
     "source_commit": "d22bd0a22308bee92374f90d01e4bd3c2958ec42",
     "kind": "description"
@@ -4455,7 +4495,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-caviar-findings/blob/main/report.md",
     "source_commit": "d22bd0a22308bee92374f90d01e4bd3c2958ec42",
     "kind": "recommendation"
@@ -4664,7 +4706,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-caviar-findings/blob/main/report.md",
     "source_commit": "d22bd0a22308bee92374f90d01e4bd3c2958ec42",
     "kind": "recommendation"
@@ -5077,11 +5121,9 @@
     "text": "To check the validity of the owner address, the code first checks for the prefix which must be `a=0x`, and second for the length of the address which should not be less than 20 bytes or 40 characters through `hexToAddress()` function. The length of the address can also be checked to not be larger than 40 characters.\n\n```solidity\n function hexToAddress(\n        bytes memory str,\n        uint256 idx,\n        uint256 lastIdx\n    ) internal pure returns (address, bool) {\n        if (lastIdx - idx < 40) return (address(0x0), false);\n        (bytes32 r, bool valid) = hexStringToBytes32(str, idx, lastIdx);\n        return (address(uint160(uint256(r))), valid);\n    }\n```\n\n**[Arachnid (ENS) confirmed, but disagreed with severity and commented](https://github.com/code-423n4/2023-04-ens-findings/issues/198#issuecomment-1536285606):**\n > I think this warrants a severity of 'note', as it requires the user to already supply an invalid-length address. It should revert rather than silently truncating.\n\n**[LSDan (judge) commented](https://github.com/code-423n4/2023-04-ens-findings/issues/198#issuecomment-1538116480):**\n > Medium risk is appropriate in this case. It is very easy to guard against the user making the mistake described.\n> \n> ref: https://github.com/code-423n4/org/issues/53#issuecomment-1340685618\n\n\n\n***",
     "authority": 0.91,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/code-423n4/2023-04-ens-findings/blob/main/report.md",
     "source_commit": "676f575d274470151fe24992b51c8051f5a0afe6",
@@ -5139,7 +5181,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-ens-findings/blob/main/report.md",
     "source_commit": "676f575d274470151fe24992b51c8051f5a0afe6",
     "kind": "description"
@@ -6108,7 +6152,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002",
+      "SIG-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-rubicon-findings/blob/main/report.md",
     "source_commit": "d735f3d7b04f5369e6e87fb7058c197ecc03526b",
     "kind": "recommendation"
@@ -6203,7 +6250,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-rubicon-findings/blob/main/report.md",
     "source_commit": "d735f3d7b04f5369e6e87fb7058c197ecc03526b",
     "kind": "description"
@@ -6450,7 +6499,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-rubicon-findings/blob/main/report.md",
     "source_commit": "d735f3d7b04f5369e6e87fb7058c197ecc03526b",
     "kind": "description"
@@ -7324,7 +7375,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-04-rubicon-findings/blob/main/report.md",
     "source_commit": "d735f3d7b04f5369e6e87fb7058c197ecc03526b",
     "kind": "description"
@@ -7552,7 +7605,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-05-juicebox-findings/blob/main/report.md",
     "source_commit": "669539a23493238b8a9cea3553c63ee0c86e0c42",
     "kind": "description"
@@ -7837,7 +7892,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-05-xeth-findings/blob/main/report.md",
     "source_commit": "368c8265ff7944bf9aac33586ad5248d38aee4f1",
     "kind": "description"
@@ -7989,7 +8046,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-06-lybra-findings/blob/main/report.md",
     "source_commit": "42bf098c4b2d893469bd588213bb1abbeb7f646c",
     "kind": "recommendation"
@@ -8787,7 +8846,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-06-stader-findings/blob/main/report.md",
     "source_commit": "a46e9e439cd8664e06f942050857bfe4a776c04a",
     "kind": "description"
@@ -9034,7 +9095,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-06-stader-findings/blob/main/report.md",
     "source_commit": "a46e9e439cd8664e06f942050857bfe4a776c04a",
     "kind": "recommendation"
@@ -9376,7 +9439,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-arcade-findings/blob/main/report.md",
     "source_commit": "099d79e0dc3b6ab04e9c2230727e25520df3af31",
     "kind": "description"
@@ -9965,7 +10030,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "recommendation"
@@ -10136,7 +10203,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "recommendation"
@@ -10269,7 +10338,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-005"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "recommendation"
@@ -10383,7 +10454,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "description"
@@ -10497,7 +10570,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "description"
@@ -10782,7 +10857,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "recommendation"
@@ -10801,7 +10878,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004",
+      "DIG-005"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "description"
@@ -10991,7 +11071,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-07-tapioca-findings/blob/main/report.md",
     "source_commit": "4193111261e3cf8de27c15857babecaa2519d67c",
     "kind": "recommendation"
@@ -11314,7 +11396,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-08-goodentry-findings/blob/main/report.md",
     "source_commit": "6ce0e87c2824628d3bf0edae43abd00c8e1f62be",
     "kind": "description"
@@ -11333,7 +11417,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-08-goodentry-findings/blob/main/report.md",
     "source_commit": "6ce0e87c2824628d3bf0edae43abd00c8e1f62be",
     "kind": "recommendation"
@@ -11751,7 +11837,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-08-verwa-findings/blob/main/report.md",
     "source_commit": "68d2753abfe77017a4da583a0cf15f8a2180f494",
     "kind": "description"
@@ -11884,7 +11972,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/code-423n4/2023-08-verwa-findings/blob/main/report.md",
     "source_commit": "68d2753abfe77017a4da583a0cf15f8a2180f494",
     "kind": "description"
@@ -12131,7 +12221,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-09-centrifuge-findings/blob/main/report.md",
     "source_commit": "1471e55def593342a1bb70ff0686e2a3add6a68e",
     "kind": "description"
@@ -12264,7 +12356,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001",
+      "SIG-001"
+    ],
     "source_url": "https://github.com/code-423n4/2023-09-centrifuge-findings/blob/main/report.md",
     "source_commit": "1471e55def593342a1bb70ff0686e2a3add6a68e",
     "kind": "recommendation"
@@ -12511,7 +12606,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-10-nextgen-findings/blob/main/report.md",
     "source_commit": "82fa8b4831930d45bf46aac14794b0db3df8371c",
     "kind": "description"
@@ -12644,7 +12741,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/code-423n4/2023-10-nextgen-findings/blob/main/report.md",
     "source_commit": "82fa8b4831930d45bf46aac14794b0db3df8371c",
     "kind": "description"
@@ -12986,7 +13085,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2023-12-revolutionprotocol-findings/blob/main/report.md",
     "source_commit": "00828dd4277f4947e561ee16a6fce0da3e4444c2",
     "kind": "recommendation"
@@ -13271,7 +13372,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-007"
+    ],
     "source_url": "https://github.com/code-423n4/2023-12-revolutionprotocol-findings/blob/main/report.md",
     "source_commit": "00828dd4277f4947e561ee16a6fce0da3e4444c2",
     "kind": "description"
@@ -13955,7 +14058,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/code-423n4/2024-05-munchables-findings/blob/main/report.md",
     "source_commit": "788b270a90933d9545eee70d5ca682622409ba10",
     "kind": "description"
@@ -14088,7 +14193,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2024-05-munchables-findings/blob/main/report.md",
     "source_commit": "788b270a90933d9545eee70d5ca682622409ba10",
     "kind": "recommendation"
@@ -14259,7 +14366,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/code-423n4/2024-05-munchables-findings/blob/main/report.md",
     "source_commit": "788b270a90933d9545eee70d5ca682622409ba10",
     "kind": "description"
@@ -15304,7 +15413,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/AegisVault-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -15513,7 +15624,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/AgoraStableSwap-security-review_2025-06-05.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -15532,7 +15645,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/AgoraStableSwap-security-review_2025-06-05.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -15893,7 +16008,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/AmpleEarn-security-review_2025-12-12.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -16007,7 +16124,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/apDAO-security-review_2024-10-03.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -16596,7 +16715,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Arcadia-security-review-October.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -16938,7 +17059,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Aria-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -16976,7 +17099,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Aria-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -17033,7 +17158,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Aria-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -17071,7 +17198,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Aria-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -17147,7 +17276,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Aria-security-review_2025-05-12.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -17864,11 +17995,9 @@
     "text": "_Resolved_\n\n## Severity\n\n**Impact:** High  \n\n**Likelihood:** Medium\n\n## Description\n\nThe `getNamespace` function contains incorrect assembly code that can lead to namespace collisions due to improper memory packing.\n\n```solidity\nfunction getNamespace(address account, address _caller) public pure returns (bytes32 result) {\n    assembly {\n        mstore(0x00, account)\n        mstore(0x14, _caller)\n        result := keccak256(0x0c, 0x28)\n    }\n}\n```\n\n**Memory Layout Analysis:**\n\n`mstore(0x00, account)` writes 32 bytes:\n\n- Positions 0x00-0x0b: 12 zero bytes (padding).\n- Positions 0x0c-0x1f: 20 bytes of account address.\n\n`mstore(0x14, _caller)` writes 32 bytes:\n\n- Positions 0x14-0x1f: 12 zero bytes (padding) - **This overwrites the last 12 bytes of the account address!**\n- Positions 0x20-0x33: 20 bytes of caller address.\n\n`keccak256(0x0c, 0x28)` hashes 40 bytes starting at position 0x0c:\n\n- Positions 0x0c-0x13: First 8 bytes of account address.\n- Positions 0x14-0x1f: 12 zero bytes (not part of original account).\n- Positions 0x20-0x33: 20 bytes of caller address.\n\n**Result:** Only 8 bytes of the account address are included in the hash instead of the full 20 bytes. This creates namespace collisions where any two accounts sharing the same first 8 bytes will generate identical namespaces for the same caller.\n\nAdditionally, this affects external systems that compute namespaces correctly using `keccak256(abi.encodePacked(account, caller))`. When they call `readStorage()`, the call will revert with `SlotNotInitialized()` because the slot was never initialized with the correctly computed namespace.",
     "authority": 0.91,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Biconomy-security-review_2025-11-26.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -17907,7 +18036,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Biconomy-security-review_2025-11-26.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -18130,10 +18261,11 @@
     "text": "`ComposableExecutionModule` uses the hardcoded address of the entry point v0.7 to check the sender of the transaction. However, not all the networks expected to be supported use the canonical EntryPoint v0.7. This is, for example, the case of [VeChain](https://docs.vechain.org/core-concepts/account-abstraction/entrypoint-contract).\n\nWhile smart accounts can set a specific entry point with the `onInstall()` and `setEntryPoint()` functions, this is an additional step that can be avoided by allowing to set the entry point of the network at deployment time.\n\nThese changes are proposed to allow the entry point to be set at deployment time:",
     "authority": 0.63,
     "version_scope": [
+      "0.6",
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false,
+    "version_uncertain": true,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BiconomyComposability-security-review_2025-03-22.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -18437,7 +18569,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "MOD-001",
+      "MOD-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BiconomyNexus-security-review_2025-03-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -18475,7 +18610,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BiconomyNexus-security-review_2025-03-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -18759,7 +18896,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Bio-security-review_2025-12-15.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -19348,7 +19487,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Blueberry-security-review_2025-04-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -19500,7 +19641,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BNBChain-security-review_2026-04-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -19557,7 +19700,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BNBChain-security-review_2026-04-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -19576,7 +19721,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BOB-Onramp-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -20032,7 +20179,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BOB-security-review-September.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -20545,7 +20694,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BOB-Staking-security-review_2025-10-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -20602,7 +20753,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/BOB-Staking-security-review_2025-10-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -22141,7 +22294,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Bunni-security-review-October.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -22217,7 +22372,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Bunni-security-review-October.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -22654,7 +22811,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Burve-security-review_2025-01-29.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -22958,7 +23117,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Cardex-security-review_2025-01-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -23072,7 +23233,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Cardex-security-review_2025-01-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -23713,11 +23876,9 @@
     "text": "## Severity\n\n**Impact:** Medium\n\n**Likelihood:** Medium\n\n## Description\n\n`validateFeeLimit` will be called within `SessionKeyValidator`'s `validationHook` to ensure that the caller's provided `maxFeePerGas` and `gasLimit` is within the usage limit.\n\n```solidity\n  function validationHook(bytes32 signedHash, Transaction calldata transaction, bytes calldata hookData) external {\n    if (hookData.length == 0) {\n      // There's no session data so we aren't validating anything\n      return;\n    }\n    (bytes memory signature, address validator, ) = abi.decode(transaction.signature, (bytes, address, bytes[]));\n    if (validator != address(this)) {\n      // This transaction is not meant to be validated by this module\n      return;\n    }\n    (SessionLib.SessionSpec memory spec, uint64[] memory periodIds) = abi.decode(\n      hookData,\n      (SessionLib.SessionSpec, uint64[])\n    );\n    require(spec.signer != address(0), \"Invalid signer (empty)\");\n    bytes32 sessionHash = keccak256(abi.encode(spec));\n    // this generally throws instead of returning false\n    sessions[sessionHash].validate(transaction, spec, periodIds);\n    (address recoveredAddress, ECDSA.RecoverError recoverError, ) = ECDSA.tryRecover(signedHash, signature);\n    if (recoverError != ECDSA.RecoverError.NoError || recoveredAddress == address(0)) {\n      return;\n    }\n    require(recoveredAddress == spec.signer, \"Invalid signer (mismatch)\");\n    // This check is separate and performed last to prevent gas estimation failures\n>>> sessions[sessionHash].validateFeeLimit(transaction, spec, periodIds[0]);\n\n    // Set the validation result to 1 for this hash, so that isValidSignature succeeds\n    uint256 slot = uint256(signedHash);\n    assembly {\n      tstore(slot, 1)\n    }\n  }\n```\n\nHowever, `validateFeeLimit` incorrectly checks the fee when `paymaster` is configured, instead of when it is not.\n\n```solidity\n  function validateFeeLimit(\n    SessionStorage storage state,\n    Transaction calldata transaction,\n    SessionSpec memory spec,\n    uint64 periodId\n  ) internal {\n    // This is split from `validate` to prevent gas estimation failures.\n    // When this check was part of `validate`, gas estimation could fail due to\n    // fee limit being smaller than the upper bound of the gas estimation binary search.\n    // By splitting this check, we can now have this order of operations in `validateTransaction`:\n    // 1. session.validate()\n    // 2. ECDSA.tryRecover()\n    // 3. session.validateFeeLimit()\n    // This way, gas estimation will exit on step 2 instead of failing, but will still run through\n    // most of the computation needed to validate the session.\n\n    // TODO: update fee allowance with the gasleft/refund at the end of execution\n>>> if (transaction.paymaster != 0) {\n      // If a paymaster is paying the fee, we don't need to check the fee limit\n      uint256 fee = transaction.maxFeePerGas * transaction.gasLimit;\n      spec.feeLimit.checkAndUpdate(state.fee, fee, periodId);\n    }\n  }\n```\n\nThi",
     "authority": 0.63,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Clave-security-review_2024-12-23.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -23732,11 +23893,9 @@
     "text": "Update the `checkAndUpdate` condition to the following:\n\n````diff\n```solidity\n  function validateFeeLimit(\n    SessionStorage storage state,\n    Transaction calldata transaction,\n    SessionSpec memory spec,\n    uint64 periodId\n  ) internal {\n    // This is split from `validate` to prevent gas estimation failures.\n    // When this check was part of `validate`, gas estimation could fail due to\n    // fee limit being smaller than the upper bound of the gas estimation binary search.\n    // By splitting this check, we can now have this order of operations in `validateTransaction`:\n    // 1. session.validate()\n    // 2. ECDSA.tryRecover()\n    // 3. session.validateFeeLimit()\n    // This way, gas estimation will exit on step 2 instead of failing, but will still run through\n    // most of the computation needed to validate the session.\n\n    // TODO: update fee allowance with the gasleft/refund at the end of execution\n-    if (transaction.paymaster != 0) {\n+    if (transaction.paymaster == 0) {\n      // If a paymaster is paying the fee, we don't need to check the fee limit\n      uint256 fee = transaction.maxFeePerGas * transaction.gasLimit;\n      spec.feeLimit.checkAndUpdate(state.fee, fee, periodId);\n    }\n  }\n````",
     "authority": 0.63,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Clave-security-review_2024-12-23.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -23908,7 +24067,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Coinflip-security-review_2025-02-05.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -24288,7 +24449,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Coinflip-security-review_2025-02-19.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -24763,7 +24926,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Cove-security-review_2024-12-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -25846,7 +26011,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Curio-security-review-July.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -25979,7 +26146,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Curio-security-review-July.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -27138,7 +27307,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Dinari-security-review_2024-12-07.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -29152,7 +29323,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Elytra-security-review_2025-07-27.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -31242,7 +31415,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Funnel-security-review_2025-08-27.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -31964,7 +32139,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Fyde-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -32078,7 +32255,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Fyde-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -32439,7 +32618,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/g8keep-security-review_2024-12-12.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -32572,7 +32753,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/g8keep-security-review_2024-12-12.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -33047,7 +33230,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/GainsNetwork-security-review-February.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -33503,7 +33688,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/GainsNetwork-security-review-May.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -33522,7 +33709,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/GainsNetwork-security-review-May.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -33541,7 +33730,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/GainsNetwork-security-review-May.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -34491,7 +34682,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Gigaverse-security-review_2025-01-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -34567,7 +34760,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Gigaverse-security-review_2025-01-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -34795,7 +34990,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Groupcoin-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -35156,7 +35353,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001",
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/HoneyJar-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -35916,7 +36116,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Hyperbeat-security-review_2025-09-03.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -36790,7 +36992,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Hyperhyper-security-review_2025-03-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -37075,7 +37279,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Hyperhyper-security-review_2025-03-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -37208,7 +37414,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Hyperhyper-security-review_2025-03-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -37436,7 +37644,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Hyperlend-security-review_2025-11-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -39146,7 +39356,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/HYTOPIAWallet-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -39165,7 +39377,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/HYTOPIAWallet-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -39811,7 +40025,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Increment-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -40172,7 +40388,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "WEB-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Initia-security-review_2025-06-17.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -40248,7 +40466,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Interpol-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -40514,7 +40734,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Interpol-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -40723,7 +40945,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Interpol-security-review_2024-12-24.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -41559,7 +41783,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Itos-security-review_2025-05-24.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -41749,7 +41975,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Karak-security-review-June.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -41901,7 +42129,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Karak-security-review-June.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -42034,7 +42264,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-005"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Kekotron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -42205,7 +42437,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Kinetiq-security-review_2025-02-26.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -42243,7 +42477,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Kinetiq-security-review_2025-02-26.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -42775,7 +43011,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/KittenSwap-security-review_2025-05-07.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -43174,7 +43412,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/KittenSwap-security-review_2025-05-07.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -43896,7 +44136,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/KittenSwap-security-review_2025-06-12.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -44537,11 +44779,9 @@
     "text": "## Severity\n\n**Impact:** High\n\n**Likelihood:** Low\n\n## Description\n\nA possible failure of transaction done in [handleOps](https://github.com/0xPolycode/klaster-smart-contracts/blob/a819679b17716bb0b01e787fbb7fc54d7c70127e/contracts/KlasterPaymaster.sol#L13) method for all UserOperation[], since there is no check for ops array if ops have multiple UserOperation for the same address:\n\n```\nfunction handleOps(UserOperation[] calldata ops) public payable {\n        entryPoint.depositTo{value: msg.value}(address(this));\n        entryPoint.handleOps(ops, payable(msg.sender));\n        entryPoint.withdrawTo(payable(msg.sender), entryPoint.getDepositInfo(address(this)).deposit);\n    }\n```\n\nAccording to https://www.alchemy.com/blog/account-abstraction, it's very important that:\n\n> As long as the bundle doesn\u2019t include multiple ops for the same wallet, we actually get this for free because of the storage restrictions discussed above: if the validations of two ops don\u2019t touch the same storage, they can\u2019t interfere with each other. To take advantage of this, executors will make sure that a bundle contains at most one op from any given wallet.\n\ntwo OPs for the same wallet address can cause an issue, A simple example is explained in the next scenario:\n\n- Users send their OPs to the bundler\n- ops array has 2 ops for the same wallet address of Bob\n- A bundler will start and choose by arranging those OPs according to simulateValidation test\n- Assume Bob's account has 1000USDC\n- on simulateValidation of Bob's first op, it will check if it can transfer 1000 USDC to another wallet, and it passes successfully through `simulateValidation`.\n- the second op of Bob transferring 500 USDC (same wallet's address) goes through simulateValidation and also succeeded as the account holds 1000 USDC.\n- the Bundler ready to execute ops array by calling handleOps.\n- first op of Bob is executed successfully.\n- second op of Bob execution failed since there was not enough USDC.",
     "authority": 0.72,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Klaster-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -44613,11 +44853,9 @@
     "text": "If other than the node account tries to use the `KlasterPaymaster.sol`, it will revert because there is no deposited ETH. The paymaster is only prepaid when a Klaster node sends userOps to the entry point:\n\n```solidity\n    function handleOps(UserOperation[] calldata ops) public payable {\n>>      entryPoint.depositTo{value: msg.value}(address(this));\n        entryPoint.handleOps(ops, payable(msg.sender));\n>>      entryPoint.withdrawTo(payable(msg.sender), entryPoint.getDepositInfo(address(this)).deposit);\n    }\n```\n\nTo address this issue paymaster's funds should be verified:",
     "authority": 0.91,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Klaster-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -44747,7 +44985,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Klaster-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -44761,11 +45001,9 @@
     "text": "In the `validateUserOp` function of the `KlasterEcdsaModule` contract, there is a lack of proper validation for the `upperBoundTimestamp` parameter. The function directly uses the `upperBoundTimestamp` value received from the decoded signature without performing any checks or validations.\n\n```solidity\n    function validateUserOp(UserOperation calldata userOp, bytes32 userOpHash)\n        external\n        view\n        virtual\n        returns (uint256)\n    {\n        (bytes memory sigBytes,) = abi.decode(userOp.signature, (bytes, address));\n\n(\n            bytes32 iTxHash,\n            bytes32[] memory proof,\n            uint48 lowerBoundTimestamp,\n            uint48 upperBoundTimestamp,\n            bytes memory userEcdsaSignature\n        ) = abi.decode(sigBytes, (bytes32, bytes32[], uint48, uint48, bytes));\n\nbytes32 calculatedUserOpHash = getUserOpHash(userOp, lowerBoundTimestamp, upperBoundTimestamp);\n        if (!_validateUserOpHash(calculatedUserOpHash, iTxHash, proof)) {\n            return SIG_VALIDATION_FAILED;\n        }\n\nif (!_verifySignature(iTxHash, userEcdsaSignature, userOp.sender)) {\n            return SIG_VALIDATION_FAILED;\n        }\n\nreturn _packValidationData(false, upperBoundTimestamp, lowerBoundTimestamp);\n    }\n```\n\nIf upperBoundTimestamp is equal to zero, it is recommended to set uint48 max.\n\n## Klaster comments\n\nThis is the way ERC-4337 EntryPoint works - validation modules simply report the lower/upper bound timestamps (sig validity period) back to whoever is asking this information. This information requester (EntryPoint) then chooses what to do with the received info.\n\nIn our case, ERC4337 entrypoint will receive back the timestamps and reject the UserOp for which the timestamp is out of bounds:\n[link](https://github.com/eth-infinitism/account-abstraction/blob/fa61290d37d079e928d92d53a122efcc63822214/contracts/core/EntryPoint.sol#L471)",
     "authority": 0.75,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Klaster-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -45184,7 +45422,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/LayerZero-security-review-September.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -45431,7 +45671,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001",
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/LayerZeroZROClaim-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -45469,7 +45712,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/LayerZeroZROClaim-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -45583,7 +45828,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/LayerZeroZROClaim-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -45621,7 +45868,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/LayerZeroZROClaim-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -46001,7 +46250,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Level-security-review_2025-04-09.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -47236,7 +47487,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/MCP-security-review_2025-08-07.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -47426,7 +47679,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/MoarCandy-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -48281,7 +48536,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nexus-security-review_2024-11-29.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -48319,7 +48576,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nexus-security-review_2024-11-29.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -48851,7 +49110,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/NFTMirror-security-review_2024-12-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -48908,7 +49169,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/NFTMirror-security-review_2024-12-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -48927,7 +49190,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/NFTMirror-security-review_2024-12-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -48965,7 +49230,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/NFTMirror-security-review_2024-12-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -49022,7 +49289,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-005"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/NFTMirror-security-review_2024-12-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -49117,7 +49386,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Noodles-security-review_2025-03-11.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -49174,7 +49445,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001",
+      "SES-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nucleus-security-review_2024-12-14.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -49193,7 +49467,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001",
+      "SES-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nucleus-security-review_2024-12-14.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -49231,7 +49508,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001",
+      "SES-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nucleus-security-review_2024-12-14.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -49383,7 +49663,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nucleus-security-review_2025-07-29.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -49497,7 +49779,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nume-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -49516,7 +49800,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nume-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -49687,7 +49973,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Nume-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -49972,7 +50260,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Omo-security-review_2025-01-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -50081,11 +50371,9 @@
     "text": "## Severity\n\n**Impact:** High\n\n**Likelihood:** Medium\n\n## Description\n\nThe current implementation of `_validateSignature()` uses `ECDSA.recover()` to extract the signer address, which can return `address(0)` for invalid signatures:\n\n```solidity\n    function _validateSignature(\n        UserOperation calldata userOp,\n        bytes32 userOpHash\n    ) internal virtual override returns (uint256 validationData) {\n        bytes32 hash = ECDSA.toEthSignedMessageHash(userOpHash);\n        address signer = ECDSA.recover(hash, userOp.signature);\n\n        // Check if signer is admin (user wallet)\n        if (isAdmin(signer)) return 0;\n\n        // Check if signer is an authorized agent\n        if (OmoAgent(payable(address(this))).agents(0) == signer) {\n            return 0;\n        }\n        return SIG_VALIDATION_FAILED;\n    }\n```\n\nHowever, if `agent(0)` is not set (i.e., `address(0)`), the function might incorrectly pass the signature validity check even though the signature is invalid. This is because it doesn't account for the possibility that the recovered address could be `address(0)` and mistakenly treats it as a valid signer. This could lead to security issues where invalid signatures are accepted.",
     "authority": 0.63,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Omo-security-review_2025-01-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -50100,12 +50388,12 @@
     "text": "Explicitly check for `address(0)` in the recovered address and ensure that no invalid signatures are accepted. If the recovered address is `address(0)`, the signature should be considered invalid.\n\nUpdate the `DynamicAccount._validateSignature()` function to check that the recovered signer is not `address(0)`:\n\n```diff\nfunction _validateSignature(\n       UserOperation calldata userOp,\n       bytes32 userOpHash\n   ) internal virtual override returns (uint256 validationData) {\n       bytes32 hash = ECDSA.toEthSignedMessageHash(userOpHash);\n       address signer = ECDSA.recover(hash, userOp.signature);\n+       if (signer == address(0)) return SIG_VALIDATION_FAILED;\n       //...\n   }\n```",
     "authority": 0.75,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
-    "obligation_ids": [],
+    "version_uncertain": false,
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Omo-security-review_2025-01-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -50162,7 +50450,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Omo-security-review_2025-01-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -50504,7 +50794,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Omo-security-review_2025-01-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -50727,10 +51019,11 @@
     "text": "The first argument in the `DynamicAccount._validateSignature` function is currently of type `UserOperation`. However, according to the expected signature in `BaseAccount`, ([link](https://github.com/thirdweb-dev/contracts/blob/389f9456571fe554d7a048d34806cbbe7b3ec909/contracts/prebuilts/account/utils/BaseAccount.sol#L68)) the first argument should be `PackedUserOperation`. This misalignment in function arguments could revert the transaction.\n\n```solidity\n    function _validateSignature(\n        UserOperation calldata userOp,\n        bytes32 userOpHash\n    ) internal virtual override returns (uint256 validationData) {\n    --snip--\n    }\n```\n\nRecommendations:\n\n```solidity\nfunction _validateSignature(\n        PackedUserOperation calldata userOp,\n        bytes32 userOpHash\n    )\n```",
     "authority": 0.91,
     "version_scope": [
+      "0.6",
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false,
+    "version_uncertain": true,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Omo-security-review_2025-01-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -51092,7 +51385,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Opinion-security-review_2026-03-24.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -51149,7 +51444,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Opinion-security-review_2026-03-24.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -51206,7 +51503,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Opinion-security-review_2026-03-24.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -51415,7 +51714,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Opinion-security-review_2026-03-24.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -51662,7 +51963,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Ostium-security-review_2025-01-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -52270,7 +52573,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Ostium-security-review_2025-09-14.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -52688,7 +52993,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Ostium-security-review_2025-09-14.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -53253,10 +53560,11 @@
     "text": "_Resolved_\n\n`UniswapV3Staker._unstakeToken()` calculates and distributes rewards before cleaning up the stake storage.\n\nIf the emission style is `Regular` and the reward token is an ERC777 token, it is possible to reenter the contract and unstake the same token again before the storage is cleaned up, distributing the same rewards multiple times, allowing the attacker to drain all the balance of the reward token from the contract.\n\n```solidity\n477:     function _unstakeToken(IncentiveKey memory key, uint256 tokenId, Deposit memory deposit) private returns (uint256 reward) {\n(...)\n488:  @>     reward = _calculateAndDistributeRewards(\n489:             key,\n490:             deposit,\n491:             incentiveId,\n492:             secondsPerLiquidityInsideInitialX128,\n493:             secondsInsideInitial,\n494:             liquidity\n495:         );\n496: \n497:         _cleanupStakeStorage(tokenId, incentiveId, liquidity);\n(...)\n627:     function _distributeReward(\n(...)\n634:         if (incentive.emissionSettings.emissionStyle == IEmissionController.EmissionStyle.Regular) {\n635:  @>         TransferHelperExtended.safeTransfer(address(key.rewardToken), owner, reward);\n```\n\nProof of concept\n\n- [Set up Foundry in the project](https://getfoundry.sh/introduction/installation).\n- Create a test file in the `test/foundry` directory with the code below.\n- Run `forge test --mt test_audit_erc777RewardReentrancy --fork-url https://eth.llamarpc.com --fork-block-number 22866702`.\n\n```solidity\n// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.7.0;\npragma abicoder v2;\n\nimport \"forge-std/Test.sol\";\nimport \"contracts/UniswapV3Staker.sol\";\nimport \"contracts/zaps/FullRangeZap.sol\";\nimport \"contracts/interfaces/IUniswapV3Staker.sol\";\nimport \"@openzeppelin/contracts/introspection/IERC1820Registry.sol\";\n\ncontract AuditTests is Test {\n    address owner = makeAddr(\"owner\");\n    address alice = makeAddr(\"alice\");\n    \n    INonfungiblePositionManager positionManager = INonfungiblePositionManager(0xC36442b4a4522E871399CD717aBDD847Ab11FE88);\n    IUniswapV3Factory factory = IUniswapV3Factory(0x1F98431c8aD98523631AE4a59f267346ea31F984);\n    IUniswapV3Pool pool = IUniswapV3Pool(0x98409d8CA9629FBE01Ab1b914EbF304175e384C8); // WETH/VRA pool\n    IERC20Minimal WETH = IERC20Minimal(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);\n    IERC20Minimal VRA = IERC20Minimal(0xF411903cbC70a74d22900a5DE66A2dda66507255);\n    IERC1820Registry ERC1820_REGISTRY = IERC1820Registry(0x1820a4B7618BdE71Dce8cdc73aAB6C95905faD24);\n    \n    UniswapV3Staker staker;\n    FullRangeZap zap;\n    IUniswapV3Staker.IncentiveKey incentiveKey;\n    uint256 reward = 1_000e18;\n    uint256 tokenId;\n    uint256 timesReentered;\n\n    function setUp() public {\n        deal(address(VRA), owner, reward);\n        incentiveKey = IUniswapV3Staker.IncentiveKey({\n            rewardToken: VRA,\n            pool: pool,\n            reward: reward,\n            startTime: block.timestamp,\n            endTime: block.timestamp + 30 days,\n ",
     "authority": 1.0,
     "version_scope": [
+      "0.6",
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false,
+    "version_uncertain": true,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Ouroboros-security-review_2025-06-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -54207,7 +54515,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Peapods-security-review_2024-11-16.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -55157,7 +55467,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Polygun-security-review_2026-03-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -55233,7 +55545,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Polygun-security-review_2026-03-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -55271,7 +55585,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Polygun-security-review_2026-03-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -56430,7 +56746,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Pump-security-review_2025-03-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -56506,7 +56824,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Pump-security-review_2025-03-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -56658,7 +56978,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Pump-security-review_2025-03-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -58691,7 +59013,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RegnumAurum-security-review_2026-03-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -58710,7 +59034,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RegnumAurum-security-review_2026-03-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -59294,11 +59620,9 @@
     "text": "The issue is that after the EIP-7702 upgrade, the value of `target.code.length` for EOA during the transaction can be higher than 0, and as a result, it would be possible to bypass this check.",
     "authority": 0.48,
     "version_scope": [
-      "0.6",
-      "0.7",
       "0.8"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Reserve-security-review_2026-02-27.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -59432,7 +59756,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Reserve-security-review_2026-02-27.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -60078,7 +60404,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Resolv-security-review_2024-12-09.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -60154,7 +60482,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Resolv-security-review_2025-04-15.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -60420,7 +60750,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Reya-security-review-October.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -60762,7 +61094,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/ReyaNetwork-security-review-August.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -60781,7 +61115,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/ReyaNetwork-security-review-August.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -61123,7 +61459,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/ReyaNetwork-security-review-June.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -61142,7 +61480,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/ReyaNetwork-security-review-June2.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -61693,7 +62033,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -62016,7 +62358,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -62415,7 +62759,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -62662,7 +63008,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -62681,7 +63029,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-005"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-04-25.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -63137,7 +63487,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-05-10.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -63175,7 +63527,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-005",
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/RipIt-security-review_2025-05-10.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -63555,7 +63910,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Rivus-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -64543,7 +64900,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -64562,7 +64921,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -64581,7 +64942,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -64676,7 +65039,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -64752,7 +65117,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -64790,7 +65157,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002",
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -64828,7 +65198,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003",
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -64885,7 +65258,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -65322,7 +65697,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review_2026-03-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -65341,7 +65718,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review_2026-03-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -65398,7 +65777,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review_2026-03-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -65531,7 +65912,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review_2026-03-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -65721,7 +66104,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Saffron-security-review_2026-03-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -65797,7 +66182,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "ORD-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Serious-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -67279,7 +67666,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Sofamon-security-review-August.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -67735,7 +68124,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "COD-010",
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Spectra-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -67887,7 +68279,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Spectra-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -68077,7 +68471,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002",
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Spicenet-security-review_2026-04-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -68115,7 +68512,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Spicenet-security-review_2026-04-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -68419,7 +68818,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/StakeDAO-security-review_2025-07-21.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -69426,7 +69827,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/StationX-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -69578,7 +69981,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/StationX-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -69730,7 +70135,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001",
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/StationX-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -69768,7 +70176,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/StationX-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -69939,7 +70349,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/StationX-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -70566,7 +70978,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/stHYPE-security-review_2025-10-13.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -70889,7 +71303,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "OP-011"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Subsquid-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -71022,7 +71438,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Subsquid-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -71155,7 +71573,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001",
+      "DIG-007"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/SushiSwap-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -71188,10 +71609,11 @@
     "text": "The TransferHelper library and Sushiswap contract specify a Solidity version range from 0.6.12 to less than 0.8.0:\n\n```solidity\npragma solidity >=0.6.12 <0.8.0;\n```\n\nHowever, the implementation of the safeTransferETH function uses syntax that is incompatible with Solidity versions 0.7.0 and above. Specifically, the method for sending ETH in external calls changed in Solidity 0.7.0. Current implementation:\n\n```solidity\n    function safeTransferETH(address to, uint value) internal {\n        (bool success, ) = to.call.value(value)(new bytes(0)); // @audit cannot compile with solc >= 0.7\n        require(success, \"TransferHelper: ETH_TRANSFER_FAILED\");\n    }\n```\n\nThis syntax for specifying the value in ETH transfers (call.value()) was deprecated in Solidity 0.7.0 in favor of a new curly brace syntax.\n\nFrom solidity docs:\n\nIn external function and contract creation calls, Ether and gas are now specified using a new syntax: x.f{gas: 10000, value: 2 ether}(arg1, arg2). The old syntax \u2013 x.f.gas(10000).value(2 ether)(arg1, arg2) \u2013 will cause an error.\n\nhttps://docs.soliditylang.org/en/v0.7.2/070-breaking-changes.html#changes-to-the-syntax\n\nIt's recommended to Update the safeTransferETH function to use the new syntax compatible with Solidity 0.7.0 and above:",
     "authority": 0.76,
     "version_scope": [
+      "0.6",
       "0.7",
       "0.8"
     ],
-    "version_uncertain": false,
+    "version_uncertain": true,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/SushiSwap-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -71439,7 +71861,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/SXT-security-review_2025-03-31.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -71477,7 +71901,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/SXT-security-review_2025-03-31.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -71515,7 +71941,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/SXT-security-review_2025-03-31.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -71572,7 +72000,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/SXT-security-review_2025-03-31.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -71838,7 +72268,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Tangent-security-review_2025-10-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -72313,7 +72745,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Tanssi-security-review_2025-04-30.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -72807,7 +73241,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review-february.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -72978,7 +73414,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review-february.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -72997,7 +73435,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review-february.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -73111,7 +73551,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004",
+      "DIG-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -73130,7 +73573,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004",
+      "SES-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -73263,7 +73709,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -73282,7 +73730,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004",
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -73301,7 +73752,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001",
+      "PRE-002"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -73586,7 +74040,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -73619,11 +74075,9 @@
     "text": "The payload that is being sent to stargate includes the following data: `abi.encode(lbpData, stargateData.receiver)`\n\nbut at the `sgReceive()` function there is this check: `if (payload.length <= 40) return;`\n\nI realize this check is done because it is in stargate docs, but they are using a different payload that includes 2 addresses + other data, that is why the 40 bytes length check exists, to make sure the addresses are in fact 20 bytes.\n\nGiven that you have to send the `ParticipateData` struct and the components of the payload are not denominated in bytes, the check is useless.\n\nRemove the following check from the `sgReceive()` function.\n\n```diff\n- if (payload.length <= 40) return;\n```",
     "authority": 0.48,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TapiocaDAO-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
@@ -73738,7 +74192,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Theo-security-review_2026-03-19.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "recommendation"
@@ -73814,7 +74270,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TitanX-security-review.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -74251,7 +74709,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-003"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/TopStrike-security-review_2025-12-18.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -75258,7 +75718,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/USDV-security-review_2025-03-06.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -75714,7 +76176,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/WishWish-security-review_2025-11-04.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -75752,7 +76216,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/WishWish-security-review_2025-11-04.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -75961,7 +76427,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-006"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/YieldBasis-security-review_2025-03-26.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -76854,7 +77322,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-001"
+    ],
     "source_url": "https://github.com/pashov/audits/blob/master/team/md/Zipper-security-review_2025-05-05.md",
     "source_commit": "0b06f74776ab318c5895b3dc2580e70a7c11dbe9",
     "kind": "description"
@@ -76892,7 +77362,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-01-uxd-judging/blob/main/README.md",
     "source_commit": "2fcd1ecf2c18b41a4a216711853de839471b41c0",
     "kind": "recommendation"
@@ -76911,7 +77383,10 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-003",
+      "DIG-006"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-01-uxd-judging/blob/main/README.md",
     "source_commit": "2fcd1ecf2c18b41a4a216711853de839471b41c0",
     "kind": "description"
@@ -76925,11 +77400,9 @@
     "text": "Limit the length of _toAddress to some amount (i.e. 256 bytes) as of right now EVM uses 20 bytes address and Sol/Aptos use 32 bytes address, so for right now it could be limited to 32 bytes.\n\n        function sendFrom(address _from, uint16 _dstChainId, bytes calldata _toAddress, uint _amount, address payable _refundAddress, address _zroPaymentAddress, bytes calldata _adapterParams) public payable virtual override {\n    +       require(_toAddress.length <= maxAddressLength);       \n            _send(_from, _dstChainId, _toAddress, _amount, _refundAddress, _zroPaymentAddress, _adapterParams);\n        }",
     "authority": 0.48,
     "version_scope": [
-      "0.6",
-      "0.7",
-      "0.8"
+      "0.6"
     ],
-    "version_uncertain": true,
+    "version_uncertain": false,
     "obligation_ids": [],
     "source_url": "https://github.com/sherlock-audit/2023-01-uxd-judging/blob/main/README.md",
     "source_commit": "2fcd1ecf2c18b41a4a216711853de839471b41c0",
@@ -77025,7 +77498,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "DIG-004"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-01-uxd-judging/blob/main/README.md",
     "source_commit": "2fcd1ecf2c18b41a4a216711853de839471b41c0",
     "kind": "recommendation"
@@ -77367,7 +77842,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-004"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-05-USSD-judging/blob/main/README.md",
     "source_commit": "c0b30b068e99a29c7b40a283ec80dbdb28425e87",
     "kind": "description"
@@ -77443,7 +77920,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-05-USSD-judging/blob/main/README.md",
     "source_commit": "c0b30b068e99a29c7b40a283ec80dbdb28425e87",
     "kind": "recommendation"
@@ -77880,7 +78359,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-06-tokemak-judging/blob/main/README.md",
     "source_commit": "2f826145cc68409ec8edc9f27ce51dcb43361ce8",
     "kind": "recommendation"
@@ -78260,7 +78741,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "PAY-008"
+    ],
     "source_url": "https://github.com/sherlock-audit/2023-06-tokemak-judging/blob/main/README.md",
     "source_commit": "2f826145cc68409ec8edc9f27ce51dcb43361ce8",
     "kind": "recommendation"
@@ -79096,7 +79579,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/sherlock-audit/2024-01-napier-judging/blob/main/README.md",
     "source_commit": "6ed1ac40e8eda9f7e0fabe5dd0849b7066dcd1a0",
     "kind": "description"
@@ -79362,7 +79847,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-001"
+    ],
     "source_url": "https://github.com/sherlock-audit/2024-01-napier-judging/blob/main/README.md",
     "source_commit": "6ed1ac40e8eda9f7e0fabe5dd0849b7066dcd1a0",
     "kind": "recommendation"
@@ -79590,7 +80077,9 @@
       "0.8"
     ],
     "version_uncertain": true,
-    "obligation_ids": [],
+    "obligation_ids": [
+      "SES-005"
+    ],
     "source_url": "https://github.com/sherlock-audit/2024-03-zivoe-judging/blob/main/README.md",
     "source_commit": "240c9cefa80166da4f6f506e9198b377534cd697",
     "kind": "description"

@@ -2,7 +2,7 @@ import json
 import os
 from collections import Counter
 
-d2_src = "corpus/phase_d/d2_ground_truth (1).json"
+d2_src = "corpus/phase_d/d2_ground_truth.json"
 dest_path = "benchmark/stage3_synthesis/ground_truth.json"
 
 with open(d2_src, "r", encoding="utf-8") as f:
