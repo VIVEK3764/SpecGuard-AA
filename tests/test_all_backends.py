@@ -1,13 +1,12 @@
 # SPDX-License-Identifier: MIT
 """
-Tests for SpecGuard-AA 5.2 (Halmos Symbolic), 5.3 (Trace Monitor), and 5.4 (Differential Simulator).
+Tests for SpecGuard-AA 5.3 (Trace Monitor) and 5.4 (Differential Simulator).
 """
 
 import os
 from specguard.extractor import extract_facts
 from specguard.backends.trace_monitor import TraceMonitorBackend
 from specguard.backends.differential_sim import DifferentialSimBackend
-from specguard.backends.halmos_symbolic import HalmosSymbolicBackend
 from specguard.models import Property, PropertyBinding, PropertyType, Role
 
 

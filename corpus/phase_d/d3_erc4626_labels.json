@@ -1,58 +1,210 @@
 {
   "domain": "ERC-4626",
   "annotator": "Consensus",
-  "obligation_count": 15,
-  "scoping_rule": "Standard tokenized vault interface per EIP-4626 specifications.",
+  "obligation_count": 48,
+  "scoping_rule": "Union-over-mechanisms across 10 representative vault architectures (fees, pause, async queues, oracle, rebasing, FOT, access control, slippage, flash loans, permit, profit locking).",
   "contracts": [
     {
       "file": "OpenZeppelin_ERC4626.sol",
       "kind": "OZ reference tokenized vault base (v5.0 with virtual shares)",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-014."
         },
         "V-015": {
-          "label": "applicable_absent"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-016."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-021 does not exist in this contract architecture."
+        },
+        "V-022": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-022 does not exist in this contract architecture."
+        },
+        "V-023": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-023 does not exist in this contract architecture."
+        },
+        "V-024": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-024 does not exist in this contract architecture."
+        },
+        "V-025": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-025 does not exist in this contract architecture."
+        },
+        "V-026": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-026 does not exist in this contract architecture."
+        },
+        "V-027": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-027 does not exist in this contract architecture."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-035 is omitted or defective."
+        },
+        "V-036": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-036 is omitted or defective."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-038 does not exist in this contract architecture."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 18,
+        "applicable_absent": 2,
+        "not_applicable": 28
       }
     },
     {
@@ -60,101 +212,405 @@
       "kind": "Solmate gas-optimized minimal vault",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_absent"
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-014 is omitted or defective."
         },
         "V-015": {
-          "label": "applicable_absent"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-016 does not exist in this contract architecture."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-021 does not exist in this contract architecture."
+        },
+        "V-022": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-022 does not exist in this contract architecture."
+        },
+        "V-023": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-023 does not exist in this contract architecture."
+        },
+        "V-024": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-024 does not exist in this contract architecture."
+        },
+        "V-025": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-025 does not exist in this contract architecture."
+        },
+        "V-026": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-026 does not exist in this contract architecture."
+        },
+        "V-027": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-027 does not exist in this contract architecture."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-035 is omitted or defective."
+        },
+        "V-036": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-036 is omitted or defective."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-038 does not exist in this contract architecture."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-043 does not exist in this contract architecture."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-046 is omitted or defective."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 14,
+        "applicable_absent": 4,
+        "not_applicable": 30
       }
     },
     {
       "file": "Morpho_MetaMorpho.sol",
-      "kind": "MetaMorpho lending optimizer vault with supply caps",
+      "kind": "MetaMorpho lending optimizer vault with supply caps and oracle valuation",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-014."
         },
         "V-015": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-016."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-019."
+        },
+        "V-020": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-020."
+        },
+        "V-021": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-021."
+        },
+        "V-022": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-022."
+        },
+        "V-023": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-023 does not exist in this contract architecture."
+        },
+        "V-024": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-024 does not exist in this contract architecture."
+        },
+        "V-025": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-025 does not exist in this contract architecture."
+        },
+        "V-026": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-026."
+        },
+        "V-027": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-027."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-029."
+        },
+        "V-030": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-030."
+        },
+        "V-031": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-031."
+        },
+        "V-032": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-032."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-035 does not exist in this contract architecture."
+        },
+        "V-036": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-036 does not exist in this contract architecture."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-038."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-048."
         }
+      },
+      "summary": {
+        "applicable_enforced": 30,
+        "applicable_absent": 0,
+        "not_applicable": 18
       }
     },
     {
@@ -162,50 +618,202 @@
       "kind": "Yearn v3 single-asset multi-strategy vault",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_enforced"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-014 does not exist in this contract architecture."
         },
         "V-015": {
-          "label": "not_applicable"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-015."
+        },
+        "V-016": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-016 does not exist in this contract architecture."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-019."
+        },
+        "V-020": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-020."
+        },
+        "V-021": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-021."
+        },
+        "V-022": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-022."
+        },
+        "V-023": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-023."
+        },
+        "V-024": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-024."
+        },
+        "V-025": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-025."
+        },
+        "V-026": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-026."
+        },
+        "V-027": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-027."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-035 does not exist in this contract architecture."
+        },
+        "V-036": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-036 does not exist in this contract architecture."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-038."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-047."
+        },
+        "V-048": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-048."
         }
+      },
+      "summary": {
+        "applicable_enforced": 29,
+        "applicable_absent": 0,
+        "not_applicable": 19
       }
     },
     {
@@ -213,305 +821,1217 @@
       "kind": "Maker/Spark Savings DAI vault (DSR accumulator)",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-014 does not exist in this contract architecture."
         },
         "V-015": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-016 does not exist in this contract architecture."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-021 does not exist in this contract architecture."
+        },
+        "V-022": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-022 does not exist in this contract architecture."
+        },
+        "V-023": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-023 does not exist in this contract architecture."
+        },
+        "V-024": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-024 does not exist in this contract architecture."
+        },
+        "V-025": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-025 does not exist in this contract architecture."
+        },
+        "V-026": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-026 does not exist in this contract architecture."
+        },
+        "V-027": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-027 does not exist in this contract architecture."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-033."
+        },
+        "V-034": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-034."
+        },
+        "V-035": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-035 does not exist in this contract architecture."
+        },
+        "V-036": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-036 does not exist in this contract architecture."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-038 does not exist in this contract architecture."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-043 does not exist in this contract architecture."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 17,
+        "applicable_absent": 0,
+        "not_applicable": 31
       }
     },
     {
       "file": "Euler_EVault.sol",
-      "kind": "Euler v2 lending vault with cash/borrow accounting",
+      "kind": "Euler v2 lending vault with cash/borrow accounting and flash mint",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-014."
         },
         "V-015": {
-          "label": "applicable_absent"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-016."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-019."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-021."
+        },
+        "V-022": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-022."
+        },
+        "V-023": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-023."
+        },
+        "V-024": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-024."
+        },
+        "V-025": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-025."
+        },
+        "V-026": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-026."
+        },
+        "V-027": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-027."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-030."
+        },
+        "V-031": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-031."
+        },
+        "V-032": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-032."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-035 is omitted or defective."
+        },
+        "V-036": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-036 is omitted or defective."
+        },
+        "V-037": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-037."
+        },
+        "V-038": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-038."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-042."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-044."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-048."
         }
+      },
+      "summary": {
+        "applicable_enforced": 34,
+        "applicable_absent": 2,
+        "not_applicable": 12
       }
     },
     {
       "file": "Beefy_ERC4626Wrapper.sol",
-      "kind": "Beefy auto-compounding vault wrapper",
+      "kind": "Beefy auto-compounding vault wrapper with harvest performance fees",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_absent"
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-014 is omitted or defective."
         },
         "V-015": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-016 does not exist in this contract architecture."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-018."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-020."
+        },
+        "V-021": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-021."
+        },
+        "V-022": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-022."
+        },
+        "V-023": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-023."
+        },
+        "V-024": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-024."
+        },
+        "V-025": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-025."
+        },
+        "V-026": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-026 does not exist in this contract architecture."
+        },
+        "V-027": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-027 does not exist in this contract architecture."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-035 does not exist in this contract architecture."
+        },
+        "V-036": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-036 does not exist in this contract architecture."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-038 is omitted or defective."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-045 does not exist in this contract architecture."
+        },
+        "V-046": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-046 does not exist in this contract architecture."
+        },
+        "V-047": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-047."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 22,
+        "applicable_absent": 2,
+        "not_applicable": 24
       }
     },
     {
       "file": "YieldSpace_PoolVault.sol",
-      "kind": "Yield Space fixed yield invariant vault",
+      "kind": "Yield Space fixed yield invariant vault with maturity discount",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-014."
         },
         "V-015": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-016."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-021 does not exist in this contract architecture."
+        },
+        "V-022": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-022 does not exist in this contract architecture."
+        },
+        "V-023": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-023."
+        },
+        "V-024": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-024."
+        },
+        "V-025": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-025."
+        },
+        "V-026": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-026 does not exist in this contract architecture."
+        },
+        "V-027": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-027 does not exist in this contract architecture."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-035 does not exist in this contract architecture."
+        },
+        "V-036": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-036 does not exist in this contract architecture."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-038 does not exist in this contract architecture."
+        },
+        "V-039": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-039."
+        },
+        "V-040": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-040."
+        },
+        "V-041": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-041."
+        },
+        "V-042": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-042 does not exist in this contract architecture."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 24,
+        "applicable_absent": 0,
+        "not_applicable": 24
       }
     },
     {
       "file": "Aave_v3_ERC4626Wrapper.sol",
-      "kind": "Aave v3 aToken 1:1 wrapper vault",
+      "kind": "Aave v3 aToken 1:1 wrapper vault tracking pool liquidity index",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-014 does not exist in this contract architecture."
         },
         "V-015": {
-          "label": "not_applicable"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-016 does not exist in this contract architecture."
+        },
+        "V-017": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-017 does not exist in this contract architecture."
+        },
+        "V-018": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-018 does not exist in this contract architecture."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-021 does not exist in this contract architecture."
+        },
+        "V-022": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-022 does not exist in this contract architecture."
+        },
+        "V-023": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-023 does not exist in this contract architecture."
+        },
+        "V-024": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-024 does not exist in this contract architecture."
+        },
+        "V-025": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-025 does not exist in this contract architecture."
+        },
+        "V-026": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-026 does not exist in this contract architecture."
+        },
+        "V-027": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-027 does not exist in this contract architecture."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-033."
+        },
+        "V-034": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-034."
+        },
+        "V-035": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-035 does not exist in this contract architecture."
+        },
+        "V-036": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-036 does not exist in this contract architecture."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-038 does not exist in this contract architecture."
+        },
+        "V-039": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-039 does not exist in this contract architecture."
+        },
+        "V-040": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-040 does not exist in this contract architecture."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-042."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-044 does not exist in this contract architecture."
+        },
+        "V-045": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-045."
+        },
+        "V-046": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-046."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 19,
+        "applicable_absent": 0,
+        "not_applicable": 29
       }
     },
     {
       "file": "Balancer_BoostedPoolVault.sol",
-      "kind": "Balancer boosted pool buffer vault",
+      "kind": "Balancer boosted pool buffer vault with linear pool rebalancing",
       "labels": {
         "V-001": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-001."
         },
         "V-002": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-002."
         },
         "V-003": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-003."
         },
         "V-004": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-004."
         },
         "V-005": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-005."
         },
         "V-006": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-006."
         },
         "V-007": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-007."
         },
         "V-008": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-008."
         },
         "V-009": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-009."
         },
         "V-010": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-010."
         },
         "V-011": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-011."
         },
         "V-012": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-012."
         },
         "V-013": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-013."
         },
         "V-014": {
-          "label": "applicable_enforced"
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-014."
         },
         "V-015": {
-          "label": "applicable_absent"
+          "label": "not_applicable",
+          "reason": "Mechanism for V-015 does not exist in this contract architecture."
+        },
+        "V-016": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-016."
+        },
+        "V-017": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-017."
+        },
+        "V-018": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-018."
+        },
+        "V-019": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-019 does not exist in this contract architecture."
+        },
+        "V-020": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-020 does not exist in this contract architecture."
+        },
+        "V-021": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-021 does not exist in this contract architecture."
+        },
+        "V-022": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-022 does not exist in this contract architecture."
+        },
+        "V-023": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-023."
+        },
+        "V-024": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-024."
+        },
+        "V-025": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-025."
+        },
+        "V-026": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-026."
+        },
+        "V-027": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-027."
+        },
+        "V-028": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-028 does not exist in this contract architecture."
+        },
+        "V-029": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-029 does not exist in this contract architecture."
+        },
+        "V-030": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-030 does not exist in this contract architecture."
+        },
+        "V-031": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-031 does not exist in this contract architecture."
+        },
+        "V-032": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-032 does not exist in this contract architecture."
+        },
+        "V-033": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-033 does not exist in this contract architecture."
+        },
+        "V-034": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-034 does not exist in this contract architecture."
+        },
+        "V-035": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-035 is omitted or defective."
+        },
+        "V-036": {
+          "label": "applicable_absent",
+          "reason": "Mechanism is applicable to contract architecture but check for V-036 is omitted or defective."
+        },
+        "V-037": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-037 does not exist in this contract architecture."
+        },
+        "V-038": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-038 does not exist in this contract architecture."
+        },
+        "V-039": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-039."
+        },
+        "V-040": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-040."
+        },
+        "V-041": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-041 does not exist in this contract architecture."
+        },
+        "V-042": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-042."
+        },
+        "V-043": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-043."
+        },
+        "V-044": {
+          "label": "applicable_enforced",
+          "reason": "Contract implements and enforces mechanism for V-044."
+        },
+        "V-045": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-045 does not exist in this contract architecture."
+        },
+        "V-046": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-046 does not exist in this contract architecture."
+        },
+        "V-047": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-047 does not exist in this contract architecture."
+        },
+        "V-048": {
+          "label": "not_applicable",
+          "reason": "Mechanism for V-048 does not exist in this contract architecture."
         }
+      },
+      "summary": {
+        "applicable_enforced": 27,
+        "applicable_absent": 2,
+        "not_applicable": 19
       }
     }
   ]

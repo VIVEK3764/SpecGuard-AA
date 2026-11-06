@@ -10,7 +10,7 @@
 | **State Tag Precision** | 61.3% | Role tagging heuristic precision |
 | **State Tag Recall** | 86.4% | Role tagging coverage |
 | **DATAFLOW READ PRECISION (PROMINENT)** | **100.0%** | State vars read during validation (constants filtered) |
-| **DATAFLOW READ RECALL (PROMINENT)** | **12.5%** | Underlies SessionAccount & CouponPaymaster bug detection |
+| **DATAFLOW READ RECALL (PROMINENT)** | **12.5%** | The extractor finds few of the reads it should find, and on the two worked examples it finds none of them. |
 
 ---
 

@@ -107,17 +107,17 @@ contract Test_{clean_id} is Test {{
     address public entryPoint = address(0x1111);
     address public owner = address(0x2222);
     address public sessionKey = address(0x3333);
-    address public allowedTarget = address(0x4444);
-    uint48 public sessionExpiry = 1000;
+    address public policyTarget = address(0x4444);
+    uint48 public policyExpiry = 1000;
 
     function setUp() public {{
         account = new {contract_name}(entryPoint, owner);
         vm.prank(owner);
-        account.setSessionKey(sessionKey, allowedTarget, sessionExpiry);
+        account.setSessionKey(sessionKey, policyTarget, policyExpiry);
     }}
 
-    function testFuzz_sessionExpiryBypass(uint256 fuzzedTimestamp) public {{
-        vm.assume(fuzzedTimestamp > sessionExpiry && fuzzedTimestamp < type(uint32).max);
+    function testFuzz_expiryBypass(uint256 fuzzedTimestamp) public {{
+        vm.assume(fuzzedTimestamp > policyExpiry && fuzzedTimestamp < type(uint32).max);
         vm.warp(fuzzedTimestamp);
 
         PackedUserOperation memory op;
@@ -152,16 +152,16 @@ contract Test_{clean_id} is Test {{
     address public entryPoint = address(0x1111);
     address public owner = address(0x2222);
     address public sessionKey = address(0x3333);
-    address public allowedTarget = address(0x4444);
+    address public policyTarget = address(0x4444);
 
     function setUp() public {{
         account = new {contract_name}(entryPoint, owner);
         vm.prank(owner);
-        account.setSessionKey(sessionKey, allowedTarget);
+        account.setSessionKey(sessionKey, policyTarget);
     }}
 
     function testFuzz_sessionTargetPolicyBypass(address unauthorizedTarget) public {{
-        vm.assume(unauthorizedTarget != allowedTarget && unauthorizedTarget != address(0));
+        vm.assume(unauthorizedTarget != policyTarget && unauthorizedTarget != address(0));
 
         PackedUserOperation memory op;
         op.sender = address(account);

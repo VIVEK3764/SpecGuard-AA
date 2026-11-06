@@ -20,7 +20,7 @@ from specguard.models import PropertyType, Role
 from specguard.retrieval.corpus import load_corpus
 from specguard.retrieval.query_builder import build_queries
 from specguard.retrieval.retriever import HybridRetriever
-from specguard.synthesis.synthesizer import PropertySynthesizer, PREDICATE_WHITELIST
+from specguard.synthesis.synthesizer import PropertySynthesizer, ALLOWED_PREDICATE_NAMES
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 GOLD_PROPERTIES_PATH = Path(__file__).resolve().parent / "gold_properties.json"
@@ -35,12 +35,11 @@ def check_predicate_whitelist(property_obj) -> bool:
     except Exception:
         return False
 
-    allowed_preds = PREDICATE_WHITELIST.get(t_type, [])
     req_cond = property_obj.required_condition
     pre_cond = property_obj.precondition
 
-    # Check that condition contains at least one whitelisted predicate
-    has_valid_pred = any(pred in req_cond or pred in pre_cond for pred in allowed_preds)
+    # Check that condition contains at least one allowed predicate
+    has_valid_pred = any(pred in req_cond or pred in pre_cond for pred in ALLOWED_PREDICATE_NAMES)
     return has_valid_pred
 
 

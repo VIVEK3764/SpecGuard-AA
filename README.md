@@ -1,5 +1,7 @@
 # SpecGuard-AA: Formal Specification Mining & Automated Bug Verification for ERC-4337 Account Abstraction
 
+> **Rule**: No number in this file that is not printed by a script in this repository.
+
 [![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen)](https://github.com/VIVEK3764/SpecGuard-AA/actions)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.20-lightgrey)](https://soliditylang.org/)
@@ -8,7 +10,7 @@
 
 **SpecGuard-AA** is a research-grade framework for **automated formal specification mining, symbol binding, and multi-backend bug verification** tailored specifically to **ERC-4337 Smart Accounts, Paymasters, Factories, and Modular Modules**.
 
-By combining static AST/IR dataflow fact extraction $E(c)$, hybrid RAG retrieval from canonical ERC specifications $C$, structured LLM property synthesis $P_{\text{raw}}$, AST symbol binding $P_{\text{bound}}$, and automated validation backends (Foundry Fuzzing, Halmos Symbolic Execution, EVM Trace Monitoring, Differential Simulation), SpecGuard-AA automatically mines formal security invariants and generates standalone, reproducible Foundry test harnesses (`.t.sol`) demonstrating concrete vulnerabilities.
+By combining static AST/IR dataflow fact extraction $E(c)$, hybrid RAG retrieval from canonical ERC specifications $C$, structured LLM property synthesis $P_{\text{raw}}$, AST symbol binding $P_{\text{bound}}$, and automated validation backends (Foundry Fuzzing, EVM Trace Monitoring, Differential Simulation), SpecGuard-AA automatically mines formal security invariants and generates standalone, reproducible Foundry test harnesses (`.t.sol`) demonstrating concrete vulnerabilities.
 
 ---
 
@@ -22,7 +24,7 @@ flowchart TD
     B --> C["Stage 2: Hybrid Retrieval C\n(Dense ChromaDB + Sparse BM25)"]
     C --> D["Stage 3: Property Synthesis P_raw\n(Live Structured LLM API)"]
     D --> E["Stage 4: Normalization & Binding P_bound\n(AST Symbol & Type Checking)"]
-    E --> F["Stage 5: Backend Dispatcher\n(Foundry Fuzz / Halmos / Trace / DiffSim)"]
+    E --> F["Stage 5: Backend Dispatcher\n(Foundry Fuzz / Trace / DiffSim)"]
     F --> G["Stage 6: Replay & Reporting\n(CheckWitness Replay & .t.sol Harnesses)"]
 ```
 
@@ -32,7 +34,6 @@ flowchart TD
 4. **Stage 4: Property Normalization & Binding $P_{\text{bound}}$ (`specguard.binding`)**: Validates property templates, whitelist predicates, and binds abstract symbols (e.g. `allowedTarget`, `usedCoupon`) to concrete AST state variables.
 5. **Stage 5: Multi-Backend Validation Dispatch (`specguard.backends`)**:
    - **Foundry Fuzzing (`FoundryFuzzBackend`)**: Generates executable `.t.sol` fuzzing harnesses for `SESSION`, `PAYMASTER`, `AUTH`, `NONCE` properties.
-   - **Halmos Symbolic Execution (`HalmosSymbolicBackend`)**: Executes formal symbolic verification in WSL2 with concrete signatures and symbolic policy variables (`target`, `selector`, `expiry`, `nonce`).
    - **Trace Monitoring (`TraceMonitorBackend`)**: Monitors EVM execution traces for ERC-7562 validation scope violations (`forbiddenOpcodeExecuted`, `externalStorageAccessed`).
    - **Differential Simulation (`DifferentialSimBackend`)**: Compares off-chain mempool simulation vs on-chain execution consistency (`simulationEqualsExecution`).
 6. **Stage 6: Replay Verification (`CheckWitness`) & Reporting (`specguard.reporting`)**: Enforces witness replay verification (`check_witness`), witness minimization, and generates standalone `.t.sol` reproduction scripts and evidence-backed security reports.
@@ -42,7 +43,7 @@ flowchart TD
 ## ⚙️ Prerequisites & Installation
 
 ### 1. System Requirements
-- **OS**: Windows 10/11, Linux, or macOS (WSL2 recommended for Halmos symbolic execution)
+- **OS**: Windows 10/11, Linux, or macOS
 - **Python**: Python 3.10 or higher
 - **Solidity Compiler**: `solc` 0.8.20+
 - **Foundry**: `forge` (installed via `foundryup`)
@@ -131,10 +132,13 @@ python benchmark/stage1_fact_extraction/eval_extraction.py
 
 **Measured Benchmark Baseline**:
 - **Role Accuracy**: `87.5%` (14/16)
-- **Function Precision / Recall**: `78.8% / 89.7%`
-- **State Tag Precision / Recall**: `82.6% / 86.4%`
-- **Dataflow Read Precision**: **`92.3%`**
-- **Worked Examples Dataflow Precision & Recall**: **`100% / 100%`** (`SessionAccount.sol` and `CouponPaymaster.sol`)
+- **Function Precision / Recall**: `73.0% / 93.1%`
+- **State Tag Precision / Recall**: `61.3% / 86.4%`
+- **Dataflow Read Precision / Recall**: `100.0% / 12.5%`
+- **Worked Examples Dataflow Precision & Recall**:
+  - `SessionAccount.sol`: `100% / 0%`
+  - `CouponPaymaster.sol`: `100% / 0%`
+  *(Note: The extractor finds few of the reads it should find (12.5% recall), and on the two worked examples it finds none of them (0% recall).)*
 
 ---
 
@@ -185,10 +189,9 @@ SpecGuard-AA/
 │   ├── audit_knowledge.json
 │   └── MANIFEST.json
 ├── specguard/                      # Core SpecGuard-AA Python Package
-│   ├── backends/                   # Validation backends (Fuzz, Halmos, Trace, Sim)
+│   ├── backends/                   # Validation backends (Fuzz, Trace, Sim)
 │   │   ├── dispatcher.py
 │   │   ├── foundry_fuzz.py
-│   │   ├── halmos_symbolic.py
 │   │   ├── trace_monitor.py
 │   │   └── differential_sim.py
 │   ├── binding/                    # AST Symbol Normalizer & Binder (Algorithm 1)
@@ -205,7 +208,7 @@ SpecGuard-AA/
 │   ├── models.py                   # Pydantic data models
 │   ├── pipeline.py                 # End-to-end pipeline orchestrator
 │   └── cli.py                      # Command line interface
-├── tests/                          # Automated Pytest suite (29 tests)
+├── tests/                          # Automated Pytest suite
 ├── pyproject.toml                  # Python package configuration
 └── README.md                       # Project documentation
 ```
@@ -216,10 +219,10 @@ SpecGuard-AA/
 
 | Target Contract | Role | Primary Vulnerability | SpecGuard-AA Mined Property | Validation Backend | Verification Result |
 |---|---|---|---|---|---|
-| `SessionAccount.sol` | Account | Missing `allowedTarget` check in `validateUserOp` | `target(op) == allowedTarget[K]` | `FoundryFuzz` / `Halmos` | 🚨 **VIOLATION FOUND** (`.t.sol` generated) |
-| `CouponPaymaster.sol` | Paymaster | Missing `usedCoupon` replay check in `validatePaymasterUserOp` | `validCoupon(op) AND NOT used(op.coupon)` | `FoundryFuzz` / `Halmos` | 🚨 **VIOLATION FOUND** (`.t.sol` generated) |
-| `ExpirySessionAccount.sol` | Account | Missing `sessionExpiry` check in `validateUserOp` | `signedBySessionKey(op, K) AND notExpired(K)` | `FoundryFuzz` / `Halmos` | 🚨 **VIOLATION FOUND** (`.t.sol` generated) |
-| `SimpleOwnerAccount.sol` | Account | Clean owner authorization (0 bugs) | `signedByOwner(op, owner)` | `FoundryFuzz` / `Halmos` | ✅ **PROPERTY HELD** (0 False Positives) |
+| `SessionAccount.sol` | Account | Missing target check in `validateUserOp` | `target(op) == allowedTarget[K]` | `FoundryFuzz` | 🚨 **VIOLATION FOUND** (`.t.sol` generated) |
+| `CouponPaymaster.sol` | Paymaster | Missing `usedCoupon` replay check in `validatePaymasterUserOp` | `validCoupon(op) AND NOT used(op.coupon)` | `FoundryFuzz` | 🚨 **VIOLATION FOUND** (`.t.sol` generated) |
+| `ExpirySessionAccount.sol` | Account | Missing expiry check in `validateUserOp` | `signedBySessionKey(op, K) AND notExpired(K)` | `FoundryFuzz` | 🚨 **VIOLATION FOUND** (`.t.sol` generated) |
+| `SimpleOwnerAccount.sol` | Account | Clean owner authorization (0 bugs) | `signedByOwner(op, owner)` | `FoundryFuzz` | ✅ **PROPERTY HELD** (0 False Positives) |
 
 ---
 

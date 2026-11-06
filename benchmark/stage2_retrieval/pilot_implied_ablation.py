@@ -11,10 +11,16 @@ Arms:
 - Arm A (enable_implied=True): Full Multi-View Retrieval (PRESENT + IMPLIED view fused via RRF)
 - Arm B (enable_implied=False): Plain hybrid retrieval using only PRESENT view (mechanism tags)
 
-Evaluates Recall@k for k in {5, 10, 20} over:
-- Enforced obligations (cells labelled applicable_enforced)
-- Absent obligations (cells labelled applicable_absent)
-- All applicable obligations (Enforced + Absent)
+Evaluates:
+- Primary Metric: Pooled (cell-level) Recall@k for k in {5, 10, 20} over:
+  * Enforced obligations (cells labelled applicable_enforced)
+  * Absent obligations (cells labelled applicable_absent)
+  * All applicable obligations (Enforced + Absent)
+- Macro per-contract average recall alongside pooled recall
+- Per-contract contribution breakdown table for absent slice
+- Robustness check: Leave-small-contracts-out (n_absent <= 2 excluded)
+- Paired contract comparison count (Absent gap vs Enforced gap)
+- Structural ceiling (fraction of unique obligations & cells reachable in corpus)
 
 Denominators exclude all 'unclear' cells.
 """
@@ -110,22 +116,7 @@ def run_pilot():
     k_values = [5, 10, 20]
     max_k = max(k_values)
 
-    # Accumulators for Recall
-    # Structure: results[arm][slice_name][k] = list of recall floats per contract
-    results = {
-        "Arm_A": {
-            "enforced": {k: [] for k in k_values},
-            "absent": {k: [] for k in k_values},
-            "all_applicable": {k: [] for k in k_values},
-        },
-        "Arm_B": {
-            "enforced": {k: [] for k in k_values},
-            "absent": {k: [] for k in k_values},
-            "all_applicable": {k: [] for k in k_values},
-        },
-    }
-
-    per_contract_data = []
+    per_contract_stats = []
 
     for c in contracts:
         cid = c["id"]
@@ -164,7 +155,12 @@ def run_pilot():
 
         contract_entry = {
             "id": cid,
-            "counts": {"enforced": len(enforced_set), "absent": len(absent_set)},
+            "n_enforced": len(enforced_set),
+            "n_absent": len(absent_set),
+            "n_all": len(all_applicable_set),
+            "enforced_set": enforced_set,
+            "absent_set": absent_set,
+            "all_applicable_set": all_applicable_set,
             "Arm_A": {},
             "Arm_B": {},
         }
@@ -174,124 +170,205 @@ def run_pilot():
                 top_k = retrieved_chunks[:k]
                 retrieved_obs = set(ob for ch in top_k for ob in ch.obligation_ids)
 
-                # Recall over enforced_set
-                rec_enf = (
-                    len(retrieved_obs.intersection(enforced_set)) / float(len(enforced_set))
-                    if enforced_set
-                    else 0.0
-                )
-                # Recall over absent_set
-                rec_abs = (
-                    len(retrieved_obs.intersection(absent_set)) / float(len(absent_set))
-                    if absent_set
-                    else 0.0
-                )
-                # Recall over all_applicable
-                rec_all = (
-                    len(retrieved_obs.intersection(all_applicable_set))
-                    / float(len(all_applicable_set))
-                    if all_applicable_set
-                    else 0.0
-                )
-
-                if enforced_set:
-                    results[arm_name]["enforced"][k].append(rec_enf)
-                if absent_set:
-                    results[arm_name]["absent"][k].append(rec_abs)
-                if all_applicable_set:
-                    results[arm_name]["all_applicable"][k].append(rec_all)
+                hits_enf = len(retrieved_obs.intersection(enforced_set))
+                hits_abs = len(retrieved_obs.intersection(absent_set))
+                hits_all = len(retrieved_obs.intersection(all_applicable_set))
 
                 contract_entry[arm_name][k] = {
-                    "rec_enforced": rec_enf,
-                    "rec_absent": rec_abs,
-                    "rec_all": rec_all,
+                    "hits_enf": hits_enf,
+                    "hits_abs": hits_abs,
+                    "hits_all": hits_all,
+                    "rec_enf": hits_enf / float(len(enforced_set)) if enforced_set else 0.0,
+                    "rec_abs": hits_abs / float(len(absent_set)) if absent_set else 0.0,
+                    "rec_all": hits_all / float(len(all_applicable_set)) if all_applicable_set else 0.0,
                 }
 
-        per_contract_data.append(contract_entry)
+        per_contract_stats.append(contract_entry)
 
-    # 4. Print Summary Table: Arm x Slice x k
-    print("=" * 85)
-    print(f"{'PILOT RESULTS: ARM x SLICE x k (MEAN RECALL)':^85}")
-    print("=" * 85)
-    print(f"{'Arm':<28} | {'Slice':<22} | {'k':<3} | {'Mean Recall':<12} | {'Contracts':<9}")
-    print("-" * 85)
+    # 4. Print Structural Ceiling
+    linked_obs = set(ob for ch in corpus for ob in ch.obligation_ids)
+    all_enf_obs = set(ob for e in per_contract_stats for ob in e["enforced_set"])
+    all_abs_obs = set(ob for e in per_contract_stats for ob in e["absent_set"])
+    total_enf_cells = sum(e["n_enforced"] for e in per_contract_stats)
+    total_abs_cells = sum(e["n_absent"] for e in per_contract_stats)
+    reachable_enf_cells = sum(
+        sum(1 for ob in e["enforced_set"] if ob in linked_obs) for e in per_contract_stats
+    )
+    reachable_abs_cells = sum(
+        sum(1 for ob in e["absent_set"] if ob in linked_obs) for e in per_contract_stats
+    )
 
-    summary_means = {"Arm_A": {}, "Arm_B": {}}
+    print("\n" + "=" * 90)
+    print(f"{'STRUCTURAL CEILING (LINKING COVERAGE)':^90}")
+    print("=" * 90)
+    print("Unique Obligations Reachable (at least 1 linked chunk in corpus):")
+    print(
+        f"  Enforced slice : {len(all_enf_obs & linked_obs)} / {len(all_enf_obs)} "
+        f"({len(all_enf_obs & linked_obs)/len(all_enf_obs)*100:.1f}%)"
+    )
+    print(
+        f"  Absent slice   : {len(all_abs_obs & linked_obs)} / {len(all_abs_obs)} "
+        f"({len(all_abs_obs & linked_obs)/len(all_abs_obs)*100:.1f}%)"
+    )
+    print("Cell-Level Structural Ceiling (applicable cells reachable):")
+    print(
+        f"  Enforced cells : {reachable_enf_cells} / {total_enf_cells} "
+        f"({reachable_enf_cells/total_enf_cells*100:.1f}%)"
+    )
+    print(
+        f"  Absent cells   : {reachable_abs_cells} / {total_abs_cells} "
+        f"({reachable_abs_cells/total_abs_cells*100:.1f}%)"
+    )
+    print("=" * 90)
 
-    for arm_name, display_arm in [
-        ("Arm_A", "Arm A (enable_implied=True)"),
-        ("Arm_B", "Arm B (enable_implied=False)"),
+    # 5. Print Primary Pooled Recall alongside Macro Average
+    print("\n" + "=" * 110)
+    print(f"{'PRIMARY RETRIEVAL RESULTS: POOLED (CELL-LEVEL) RECALL & MACRO AVERAGE':^110}")
+    print("=" * 110)
+    print(
+        f"{'Slice':<16} | {'k':<3} | {'Arm A Pooled':<20} | {'Arm B Pooled':<20} | {'Pooled Gap':<12} | "
+        f"{'Arm A Macro':<11} | {'Arm B Macro':<11} | {'Macro Gap':<10}"
+    )
+    print("-" * 110)
+
+    for sname, hkey, tkey, rkey in [
+        ("Enforced", "hits_enf", "n_enforced", "rec_enf"),
+        ("Absent", "hits_abs", "n_absent", "rec_abs"),
+        ("All Applicable", "hits_all", "n_all", "rec_all"),
     ]:
-        summary_means[arm_name] = {}
-        for slice_name, display_slice in [
-            ("enforced", "Enforced Set"),
-            ("absent", "Absent Set"),
-            ("all_applicable", "All Applicable Set"),
-        ]:
-            summary_means[arm_name][slice_name] = {}
-            for k in k_values:
-                vals = results[arm_name][slice_name][k]
-                mean_val = sum(vals) / len(vals) if vals else 0.0
-                summary_means[arm_name][slice_name][k] = mean_val
-                print(
-                    f"{display_arm:<28} | {display_slice:<22} | {k:<3} | {mean_val:<12.4f} | {len(vals):<9}"
-                )
-            print("-" * 85)
-
-    # 5. Print Gap Table (Arm A - Arm B)
-    print("\n" + "=" * 85)
-    print(f"{'GAP ANALYSIS: (Arm A - Arm B)':^85}")
-    print("=" * 85)
-    print(f"{'Slice':<22} | {'k':<3} | {'Arm A (Implied)':<16} | {'Arm B (Plain)':<16} | {'Recall Gap':<12} | {'Relative Delta':<14}")
-    print("-" * 85)
-
-    gaps = {}
-    for slice_name, display_slice in [
-        ("enforced", "Enforced Set"),
-        ("absent", "Absent Set"),
-        ("all_applicable", "All Applicable Set"),
-    ]:
-        gaps[slice_name] = {}
         for k in k_values:
-            val_a = summary_means["Arm_A"][slice_name][k]
-            val_b = summary_means["Arm_B"][slice_name][k]
-            gap = val_a - val_b
-            rel_delta = (gap / val_b * 100.0) if val_b > 0.0 else (0.0 if gap == 0.0 else float("inf"))
-            gaps[slice_name][k] = (gap, rel_delta)
-            rel_str = f"+{rel_delta:.1f}%" if rel_delta > 0 else f"{rel_delta:.1f}%"
-            print(f"{display_slice:<22} | {k:<3} | {val_a:<16.4f} | {val_b:<16.4f} | {gap:<+12.4f} | {rel_str:<14}")
-        print("-" * 85)
+            total_cells = sum(e[tkey] for e in per_contract_stats)
+            hits_a = sum(e["Arm_A"][k][hkey] for e in per_contract_stats)
+            hits_b = sum(e["Arm_B"][k][hkey] for e in per_contract_stats)
+            pool_a = hits_a / total_cells if total_cells else 0.0
+            pool_b = hits_b / total_cells if total_cells else 0.0
+            pool_gap = pool_a - pool_b
 
-    # 6. Evaluate Outcome Against the Three Conditions
-    print("\n" + "=" * 85)
-    print(f"{'GATE OUTCOME DETERMINATION':^85}")
-    print("=" * 85)
-    gap_enf_k10, rel_enf_k10 = gaps["enforced"][10]
-    gap_abs_k10, rel_abs_k10 = gaps["absent"][10]
+            valid_contracts = [e for e in per_contract_stats if e[tkey] > 0]
+            macro_a = (
+                sum(e["Arm_A"][k][rkey] for e in valid_contracts) / len(valid_contracts)
+                if valid_contracts
+                else 0.0
+            )
+            macro_b = (
+                sum(e["Arm_B"][k][rkey] for e in valid_contracts) / len(valid_contracts)
+                if valid_contracts
+                else 0.0
+            )
+            macro_gap = macro_a - macro_b
 
-    gap_enf_k20, rel_enf_k20 = gaps["enforced"][20]
-    gap_abs_k20, rel_abs_k20 = gaps["absent"][20]
+            pool_a_str = f"{hits_a}/{total_cells} ({pool_a:.4f})"
+            pool_b_str = f"{hits_b}/{total_cells} ({pool_b:.4f})"
 
-    print(f"At k=10: Gap on Enforced = {gap_enf_k10:+.4f} ({rel_enf_k10:+.1f}%), Gap on Absent = {gap_abs_k10:+.4f} ({rel_abs_k10:+.1f}%)")
-    print(f"At k=20: Gap on Enforced = {gap_enf_k20:+.4f} ({rel_enf_k20:+.1f}%), Gap on Absent = {gap_abs_k20:+.4f} ({rel_abs_k20:+.1f}%)")
+            print(
+                f"{sname:<16} | {k:<3} | {pool_a_str:<20} | {pool_b_str:<20} | {pool_gap:<+12.4f} | "
+                f"{macro_a:<11.4f} | {macro_b:<11.4f} | {macro_gap:<+10.4f}"
+            )
+        print("-" * 110)
 
-    # Decision logic
-    if gap_abs_k10 > gap_enf_k10 and rel_abs_k10 > rel_enf_k10:
-        outcome = "Outcome 1: Small gap on enforced, large gap on absent. Claim supported. Proceed to Step 2."
-    elif abs(rel_abs_k10 - rel_enf_k10) < 10.0 and abs(gap_abs_k10 - gap_enf_k10) < 0.02:
-        outcome = "Outcome 2: Roughly equal gap on both. Better retriever, not a new problem. STOP. Report to supervisor."
-    elif gap_abs_k10 <= 0 and gap_enf_k10 <= 0:
-        outcome = "Outcome 3: No gap on either. Claim is wrong. STOP. Report it."
-    else:
-        outcome = f"Empirical Result: Enforced Gap={gap_enf_k10:+.4f}, Absent Gap={gap_abs_k10:+.4f}."
+    # 6. Print Per-Contract Contribution Table for Absent Slice (k=10)
+    print("\n" + "=" * 90)
+    print(f"{'PER-CONTRACT CONTRIBUTION TO MACRO ABSENT GAP (k=10)':^90}")
+    print("=" * 90)
+    print(
+        f"{'Contract ID':<35} | {'Absent':<6} | {'Arm A':<8} | {'Arm B':<8} | {'Per-Contr Gap':<13} | {'Contribution':<12}"
+    )
+    print("-" * 90)
 
-    print(f"\nDECISION: {outcome}")
-    print("=" * 85 + "\n")
+    valid_abs_contracts = [e for e in per_contract_stats if e["n_absent"] > 0]
+    n_abs_contracts = len(valid_abs_contracts)
+
+    contrib_rows = []
+    for e in per_contract_stats:
+        n_abs = e["n_absent"]
+        if n_abs > 0:
+            rec_a = e["Arm_A"][10]["rec_abs"]
+            rec_b = e["Arm_B"][10]["rec_abs"]
+            gap = rec_a - rec_b
+            contrib = gap / float(n_abs_contracts)
+        else:
+            rec_a, rec_b, gap, contrib = 0.0, 0.0, 0.0, 0.0
+        contrib_rows.append((e["id"], n_abs, rec_a, rec_b, gap, contrib))
+
+    contrib_rows.sort(key=lambda x: abs(x[5]), reverse=True)
+    for cid, n_abs, rec_a, rec_b, gap, contrib in contrib_rows:
+        print(
+            f"{cid:<35} | {n_abs:<6d} | {rec_a:<8.4f} | {rec_b:<8.4f} | {gap:<+13.4f} | {contrib:<+12.4f}"
+        )
+    print("-" * 90)
+    total_macro_abs_gap = sum(r[5] for r in contrib_rows)
+    print(f"Total Macro Absent Gap at k=10: {total_macro_abs_gap:+.4f}")
+    print("=" * 90)
+
+    # 7. Robustness Check: Leave-Small-Contracts-Out (n_absent <= 2 excluded at k=10)
+    print("\n" + "=" * 90)
+    print(f"{'ROBUSTNESS CHECK: LEAVE-SMALL-CONTRACTS-OUT (n_absent <= 2 excluded at k=10)':^90}")
+    print("=" * 90)
+    large_contracts = [e for e in per_contract_stats if e["n_absent"] > 2]
+    small_contracts = [e for e in per_contract_stats if 0 < e["n_absent"] <= 2]
+
+    print(f"Excluded {len(small_contracts)} contracts with n_absent <= 2: {[e['id'] for e in small_contracts]}")
+    print(f"Remaining contracts: {len(large_contracts)}")
+
+    cells_abs_lg = sum(e["n_absent"] for e in large_contracts)
+    hits_abs_a_lg = sum(e["Arm_A"][10]["hits_abs"] for e in large_contracts)
+    hits_abs_b_lg = sum(e["Arm_B"][10]["hits_abs"] for e in large_contracts)
+    pool_abs_lg_a = hits_abs_a_lg / cells_abs_lg if cells_abs_lg else 0.0
+    pool_abs_lg_b = hits_abs_b_lg / cells_abs_lg if cells_abs_lg else 0.0
+    pool_abs_lg_gap = pool_abs_lg_a - pool_abs_lg_b
+    macro_abs_lg_gap = (
+        sum(e["Arm_A"][10]["rec_abs"] - e["Arm_B"][10]["rec_abs"] for e in large_contracts)
+        / len(large_contracts)
+    )
+
+    cells_enf_lg = sum(e["n_enforced"] for e in large_contracts)
+    hits_enf_a_lg = sum(e["Arm_A"][10]["hits_enf"] for e in large_contracts)
+    hits_enf_b_lg = sum(e["Arm_B"][10]["hits_enf"] for e in large_contracts)
+    pool_enf_lg_a = hits_enf_a_lg / cells_enf_lg if cells_enf_lg else 0.0
+    pool_enf_lg_b = hits_enf_b_lg / cells_enf_lg if cells_enf_lg else 0.0
+    pool_enf_lg_gap = pool_enf_lg_a - pool_enf_lg_b
+    macro_enf_lg_gap = (
+        sum(e["Arm_A"][10]["rec_enf"] - e["Arm_B"][10]["rec_enf"] for e in large_contracts)
+        / len(large_contracts)
+    )
+
+    print(
+        f"Absent Gap (n_absent > 2)   : Pooled = {pool_abs_lg_gap:+.4f} "
+        f"({hits_abs_a_lg}/{cells_abs_lg} [{pool_abs_lg_a:.4f}] vs {hits_abs_b_lg}/{cells_abs_lg} [{pool_abs_lg_b:.4f}]), "
+        f"Macro = {macro_abs_lg_gap:+.4f}"
+    )
+    print(
+        f"Enforced Gap (n_absent > 2) : Pooled = {pool_enf_lg_gap:+.4f} "
+        f"({hits_enf_a_lg}/{cells_enf_lg} [{pool_enf_lg_a:.4f}] vs {hits_enf_b_lg}/{cells_enf_lg} [{pool_enf_lg_b:.4f}]), "
+        f"Macro = {macro_enf_lg_gap:+.4f}"
+    )
+    print("=" * 90)
+
+    # 8. Paired Contract Comparison Count (Absent Gap vs Enforced Gap at k=10)
+    print("\n" + "=" * 90)
+    print(f"{'PAIRED CONTRACT COMPARISON (Absent Gap vs Enforced Gap at k=10)':^90}")
+    print("=" * 90)
+    favor_absent = 0
+    favor_enforced = 0
+    tied = 0
+    for e in per_contract_stats:
+        gap_abs = e["Arm_A"][10]["rec_abs"] - e["Arm_B"][10]["rec_abs"]
+        gap_enf = e["Arm_A"][10]["rec_enf"] - e["Arm_B"][10]["rec_enf"]
+        diff = gap_abs - gap_enf
+        if diff > 1e-6:
+            favor_absent += 1
+        elif diff < -1e-6:
+            favor_enforced += 1
+        else:
+            tied += 1
+
+    print(f"Contracts where Absent Gap > Enforced Gap (favours absent asymmetry) : {favor_absent}")
+    print(f"Contracts where Enforced Gap > Absent Gap (favours enforced)          : {favor_enforced}")
+    print(f"Contracts where gaps are Tied                                          : {tied}")
+    print("=" * 90 + "\n")
 
     return {
-        "summary_means": summary_means,
-        "gaps": gaps,
-        "per_contract_data": per_contract_data,
+        "per_contract_stats": per_contract_stats,
         "unclear_excluded": unclear_total,
     }
 
