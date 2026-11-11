@@ -11,7 +11,15 @@ import shutil
 import subprocess
 from typing import Optional, List
 from specguard.backends.base import ValidationBackend
-from specguard.models import ContractFacts, Property, PropertyBinding, PropertyType, Witness
+from specguard.models import (
+    ContractFacts,
+    Property,
+    PropertyBinding,
+    PropertyType,
+    Witness,
+    ValidationResult,
+    Outcome,
+)
 
 
 def _find_forge() -> str:
@@ -31,18 +39,25 @@ class TraceMonitorBackend(ValidationBackend):
     """
 
     def __init__(self, forge_path: str | None = None, test_dir: str = "contracts/test/generated"):
-        self.forge_path = forge_path or _find_forge()
         self.test_dir = test_dir
         os.makedirs(self.test_dir, exist_ok=True)
+        try:
+            self.forge_path = forge_path or _find_forge()
+        except RuntimeError:
+            self.forge_path = forge_path
 
     def validate(
         self, property: Property, binding: PropertyBinding, facts: ContractFacts
-    ) -> Optional[Witness]:
+    ) -> ValidationResult:
         """
         Capture validation trace and check for forbidden ERC-7562 opcodes/accesses.
         """
         if property.template_type != PropertyType.SCOPE:
-            return None
+            return ValidationResult(
+                outcome=Outcome.HELD,
+                backend="TraceMonitor",
+                property_id=property.property_id,
+            )
 
         clean_id = re.sub(r"[^a-zA-Z0-9_]", "_", property.property_id)
         contract_name = facts.contract_name
@@ -115,15 +130,31 @@ contract Test_TraceScope_{clean_id} is Test {{
                     forbidden_found.append(line.strip())
 
             if forbidden_found:
-                return Witness(
+                witness = Witness(
                     backend="TraceMonitor",
                     reproducible_test_code=harness_code,
                     user_op_json={"forbidden_opcodes_detected": forbidden_found},
                     trace_events=forbidden_found,
                     is_valid=True,
                 )
+                return ValidationResult(
+                    outcome=Outcome.VIOLATED,
+                    backend="TraceMonitor",
+                    property_id=property.property_id,
+                    witness=witness,
+                    error_message=f"Forbidden opcodes detected: {'; '.join(forbidden_found)}",
+                )
             else:
-                return None
+                return ValidationResult(
+                    outcome=Outcome.HELD,
+                    backend="TraceMonitor",
+                    property_id=property.property_id,
+                )
 
-        except Exception:
-            return None
+        except Exception as e:
+            return ValidationResult(
+                outcome=Outcome.HARNESS_ERROR,
+                backend="TraceMonitor",
+                property_id=property.property_id,
+                error_message=str(e),
+            )

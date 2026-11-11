@@ -23,7 +23,15 @@ from specguard.synthesis.synthesizer import PropertySynthesizer
 from specguard.binding.binder import NormalizerAndBinder
 from specguard.backends.dispatcher import BackendDispatcher
 from specguard.reporting.reporter import ReportEngine
-from specguard.models import ContractFacts, Property, PropertyBinding, Witness, SecurityReport
+from specguard.models import (
+    ContractFacts,
+    Property,
+    PropertyBinding,
+    Witness,
+    SecurityReport,
+    ValidationResult,
+    Outcome,
+)
 
 
 class SpecGuardPipeline:
@@ -93,23 +101,32 @@ class SpecGuardPipeline:
 
         print(f"\n[5/6] Dispatching Properties to Backend Engines for Validation...")
         active_witnesses = []
+        outcome_counts = {
+            Outcome.VIOLATED.value: 0,
+            Outcome.HELD.value: 0,
+            Outcome.HARNESS_ERROR.value: 0,
+            Outcome.TIMEOUT.value: 0,
+        }
         for norm_prop, binding in bound_pairs:
             target_backends = self.dispatcher.dispatch_map.get(norm_prop.template_type, [self.dispatcher.fuzz_backend])
             backend_names = [b.__class__.__name__ for b in target_backends]
             print(f"      [->] Dispatching {norm_prop.property_id} (Type: {norm_prop.template_type.value}) -> Routing to Backends: {backend_names}")
             
-            witness = self.dispatcher.validate_property(norm_prop, binding, facts)
+            res = self.dispatcher.validate_property(norm_prop, binding, facts)
+            outcome_counts[res.outcome.value] = outcome_counts.get(res.outcome.value, 0) + 1
+            transcript["stage_5_backend_results"].append(res.model_dump())
             
-            if witness:
-                print(f"      [!] VIOLATION FOUND! Backend '{witness.backend}' produced valid witness!")
-                active_witnesses.append((norm_prop, binding, witness))
-                transcript["stage_5_backend_results"].append({
-                    "property_id": norm_prop.property_id,
-                    "backend": witness.backend,
-                    "witness": witness.model_dump()
-                })
+            if res.outcome == Outcome.VIOLATED and res.witness:
+                print(f"      [!] VIOLATION FOUND! Backend '{res.backend}' produced valid witness!")
+                active_witnesses.append((norm_prop, binding, res.witness))
+            elif res.outcome == Outcome.HARNESS_ERROR:
+                print(f"      [?] HARNESS_ERROR in {res.backend}: {res.error_message}")
+            elif res.outcome == Outcome.TIMEOUT:
+                print(f"      [⏰] TIMEOUT in {res.backend}")
             else:
-                print(f"      [+] Property Held (None returned by {backend_names})")
+                print(f"      [+] Property Held ({res.outcome.value} returned by {backend_names})")
+
+        transcript["stage_5_outcome_counts"] = outcome_counts
 
         print(f"\n[6/6] Replay Verification (CheckWitness) & Evidence-Backed Reporting...")
         final_reports: List[SecurityReport] = []
