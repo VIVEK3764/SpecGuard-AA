@@ -26,6 +26,14 @@ class PropertyType(str, Enum):
     SIM = "SIM"
 
 
+class Outcome(str, Enum):
+    """Structured four-valued outcome from formal validation backends (Step F2)."""
+    VIOLATED = "VIOLATED"
+    HELD = "HELD"
+    HARNESS_ERROR = "HARNESS_ERROR"
+    TIMEOUT = "TIMEOUT"
+
+
 class FunctionFact(BaseModel):
     name: str
     visibility: str
@@ -129,6 +137,17 @@ class Witness(BaseModel):
     user_op_json: Dict[str, Any] = Field(default_factory=dict)
     trace_events: List[str] = Field(default_factory=list)
     is_valid: bool = True
+
+
+class ValidationResult(BaseModel):
+    """Structured result returned by every validation backend (Step F2)."""
+    outcome: Outcome
+    backend: str
+    property_id: str
+    failing_obligation_id: Optional[str] = None
+    witness: Optional[Witness] = None
+    error_message: Optional[str] = None
+    raw_artifact_path: Optional[str] = None
 
 
 class SecurityReport(BaseModel):
