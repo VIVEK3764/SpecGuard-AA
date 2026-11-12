@@ -11,7 +11,15 @@ import shutil
 import subprocess
 from typing import Optional
 from specguard.backends.base import ValidationBackend
-from specguard.models import ContractFacts, Property, PropertyBinding, PropertyType, Witness
+from specguard.models import (
+    ContractFacts,
+    Property,
+    PropertyBinding,
+    PropertyType,
+    Witness,
+    ValidationResult,
+    Outcome,
+)
 
 
 def _find_forge() -> str:
@@ -31,18 +39,25 @@ class DifferentialSimBackend(ValidationBackend):
     """
 
     def __init__(self, forge_path: str | None = None, test_dir: str = "contracts/test/generated"):
-        self.forge_path = forge_path or _find_forge()
         self.test_dir = test_dir
         os.makedirs(self.test_dir, exist_ok=True)
+        try:
+            self.forge_path = forge_path or _find_forge()
+        except RuntimeError:
+            self.forge_path = forge_path
 
     def validate(
         self, property: Property, binding: PropertyBinding, facts: ContractFacts
-    ) -> Optional[Witness]:
+    ) -> ValidationResult:
         """
         Compare off-chain simulation path vs execution path.
         """
         if property.template_type != PropertyType.SIM:
-            return None
+            return ValidationResult(
+                outcome=Outcome.HELD,
+                backend="DifferentialSim",
+                property_id=property.property_id,
+            )
 
         clean_id = re.sub(r"[^a-zA-Z0-9_]", "_", property.property_id)
         contract_name = facts.contract_name
@@ -105,15 +120,31 @@ contract Test_DiffSim_{clean_id} is Test {{
             stdout = result.stdout + "\n" + result.stderr
 
             if "[FAIL" in stdout or "Inconsistency" in stdout:
-                return Witness(
+                witness = Witness(
                     backend="DifferentialSim",
                     reproducible_test_code=harness_code,
                     user_op_json={"simulation_diff": True, "raw_output": stdout.strip()},
                     trace_events=[line.strip() for line in stdout.splitlines() if "[FAIL" in line or "Inconsistency" in line],
                     is_valid=True,
                 )
+                return ValidationResult(
+                    outcome=Outcome.VIOLATED,
+                    backend="DifferentialSim",
+                    property_id=property.property_id,
+                    witness=witness,
+                    error_message="Simulation inconsistency detected",
+                )
             else:
-                return None
+                return ValidationResult(
+                    outcome=Outcome.HELD,
+                    backend="DifferentialSim",
+                    property_id=property.property_id,
+                )
 
-        except Exception:
-            return None
+        except Exception as e:
+            return ValidationResult(
+                outcome=Outcome.HARNESS_ERROR,
+                backend="DifferentialSim",
+                property_id=property.property_id,
+                error_message=str(e),
+            )

@@ -7,7 +7,7 @@ import os
 from specguard.extractor import extract_facts
 from specguard.backends.trace_monitor import TraceMonitorBackend
 from specguard.backends.differential_sim import DifferentialSimBackend
-from specguard.models import Property, PropertyBinding, PropertyType, Role
+from specguard.models import Property, PropertyBinding, PropertyType, Role, Outcome
 
 
 SCOPE_VIOLATING_PATH = os.path.join(
@@ -40,14 +40,15 @@ def test_trace_monitor_backend_positive_fixture():
     binding = PropertyBinding(validator_function="validateUserOp")
 
     backend = TraceMonitorBackend()
-    witness = backend.validate(prop, binding, facts)
+    res = backend.validate(prop, binding, facts)
 
-    assert witness is not None, "Trace monitor MUST flag forbidden timestamp/balance opcode read"
-    assert witness.backend == "TraceMonitor"
+    assert res.outcome == Outcome.VIOLATED, "Trace monitor MUST flag forbidden timestamp/balance opcode read"
+    assert res.witness is not None
+    assert res.witness.backend == "TraceMonitor"
 
 
 def test_trace_monitor_backend_negative_fixture():
-    """5.3 Trace Monitor: ScopeAccountCompliant.sol returns None (⊥)."""
+    """5.3 Trace Monitor: ScopeAccountCompliant.sol returns Outcome.HELD."""
     facts = extract_facts(SCOPE_COMPLIANT_PATH)
 
     prop = Property(
@@ -62,9 +63,10 @@ def test_trace_monitor_backend_negative_fixture():
     binding = PropertyBinding(validator_function="validateUserOp")
 
     backend = TraceMonitorBackend()
-    witness = backend.validate(prop, binding, facts)
+    res = backend.validate(prop, binding, facts)
 
-    assert witness is None, "Trace monitor MUST return None (⊥) for compliant scope validation"
+    assert res.outcome == Outcome.HELD, "Trace monitor MUST return Outcome.HELD for compliant scope validation"
+    assert res.witness is None
 
 
 def test_differential_sim_backend_positive_fixture():
@@ -83,14 +85,15 @@ def test_differential_sim_backend_positive_fixture():
     binding = PropertyBinding(validator_function="validateUserOp")
 
     backend = DifferentialSimBackend()
-    witness = backend.validate(prop, binding, facts)
+    res = backend.validate(prop, binding, facts)
 
-    assert witness is not None, "Differential simulator MUST flag simulation inconsistency"
-    assert witness.backend == "DifferentialSim"
+    assert res.outcome == Outcome.VIOLATED, "Differential simulator MUST flag simulation inconsistency"
+    assert res.witness is not None
+    assert res.witness.backend == "DifferentialSim"
 
 
 def test_differential_sim_backend_negative_fixture():
-    """5.4 Differential Sim: SimAccountCompliant.sol returns None (⊥)."""
+    """5.4 Differential Sim: SimAccountCompliant.sol returns Outcome.HELD."""
     facts = extract_facts(SIM_COMPLIANT_PATH)
 
     prop = Property(
@@ -105,6 +108,7 @@ def test_differential_sim_backend_negative_fixture():
     binding = PropertyBinding(validator_function="validateUserOp")
 
     backend = DifferentialSimBackend()
-    witness = backend.validate(prop, binding, facts)
+    res = backend.validate(prop, binding, facts)
 
-    assert witness is None, "Differential simulator MUST return None (⊥) when paths agree"
+    assert res.outcome == Outcome.HELD, "Differential simulator MUST return Outcome.HELD when paths agree"
+    assert res.witness is None

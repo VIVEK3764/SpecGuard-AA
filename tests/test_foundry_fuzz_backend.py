@@ -13,7 +13,7 @@ from specguard.retrieval.retriever import HybridRetriever
 from specguard.synthesis.synthesizer import PropertySynthesizer
 from specguard.binding.binder import NormalizerAndBinder
 from specguard.backends.dispatcher import BackendDispatcher
-from specguard.models import PropertyType
+from specguard.models import PropertyType, Outcome
 
 
 SESSION_ACCOUNT_PATH = os.path.join(
@@ -48,11 +48,15 @@ def test_positive_fixture_session_account():
     )
 
     dispatcher = BackendDispatcher()
-    witness = dispatcher.validate_property(session_prop, binding, facts)
+    res = dispatcher.validate_property(session_prop, binding, facts)
 
-    assert witness is not None, "Foundry fuzz backend MUST produce a witness for SessionAccount target bypass"
-    assert witness.backend == "FoundryFuzz"
-    assert witness.is_valid is True
+    if dispatcher.fuzz_backend.forge_path:
+        assert res.outcome == Outcome.VIOLATED, "Foundry fuzz backend MUST produce VIOLATED for SessionAccount target bypass"
+        assert res.witness is not None
+        assert res.witness.backend == "FoundryFuzz"
+        assert res.witness.is_valid is True
+    else:
+        assert res.outcome == Outcome.HARNESS_ERROR, "Should return HARNESS_ERROR when forge is absent"
 
 
 def test_positive_fixture_coupon_paymaster():
@@ -73,11 +77,15 @@ def test_positive_fixture_coupon_paymaster():
     )
 
     dispatcher = BackendDispatcher()
-    witness = dispatcher.validate_property(paymaster_prop, binding, facts)
+    res = dispatcher.validate_property(paymaster_prop, binding, facts)
 
-    assert witness is not None, "Foundry fuzz backend MUST produce a witness for CouponPaymaster coupon replay"
-    assert witness.backend == "FoundryFuzz"
-    assert witness.is_valid is True
+    if dispatcher.fuzz_backend.forge_path:
+        assert res.outcome == Outcome.VIOLATED, "Foundry fuzz backend MUST produce VIOLATED for CouponPaymaster coupon replay"
+        assert res.witness is not None
+        assert res.witness.backend == "FoundryFuzz"
+        assert res.witness.is_valid is True
+    else:
+        assert res.outcome == Outcome.HARNESS_ERROR, "Should return HARNESS_ERROR when forge is absent"
 
 
 def test_positive_fixture_expiry_session_account():
@@ -98,11 +106,15 @@ def test_positive_fixture_expiry_session_account():
     )
 
     dispatcher = BackendDispatcher()
-    witness = dispatcher.validate_property(expiry_prop, binding, facts)
+    res = dispatcher.validate_property(expiry_prop, binding, facts)
 
-    assert witness is not None, "Foundry fuzz backend MUST produce a witness for ExpirySessionAccount expiry bypass"
-    assert witness.backend == "FoundryFuzz"
-    assert witness.is_valid is True
+    if dispatcher.fuzz_backend.forge_path:
+        assert res.outcome == Outcome.VIOLATED, "Foundry fuzz backend MUST produce VIOLATED for ExpirySessionAccount expiry bypass"
+        assert res.witness is not None
+        assert res.witness.backend == "FoundryFuzz"
+        assert res.witness.is_valid is True
+    else:
+        assert res.outcome == Outcome.HARNESS_ERROR, "Should return HARNESS_ERROR when forge is absent"
 
 
 def test_negative_fixture_simple_owner_account():
@@ -123,6 +135,10 @@ def test_negative_fixture_simple_owner_account():
     )
 
     dispatcher = BackendDispatcher()
-    witness = dispatcher.validate_property(nonce_prop, binding, facts)
+    res = dispatcher.validate_property(nonce_prop, binding, facts)
 
-    assert witness is None, "Foundry fuzz backend MUST return None (⊥) for clean owner account"
+    if dispatcher.fuzz_backend.forge_path:
+        assert res.outcome == Outcome.HELD, "Foundry fuzz backend MUST return Outcome.HELD for clean owner account"
+        assert res.witness is None
+    else:
+        assert res.outcome in (Outcome.HELD, Outcome.HARNESS_ERROR)

@@ -6,7 +6,7 @@ Defines Validate(p_hat, b, c) -> Witness | ⊥
 
 from abc import ABC, abstractmethod
 from typing import Optional
-from specguard.models import ContractFacts, Property, PropertyBinding, Witness
+from specguard.models import ContractFacts, Property, PropertyBinding, Witness, ValidationResult, Outcome
 
 
 class ValidationBackend(ABC):
@@ -17,10 +17,13 @@ class ValidationBackend(ABC):
     @abstractmethod
     def validate(
         self, property: Property, binding: PropertyBinding, facts: ContractFacts
-    ) -> Optional[Witness]:
+    ) -> ValidationResult:
         """
         Validate property against target contract facts E(c).
-        Returns a Witness object if a concrete violation is found,
-        or None (⊥) if no counterexample exists.
+        Returns a structured ValidationResult with outcome:
+        - Outcome.VIOLATED (with witness)
+        - Outcome.HELD (invariant confirmed)
+        - Outcome.HARNESS_ERROR (compilation / setup / harness syntax error)
+        - Outcome.TIMEOUT (execution timed out)
         """
         pass
