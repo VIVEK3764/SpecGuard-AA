@@ -2,6 +2,8 @@
 """
 Validation Backend Dispatcher for SpecGuard-AA (Paper Algorithm 1 Lines 22-27).
 Maps normalized properties p_hat to executable validation backends by property type tau.
+Phase F Complete: Clean tri-backend verification engine
+(FoundryFuzzBackend, TraceMonitorBackend, DifferentialSimBackend).
 """
 
 from typing import List, Optional, Dict
@@ -22,10 +24,12 @@ from specguard.models import (
 
 class BackendDispatcher:
     """
-    Dispatches normalized properties to appropriate validation backends (Step F2).
+    Dispatches normalized properties to appropriate validation backends (Phase F).
+    Guarantees full coverage over all PropertyType variants using the verified tri-backend suite.
     """
 
     def __init__(self):
+        # Canonical tri-backend suite (Step F5)
         self.fuzz_backend = FoundryFuzzBackend()
         self.trace_backend = TraceMonitorBackend()
         self.sim_backend = DifferentialSimBackend()
@@ -46,7 +50,9 @@ class BackendDispatcher:
         Validate property using dispatched backends by property type tau.
         Returns a structured ValidationResult with Outcome (VIOLATED, HELD, HARNESS_ERROR, TIMEOUT).
         """
-        backends = self.dispatch_map.get(property.template_type, [self.fuzz_backend])
+        backends = self.dispatch_map.get(property.template_type)
+        if not backends:
+            backends = [self.fuzz_backend]
         
         last_error_res: Optional[ValidationResult] = None
         for backend in backends:
