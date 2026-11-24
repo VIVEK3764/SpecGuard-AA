@@ -93,7 +93,7 @@ import "forge-std/Test.sol";
 import "@account-abstraction/contracts/core/EntryPoint.sol";
 import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
 import "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
-import "../../src/worked_examples/{contract_name}.sol";
+{import_statement}
 
 /// @title  Bundle Differential Simulation Test for {contract_name}
 /// @notice Builds a {bundle_size}-operation bundle using the same resource and
@@ -112,6 +112,8 @@ contract Test_BundleDiff_{clean_id} is Test {{
     address public beneficiary  = makeAddr("beneficiary");
     address public sender1      = makeAddr("sender1");
     address public sender2      = makeAddr("sender2");
+    address public sponsor;
+    uint256 public sponsorPk;
 
     // ERC-4337 UserOperationEvent(bytes32 userOpHash, address sender,
     //   address paymaster, uint256 nonce, bool success, uint256 actualGasCost,
@@ -128,8 +130,9 @@ contract Test_BundleDiff_{clean_id} is Test {{
 
     function setUp() public {{
         entryPoint = new EntryPoint();
+        (sponsor, sponsorPk) = makeAddrAndKey("sponsor");
         // Paymaster constructor: (entryPoint, sponsor/owner)
-        paymaster  = new {contract_name}(address(entryPoint), address(this));
+        paymaster  = new {contract_name}(address(entryPoint), sponsor);
 
         // Fund accounts so gas accounting doesn't revert
         vm.deal(address(paymaster), 100 ether);
@@ -140,7 +143,7 @@ contract Test_BundleDiff_{clean_id} is Test {{
     }}
 
     /// @dev Build an op for a given sender with minimal gas limits and
-    ///      paymasterAndData pointing at our paymaster + a shared coupon hash.
+    ///      paymasterAndData pointing at our paymaster + a shared coupon hash and sponsor signature.
     function _buildOp(
         address sender,
         uint256 nonce,
@@ -152,14 +155,19 @@ contract Test_BundleDiff_{clean_id} is Test {{
         op.accountGasLimits = bytes32((uint256(500_000) << 128) | uint256(200_000));
         // gasFees: high 128 bits = maxPriorityFeePerGas, low 128 bits = maxFeePerGas
         op.gasFees          = bytes32((uint256(1 gwei) << 128) | uint256(2 gwei));
-        // paymasterAndData: 20 bytes paymaster | 16 bytes verGasLimit | 16 bytes postOpGasLimit | coupon
+
+        // Genuine cryptographic signature from sponsor over couponHash (NO vm.mockCall)
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sponsorPk, couponHash);
+        bytes memory couponSig = abi.encodePacked(r, s, v);
+
+        // paymasterAndData: 20 bytes paymaster | 16 bytes verGasLimit | 16 bytes postOpGasLimit | coupon | sig
         op.paymasterAndData = abi.encodePacked(
             address(paymaster),
             uint128(300_000),   // paymasterVerificationGasLimit
             uint128(100_000),   // paymasterPostOpGasLimit
-            couponHash
+            couponHash,
+            couponSig
         );
-        // Blank signature — paymaster validates via couponHash, not sig
         op.signature = hex"";
     }}
 
@@ -222,17 +230,31 @@ contract Test_BundleDiff_{clean_id} is Test {{
 """
 
 
+def _resolve_relative_import(source_path: str, contract_name: str) -> str:
+    """Derives relative import for Solidity bundle differential harness."""
+    if not source_path:
+        return f'import "../../src/worked_examples/{contract_name}.sol";'
+    norm_path = source_path.replace("\\", "/")
+    if "contracts/" in norm_path:
+        rel = norm_path.split("contracts/")[-1]
+        return f'import "../../{rel}";'
+    return f'import "../../src/worked_examples/{contract_name}.sol";'
+
+
 def _generate_harness(
     contract_name: str,
     clean_id: str,
     invariant_comment: str,
     bundle_size: int = 2,
+    source_path: str = "",
 ) -> str:
+    import_statement = _resolve_relative_import(source_path, contract_name)
     return _HARNESS_TEMPLATE.format(
         contract_name=contract_name,
         clean_id=clean_id,
         bundle_size=bundle_size,
         invariant_comment=invariant_comment,
+        import_statement=import_statement,
     )
 
 
@@ -454,6 +476,7 @@ class DifferentialSimBackend(ValidationBackend):
             clean_id=clean_id,
             invariant_comment=invariant_comment,
             bundle_size=self.bundle_size,
+            source_path=facts.source_path,
         )
 
         contract_test_name = f"Test_BundleDiff_{clean_id}"

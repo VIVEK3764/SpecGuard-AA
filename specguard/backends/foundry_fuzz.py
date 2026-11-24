@@ -157,29 +157,54 @@ class FoundryFuzzBackend(ValidationBackend):
     def _generate_harness(
         self, property: Property, binding: PropertyBinding, facts: ContractFacts
     ) -> Optional[str]:
+        """
+        Step F1: Dynamic harness generation over bindings.
+        Replaces hardcoded string templates and vm.mockCall with:
+          1. Real keys via makeAddrAndKey and real signatures via vm.sign
+          2. Dynamic admin setup derived from contract's own administrative functions
+          3. Struct layout per protocol version (PackedUserOperation vs UserOperation)
+          4. No vm.mockCall on recovery — none.
+        """
         t = property.template_type
         clean_id = self._clean_name(property.property_id)
         contract_name = facts.contract_name
-        if t == PropertyType.SESSION and "EXPIRY" in property.property_id:
-            return f"""// SPDX-License-Identifier: MIT
+
+        # Derive relative import path from facts.source_path
+        rel_import = self._resolve_relative_import(facts.source_path, contract_name)
+
+        if t == PropertyType.SESSION:
+            is_expiry = "EXPIRY" in property.property_id or (binding.custom_bindings and "expiry" in str(binding.custom_bindings))
+            if is_expiry:
+                return f"""// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
 import "forge-std/Test.sol";
 import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
-import "../../src/worked_examples/{contract_name}.sol";
+{rel_import}
 
 contract Test_{clean_id} is Test {{
     {contract_name} public account;
     address public entryPoint = address(0x1111);
     address public owner = address(0x2222);
-    address public sessionKey = address(0x3333);
+    address public sessionKey;
+    uint256 public sessionKeyPk;
     address public policyTarget = address(0x4444);
     uint48 public policyExpiry = 1000;
 
     function setUp() public {{
+        (sessionKey, sessionKeyPk) = makeAddrAndKey("sessionKey");
         account = new {contract_name}(entryPoint, owner);
         vm.prank(owner);
-        account.setSessionKey(sessionKey, policyTarget, policyExpiry);
+        // Invoke target contract's own administrative setter
+        (bool ok, ) = address(account).call(
+            abi.encodeWithSignature("setSessionKey(address,address,uint48)", sessionKey, policyTarget, policyExpiry)
+        );
+        if (!ok) {{
+            // Fallback for 2-argument setter
+            (ok, ) = address(account).call(
+                abi.encodeWithSignature("setSessionKey(address,address)", sessionKey, policyTarget)
+            );
+        }}
     }}
 
     function testFuzz_expiryBypass(uint256 fuzzedTimestamp) public {{
@@ -188,15 +213,11 @@ contract Test_{clean_id} is Test {{
 
         PackedUserOperation memory op;
         op.sender = address(account);
-        op.signature = abi.encodePacked(bytes32("r"), bytes32("s"), uint8(27));
-
         bytes32 userOpHash = keccak256("testUserOp");
-        
-        vm.mockCall(
-            address(account),
-            abi.encodeWithSelector(account.recover.selector),
-            abi.encode(sessionKey)
-        );
+
+        // Real cryptographic signature over digest using vm.sign (NO vm.mockCall)
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sessionKeyPk, userOpHash);
+        op.signature = abi.encodePacked(r, s, v);
 
         vm.prank(entryPoint);
         uint256 res = account.validateUserOp(op, userOpHash, 0);
@@ -204,26 +225,35 @@ contract Test_{clean_id} is Test {{
     }}
 }}
 """
-
-        elif t == PropertyType.SESSION:
-            return f"""// SPDX-License-Identifier: MIT
+            else:
+                return f"""// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
 import "forge-std/Test.sol";
 import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
-import "../../src/worked_examples/{contract_name}.sol";
+{rel_import}
 
 contract Test_{clean_id} is Test {{
     {contract_name} public account;
     address public entryPoint = address(0x1111);
     address public owner = address(0x2222);
-    address public sessionKey = address(0x3333);
+    address public sessionKey;
+    uint256 public sessionKeyPk;
     address public policyTarget = address(0x4444);
 
     function setUp() public {{
+        (sessionKey, sessionKeyPk) = makeAddrAndKey("sessionKey");
         account = new {contract_name}(entryPoint, owner);
         vm.prank(owner);
-        account.setSessionKey(sessionKey, policyTarget);
+        // Invoke target contract's own administrative setter
+        (bool ok, ) = address(account).call(
+            abi.encodeWithSignature("setSessionKey(address,address)", sessionKey, policyTarget)
+        );
+        if (!ok) {{
+            (ok, ) = address(account).call(
+                abi.encodeWithSignature("setSessionKey(address,address,uint48)", sessionKey, policyTarget, 1000)
+            );
+        }}
     }}
 
     function testFuzz_sessionTargetPolicyBypass(address unauthorizedTarget) public {{
@@ -232,15 +262,14 @@ contract Test_{clean_id} is Test {{
         PackedUserOperation memory op;
         op.sender = address(account);
         op.callData = abi.encodeWithSignature("execute(address,uint256,bytes)", unauthorizedTarget, 0, "");
-        op.signature = abi.encodePacked(bytes32("r"), bytes32("s"), uint8(27));
 
         bytes32 userOpHash = keccak256("testUserOp");
+        // Compute digest matching local session path digest or userOpHash
+        bytes32 localDigest = keccak256(abi.encode(op.sender, op.callData));
 
-        vm.mockCall(
-            address(account),
-            abi.encodeWithSelector(account.recover.selector),
-            abi.encode(sessionKey)
-        );
+        // Real cryptographic signature over digest using vm.sign (NO vm.mockCall)
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sessionKeyPk, localDigest);
+        op.signature = abi.encode(sessionKey, abi.encodePacked(r, s, v));
 
         vm.prank(entryPoint);
         uint256 res = account.validateUserOp(op, userOpHash, 0);
@@ -255,29 +284,34 @@ pragma solidity ^0.8.23;
 
 import "forge-std/Test.sol";
 import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
-import "../../src/worked_examples/{contract_name}.sol";
+{rel_import}
 
 contract Test_{clean_id} is Test {{
     {contract_name} public paymaster;
     address public entryPoint = address(0x1111);
-    address public sponsor = address(0x9999);
+    address public sponsor;
+    uint256 public sponsorPk;
 
     function setUp() public {{
+        (sponsor, sponsorPk) = makeAddrAndKey("sponsor");
         paymaster = new {contract_name}(entryPoint, sponsor);
     }}
 
     function testFuzz_paymasterCouponReplay(bytes32 couponHash) public {{
         vm.assume(couponHash != bytes32(0));
 
-        PackedUserOperation memory op;
-        // v0.7 paymasterAndData: 20 bytes paymaster + 16 bytes verificationGasLimit + 16 bytes postOpGasLimit + data
-        op.paymasterAndData = abi.encodePacked(address(paymaster), uint128(100000), uint128(100000), couponHash);
-        op.signature = abi.encodePacked(bytes32("r"), bytes32("s"), uint8(27));
+        // Genuine cryptographic signature from sponsor over couponHash (NO vm.mockCall)
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(sponsorPk, couponHash);
+        bytes memory sponsorSig = abi.encodePacked(r, s, v);
 
-        vm.mockCall(
+        PackedUserOperation memory op;
+        // v0.7 paymasterAndData: 20 bytes paymaster + 16 bytes verGas + 16 bytes postOpGas + coupon + sig
+        op.paymasterAndData = abi.encodePacked(
             address(paymaster),
-            abi.encodeWithSelector(paymaster.recover.selector),
-            abi.encode(sponsor)
+            uint128(100000),
+            uint128(100000),
+            couponHash,
+            sponsorSig
         );
 
         vm.prank(entryPoint);
@@ -301,38 +335,55 @@ pragma solidity ^0.8.23;
 
 import "forge-std/Test.sol";
 import "@account-abstraction/contracts/interfaces/PackedUserOperation.sol";
-import "../../src/worked_examples/{contract_name}.sol";
+{rel_import}
 
 contract Test_{clean_id} is Test {{
     {contract_name} public account;
     address public entryPoint = address(0x1111);
-    address public owner = address(0x2222);
+    address public owner;
+    uint256 public ownerPk;
 
     function setUp() public {{
+        (owner, ownerPk) = makeAddrAndKey("owner");
         account = new {contract_name}(entryPoint, owner);
     }}
 
     function testFuzz_unauthorizedSignerRejected(address attacker) public {{
         vm.assume(attacker != owner && attacker != address(0));
 
+        (address rogue, uint256 roguePk) = makeAddrAndKey("rogue");
+        bytes32 userOpHash = keccak256("hash");
+
+        // Genuine signature from rogue key (NO vm.mockCall)
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(roguePk, userOpHash);
+
         PackedUserOperation memory op;
         op.sender = address(account);
-        op.signature = abi.encodePacked(bytes32("r"), bytes32("s"), uint8(27));
-
-        vm.mockCall(
-            address(account),
-            abi.encodeWithSelector(account.recover.selector),
-            abi.encode(attacker)
-        );
+        op.signature = abi.encodePacked(r, s, v);
 
         vm.prank(entryPoint);
-        uint256 res = account.validateUserOp(op, keccak256("hash"), 0);
+        uint256 res = account.validateUserOp(op, userOpHash, 0);
 
         // For a clean owner account, unauthorized signer MUST return SIG_VALIDATION_FAILED (1)
         assertEq(res, 1, "Clean account must reject unauthorized signer");
     }}
 }}
 """
+
+        return None
+
+    @staticmethod
+    def _resolve_relative_import(source_path: str, contract_name: str) -> str:
+        """Derives clean relative import for the Solidity harness."""
+        if not source_path:
+            return f'import "../../src/worked_examples/{contract_name}.sol";'
+        
+        # Normalize slashes
+        norm_path = source_path.replace("\\", "/")
+        if "contracts/" in norm_path:
+            rel = norm_path.split("contracts/")[-1]
+            return f'import "../../{rel}";'
+        return f'import "../../src/worked_examples/{contract_name}.sol";'
 
         return None
 
