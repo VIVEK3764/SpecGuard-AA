@@ -22,6 +22,11 @@ from specguard.models import (
     AAFact,
 )
 from specguard.facts.mechanisms import tag_mechanisms
+from specguard.facts.acceptance_paths import (
+    extract_acceptance_paths,
+    infer_protocol_version,
+    extract_admin_setups,
+)
 
 # Ensure forge is available on PATH for Slither's underlying crytic-compile platform.
 if shutil.which("forge") is None:
@@ -196,6 +201,15 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
     # 6. Extract Structural Mechanism Tags E_mech
     mechanism_tags = tag_mechanisms(target_contract)
 
+    # 7. Extract Acceptance Paths (Step E3)
+    acceptance_paths = extract_acceptance_paths(target_contract)
+
+    # 8. Infer Protocol Version (Step E5)
+    protocol_version = infer_protocol_version(target_contract)
+
+    # 9. Extract Admin Setup Functions (Step F1)
+    admin_setups = extract_admin_setups(target_contract)
+
     return ContractFacts(
         contract_name=target_contract.name,
         source_path=abs_path,
@@ -205,6 +219,9 @@ def extract_facts(solidity_path: str, target_contract_name: Optional[str] = None
         data_flows=data_flow_facts,
         aa_facts=aa_facts,
         mechanism_tags=mechanism_tags,
+        acceptance_paths=acceptance_paths,
+        protocol_version=protocol_version,
+        admin_setups=admin_setups,
     )
 
 
